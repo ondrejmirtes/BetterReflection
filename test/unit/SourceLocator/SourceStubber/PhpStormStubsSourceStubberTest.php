@@ -284,20 +284,13 @@ class PhpStormStubsSourceStubberTest extends TestCase
     {
         $functionNames = get_defined_functions()['internal'];
 
-        // Needs fixes in JetBrains/phpstorm-stubs
-        $missingFunctionsInStubs = ['sapi_windows_set_ctrl_handler', 'sapi_windows_generate_ctrl_event'];
-
         return array_map(
             static function (string $functionName) : array {
                 return [$functionName];
             },
             array_filter(
                 $functionNames,
-                static function (string $functionName) use ($missingFunctionsInStubs) : bool {
-                    if (in_array($functionName, $missingFunctionsInStubs, true)) {
-                        return false;
-                    }
-
+                static function (string $functionName) : bool {
                     $reflection = new CoreReflectionFunction($functionName);
 
                     // Check only always enabled extensions
@@ -320,30 +313,19 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         $originalReflection = new CoreReflectionFunction($functionName);
 
-        // Needs fixes in JetBrains/phpstorm-stubs
+        // Needs fixes in JetBrains/phpstorm-stubs or PHP
         if (in_array($functionName, [
             'setlocale',
-            'sprintf',
-            'printf',
-            'fprintf',
             'trait_exists',
             'strtok',
             'strtr',
             'hrtime',
-            'forward_static_call',
-            'forward_static_call_array',
             'pack',
             'min',
             'max',
             'var_dump',
-            'register_shutdown_function',
-            'register_tick_function',
             'compact',
             'array_map',
-            'array_merge',
-            'array_merge_recursive',
-            'array_replace',
-            'array_replace_recursive',
             'array_intersect',
             'array_intersect_key',
             'array_intersect_ukey',
@@ -361,12 +343,13 @@ class PhpStormStubsSourceStubberTest extends TestCase
             'array_diff_uassoc',
             'array_udiff_uassoc',
             'array_multisort',
-            'dns_get_record',
             'extract',
-            'pos',
             'setcookie',
             'setrawcookie',
             'sapi_windows_vt100_support',
+            'sapi_windows_cp_get',
+            'stream_context_set_option',
+            'debug_zval_dump',
         ], true)) {
             return;
         }
@@ -377,12 +360,14 @@ class PhpStormStubsSourceStubberTest extends TestCase
         }
 
         // Changed in PHP 7.4.0
-        if (PHP_VERSION_ID < 70400 && in_array($functionName, ['preg_replace_callback', 'preg_replace_callback_array'], true)) {
-            return;
-        }
-
-        // Needs fixes in JetBrains/phpstorm-stubs or PHP
-        if (in_array($functionName, ['get_resources', 'sapi_windows_cp_get', 'stream_context_set_option'], true)) {
+        if (PHP_VERSION_ID < 70400 && in_array($functionName, [
+            'pack',
+            'array_merge',
+            'array_merge_recursive',
+            'preg_replace_callback',
+            'preg_replace_callback_array',
+        ], true)
+        ) {
             return;
         }
 
@@ -400,27 +385,17 @@ class PhpStormStubsSourceStubberTest extends TestCase
             self::assertSame($originalReflectionParameter->canBePassedByValue(), $stubbedReflectionParameter->canBePassedByValue(), $parameterName);
 
             // Bugs in PHP
-            if (! in_array($parameterName, ['preg_replace_callback.callback', 'header_register_callback.callback'], true)) {
+            if (! in_array($parameterName, ['preg_replace_callback.callback', 'header_register_callback.callback', 'sapi_windows_set_ctrl_handler.callable'], true)) {
                 self::assertSame($originalReflectionParameter->isCallable(), $stubbedReflectionParameter->isCallable(), $parameterName);
             }
 
-            // Needs fixes in JetBrains/phpstorm-stubs
-            if (! in_array($parameterName, ['fscanf.vars', 'debug_zval_dump.vars'], true)) {
-                self::assertSame($originalReflectionParameter->isVariadic(), $stubbedReflectionParameter->isVariadic(), $parameterName);
-            }
+            self::assertSame($originalReflectionParameter->isVariadic(), $stubbedReflectionParameter->isVariadic(), $parameterName);
 
             $class = $originalReflectionParameter->getClass();
             if ($class) {
-                // Needs fixes in JetBrains/phpstorm-stubs
-                if (! in_array($parameterName, [
-                    'iterator_to_array.iterator',
-                    'iterator_count.iterator',
-                    'iterator_apply.iterator',
-                ], true)) {
-                    $stubbedClass = $stubbedReflectionParameter->getClass();
-                    self::assertInstanceOf(ReflectionClass::class, $stubbedClass, $parameterName);
-                    self::assertSame($class->getName(), $stubbedClass->getName(), $parameterName);
-                }
+                $stubbedClass = $stubbedReflectionParameter->getClass();
+                self::assertInstanceOf(ReflectionClass::class, $stubbedClass, $parameterName);
+                self::assertSame($class->getName(), $stubbedClass->getName(), $parameterName);
             } else {
                 self::assertNull($originalReflectionParameter->getClass(), $parameterName);
             }
@@ -444,17 +419,6 @@ class PhpStormStubsSourceStubberTest extends TestCase
             }
 
             foreach ($extensionConstants as $constantName => $constantValue) {
-                // Needs fixes in JetBrains/phpstorm-stubs
-                if (in_array($constantName, [
-                    'PHP_WINDOWS_NT_DOMAIN_CONTROLLER',
-                    'PHP_WINDOWS_NT_SERVER',
-                    'PHP_WINDOWS_NT_WORKSTATION',
-                    'PHP_WINDOWS_EVENT_CTRL_C',
-                    'PHP_WINDOWS_EVENT_CTRL_BREAK',
-                ], true)) {
-                    continue;
-                }
-
                 // Not supported because of resource as value
                 if (in_array($constantName, ['STDIN', 'STDOUT', 'STDERR'], true)) {
                     continue;
@@ -484,8 +448,6 @@ class PhpStormStubsSourceStubberTest extends TestCase
         self::assertFalse($constantReflection->inNamespace());
         self::assertTrue($constantReflection->isInternal());
         self::assertFalse($constantReflection->isUserDefined());
-        // Needs fixes in JetBrains/phpstorm-stubs
-        // self::assertSame($extensionName, $constantReflection->getExtensionName());
         // NAN cannot be compared
         if ($constantName === 'NAN') {
             return;
