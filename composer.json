@@ -5,7 +5,7 @@
     "require": {
         "php": ">=7.1.0",
         "ext-json": "*",
-        "jetbrains/phpstorm-stubs": "dev-master#283077af53ba9319567ff1dd0caf15c5468209a0",
+        "jetbrains/phpstorm-stubs": "dev-master#f40231e697e9483e523378096b256268369b9138",
         "nikic/php-parser": "4.10.2",
         "phpdocumentor/reflection-docblock": "^4.3.4 || ^5.2.0",
         "phpdocumentor/type-resolver": "^1.0.0",
