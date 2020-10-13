@@ -1008,12 +1008,12 @@ class PhpStormStubsSourceStubberTest extends TestCase
             ],
             [
                 'SplFixedArray',
-                ['ArrayAccess', 'Countable'],
+                ['Iterator', 'ArrayAccess', 'Countable'],
                 70400,
             ],
             [
                 'SplFixedArray',
-                ['ArrayAccess', 'Countable', 'IteratorAggregate'],
+                ['Iterator', 'ArrayAccess', 'Countable', 'IteratorAggregate'],
                 80000,
             ],
         ];
