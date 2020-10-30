@@ -187,6 +187,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             $stub = str_replace('implements \IteratorAggregate', 'implements \Traversable', $stub);
         }
 
+        if ($className === 'DatePeriod' && $this->phpVersionId < 80000) {
+            $stub = str_replace('implements \IteratorAggregate', 'implements \Traversable', $stub);
+        }
+
         if ($className === 'SplFixedArray' && $this->phpVersionId < 80000) {
             $stub = str_replace(', \IteratorAggregate', '', $stub);
         }

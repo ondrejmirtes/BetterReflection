@@ -1007,6 +1007,16 @@ class PhpStormStubsSourceStubberTest extends TestCase
                 80000,
             ],
             [
+                'DatePeriod',
+                ['Traversable'],
+                70400,
+            ],
+            [
+                'DatePeriod',
+                ['IteratorAggregate'],
+                80000,
+            ],
+            [
                 'SplFixedArray',
                 ['Iterator', 'ArrayAccess', 'Countable'],
                 70400,
