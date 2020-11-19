@@ -316,6 +316,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $absoluteFilePath = $this->getAbsoluteFilePath($filePath);
         FileChecker::assertReadableFile($absoluteFilePath);
 
+        $isCore = $this->isCoreExtension($this->getExtensionFromFilePath($filePath));
+
         $ast = $this->phpParser->parse(file_get_contents($absoluteFilePath));
 
         /** @psalm-suppress UndefinedMethod */
@@ -329,7 +331,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         foreach ($this->cachingVisitor->getClassNodes() as $className => $classNode) {
             assert(is_string($className));
             assert($classNode instanceof Node\Stmt\ClassLike);
-            if ($this->hasLaterSinceVersion($classNode)) {
+            if ($isCore && $this->hasLaterSinceVersion($classNode)) {
                 continue;
             }
 
@@ -347,7 +349,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                 [$functionName] = explode('--', $functionName);
             }
 
-            if ($functionName !== 'array_push' && $this->hasLaterSinceVersion($functionNode)) {
+            if ($functionName !== 'array_push' && $isCore && $this->hasLaterSinceVersion($functionNode)) {
                 continue;
             }
 
@@ -360,7 +362,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         foreach ($this->cachingVisitor->getConstantNodes() as $constantName => $constantNode) {
             assert(is_string($constantName));
             assert($constantNode instanceof Node\Stmt\Const_ || $constantNode instanceof Node\Expr\FuncCall);
-            if ($this->hasLaterSinceVersion($constantNode)) {
+            if ($isCore && $this->hasLaterSinceVersion($constantNode)) {
                 continue;
             }
 
@@ -415,6 +417,36 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         }
 
         return false;
+    }
+
+    private function isCoreExtension(string $extension): bool
+    {
+        return in_array(
+            $extension,
+            [
+                'apache',
+                'bcmath', 'bz2',
+                'calendar', 'Core', 'ctype', 'curl',
+                'date', 'dba', 'dom',
+                'enchant', 'exif',
+                'FFI', 'fileinfo', 'filter', 'fpm', 'ftp',
+                'gd', 'gettext', 'gmp',
+                'hash',
+                'iconv', 'imap', 'interbase', 'intl',
+                'json',
+                'ldap', 'libxml',
+                'mbstring', 'mcrypt', 'mssql', 'mysql', 'mysqli',
+                'oci8', 'openssl',
+                'pcntl', 'pcre', 'PDO', 'pdo_ibm', 'pgsql', 'Phar', 'posix', 'pspell',
+                'readline', 'recode', 'Reflection', 'regex',
+                'session', 'shmop', 'SimpleXML', 'snmp', 'soap', 'sockets', 'sodium', 'SPL', 'sqlite3', 'standard', 'sybase', 'sysvmsg', 'sysvsem', 'sysvshm',
+                'tidy', 'tokenizer',
+                'wddx',
+                'xml', 'xmlreader', 'xmlrpc', 'xmlwriter', 'xsl',
+                'Zend OPcache', 'zip', 'zlib',
+            ],
+            true
+        );
     }
 
     /**
