@@ -61,7 +61,7 @@ final class MemoizingSourceLocator implements SourceLocator
     private function reflectorCacheKey(Reflector $reflector) : string
     {
         return 'type:' . get_class($reflector)
-            . '#oid:' . (\PHP_MAJOR_VERSION > 7 || \PHP_MINOR_VERSION > 1 ? spl_object_id($reflector) : spl_object_hash($reflector));
+            . '#oid:' . (PHP_MAJOR_VERSION > 7 || PHP_MINOR_VERSION > 1 ? spl_object_id($reflector) : spl_object_hash($reflector));
     }
 
     private function identifierToCacheKey(Identifier $identifier) : string
