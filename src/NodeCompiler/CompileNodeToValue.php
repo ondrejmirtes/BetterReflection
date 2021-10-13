@@ -13,7 +13,9 @@ use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
 use Roave\BetterReflection\Util\FileHelper;
 
+use function array_map;
 use function assert;
+use function class_exists;
 use function constant;
 use function defined;
 use function dirname;
@@ -60,7 +62,7 @@ class CompileNodeToValue
             }
 
             if ($node instanceof Node\Expr\New_) {
-                throw Exception\UnableToCompileNode::becauseOfInitializer($context, $node);
+                return $this->compileNew($node, $context);
             }
 
             if ($node instanceof Node\Scalar\MagicConst\Dir) {
@@ -291,6 +293,22 @@ class CompileNodeToValue
         }
 
         return $reflectionConstant->getValue();
+    }
+
+    private function compileNew(Node\Expr\New_ $node, CompilerContext $context): object
+    {
+        assert($node->class instanceof Node\Name);
+
+        /** @psalm-var class-string $className */
+        $className = $node->class->toString();
+
+        if (! class_exists($className)) {
+            throw Exception\UnableToCompileNode::becauseOfClassCannotBeLoaded($context, $node, $className);
+        }
+
+        $arguments = array_map(fn (Node\Arg $arg): mixed => $this($arg->value, $context)->value, $node->args);
+
+        return new $className(...$arguments);
     }
 
     /**
