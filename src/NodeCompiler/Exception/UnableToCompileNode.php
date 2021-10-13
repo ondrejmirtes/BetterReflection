@@ -100,12 +100,14 @@ class UnableToCompileNode extends LogicException
         ));
     }
 
-    public static function becauseOfInitializer(
+    public static function becauseOfClassCannotBeLoaded(
         CompilerContext $context,
         Node\Expr\New_ $newNode,
+        string $className,
     ): self {
         return new self(sprintf(
-            'Unable to compile initializer in %s in file %s (line %d)',
+            'Cound not load class "%s" while evaluating expression in %s in file %s (line %d)',
+            $className,
             self::compilerContextToContextDescription($context),
             self::getFileName($context),
             $newNode->getLine(),

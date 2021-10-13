@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflectionTest\NodeCompiler;
 
+use ArrayObject;
 use BadMethodCallException;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
@@ -34,6 +35,7 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\ClassWithNewInInitializers;
 use Roave\BetterReflectionTest\Fixture\MagicConstantsClass;
 use Roave\BetterReflectionTest\Fixture\MagicConstantsTrait;
+use stdClass;
 
 use function assert;
 use function define;
@@ -1027,7 +1029,7 @@ PHP
         $parameter->getDefaultValue();
     }
 
-    public function testThrowExceptionWhenValueContainsInitializer(): void
+    public function testNewInInitializers(): void
     {
         $file = FileHelper::normalizeWindowsPath(self::realPath(__DIR__ . '/../Fixture/NewInInitializers.php'));
 
@@ -1036,14 +1038,17 @@ PHP
         $method    = $class->getMethod('methodWithInitializer');
         $parameter = $method->getParameter('parameterWithInitializer');
 
-        $this->expectException(UnableToCompileNode::class);
-        $this->expectExceptionMessage(sprintf(
-            'Unable to compile initializer in method %s::methodWithInitializer() in file %s (line 11)',
-            ClassWithNewInInitializers::class,
-            $file,
-        ));
+        $value = $parameter->getDefaultValue();
 
-        $parameter->getDefaultValue();
+        self::assertInstanceOf(ArrayObject::class, $value);
+        self::assertSame(6, $value->count());
+
+        self::assertSame('a', $value[0]);
+        self::assertSame('b', $value[1]);
+        self::assertSame('constant', $value[2]);
+        self::assertSame(PHP_VERSION_ID, $value[3]);
+        self::assertSame(ClassWithNewInInitializers::class, $value[4]);
+        self::assertInstanceOf(stdClass::class, $value[5]);
     }
 
     /** @return non-empty-string */
