@@ -38,16 +38,20 @@ final class UnableToCompileNodeTest extends TestCase
     }
 
     #[DataProvider('supportedContextTypes')]
-    public function testBecauseOfInitializer(CompilerContext $context, string $contextName): void
+    public function testBecauseOfClassNotLoaded(CompilerContext $context, string $contextName): void
     {
-        $exception = UnableToCompileNode::becauseOfInitializer(
+        $className = 'SomeClassThatCannotBeFound';
+
+        $exception = UnableToCompileNode::becauseOfClassCannotBeLoaded(
             $context,
-            new New_(new Name('SomeClass')),
+            new New_(new Name($className)),
+            $className,
         );
 
         self::assertSame(
             sprintf(
-                'Unable to compile initializer in %s in file "" (line -1)',
+                'Cound not load class "%s" while evaluating expression in %s in file "" (line -1)',
+                $className,
                 $contextName,
             ),
             $exception->getMessage(),
