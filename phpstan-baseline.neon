@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(PhpParser\\Node\\Arg\|PhpParser\\Node\\ArgPlaceholder\|PhpParser\\Node\\VariadicPlaceholder\)\: mixed\)\|null, Closure\(PhpParser\\Node\\Arg\)\: mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/NodeCompiler/CompileNodeToValue.php
+
+		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionAttribute\:\:newInstance\(\) should never return but return statement found\.$#'
 			identifier: return.never
 			count: 1
@@ -197,3 +203,15 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Call to function is_object\(\) with array\<bool\|float\|int\|string\>\|bool\|float\|int\|string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Reflection/StringCast/ReflectionConstantStringCast.php
+
+		-
+			message: '#^You should use assertCount\(\$expectedCount, \$variable\) instead of assertSame\(\$expectedCount, \$variable\-\>count\(\)\)\.$#'
+			identifier: phpunit.assertCount
+			count: 1
+			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
