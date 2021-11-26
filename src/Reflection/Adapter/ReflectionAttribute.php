@@ -53,7 +53,9 @@ final class ReflectionAttribute extends CoreReflectionAttribute
     /** @return never */
     public function newInstance(): object
     {
-        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
+        $class = $this->getName();
+
+        return new $class(...$this->getArguments());
     }
 
     /** @return non-empty-string */
