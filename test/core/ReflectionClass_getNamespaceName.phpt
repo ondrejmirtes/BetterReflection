@@ -1,8 +1,10 @@
+<?php
+namespace A\B;
+?>
 --TEST--
 ReflectionClass::getNamespaceName()
 --FILE--
 <?php
-namespace A\B;
 class Foo {
 }
 
