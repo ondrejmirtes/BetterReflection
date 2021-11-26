@@ -4,6 +4,7 @@
 /.gitattributes export-ignore
 /.github/ export-ignore
 /.gitignore export-ignore
+/build export-ignore
 /composer.lock export-ignore
 /demo/ export-ignore
 /docs/ export-ignore
