@@ -1133,7 +1133,7 @@ class ReflectionObjectTest extends TestCase
         $betterReflectionObject  = $this->createMock(BetterReflectionObject::class);
         $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionObject::$foo does not exist.');
+        $this->expectExceptionMessage('Property PHPStan\BetterReflection\Reflection\Adapter\ReflectionObject::$foo does not exist.');
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $reflectionObjectAdapter->foo;
     }
