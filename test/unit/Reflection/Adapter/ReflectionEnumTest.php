@@ -255,7 +255,7 @@ class ReflectionEnumTest extends TestCase
         $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionEnum::$foo does not exist.');
+        $this->expectExceptionMessage('Property PHPStan\BetterReflection\Reflection\Adapter\ReflectionEnum::$foo does not exist.');
         /** @phpstan-ignore-next-line */
         $reflectionEnumAdapter->foo;
     }
