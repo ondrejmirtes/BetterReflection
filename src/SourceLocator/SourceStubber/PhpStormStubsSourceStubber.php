@@ -355,7 +355,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             [$classNode] = $classNodeData;
 
             if ($isCoreExtension) {
-                if (! $this->isSupportedInPhpVersion($classNode)) {
+                if ($className !== 'ReturnTypeWillChange' && ! $this->isSupportedInPhpVersion($classNode)) {
                     continue;
                 }
 
