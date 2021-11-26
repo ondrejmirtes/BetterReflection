@@ -369,7 +369,7 @@ class ReflectionClassConstantTest extends TestCase
         $betterReflectionClassConstant  = $this->createMock(BetterReflectionClassConstant::class);
         $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter($betterReflectionClassConstant);
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant::$foo does not exist.');
+        $this->expectExceptionMessage('Property PHPStan\BetterReflection\Reflection\Adapter\ReflectionClassConstant::$foo does not exist.');
         /** @phpstan-ignore-next-line */
         $reflectionClassConstantAdapter->foo;
     }
