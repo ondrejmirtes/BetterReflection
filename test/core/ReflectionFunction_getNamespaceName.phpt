@@ -1,6 +1,3 @@
---TEST--
-ReflectionFunction::getNamespaceName()
---FILE--
 <?php
 namespace A\B;
 function foo() {}
@@ -17,6 +14,9 @@ var_dump($function->getName());
 var_dump($function->getNamespaceName());
 var_dump($function->getShortName());
 ?>
+--TEST--
+ReflectionFunction::getNamespaceName()
+--FILE--
 --EXPECT--
 bool(false)
 string(4) "sort"

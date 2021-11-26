@@ -23,6 +23,7 @@ var_dump($class->newInstanceWithoutConstructor());
 
 $class = new ReflectionClass('Generator');
 var_dump($class->newInstanceWithoutConstructor());
+?>
 --EXPECTF--
 object(Foo)#%d (0) {
 }
