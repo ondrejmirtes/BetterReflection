@@ -997,7 +997,7 @@ class ReflectionClassTest extends TestCase
         $betterReflectionClass  = self::createStub(BetterReflectionClass::class);
         $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionClass);
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionClass::$foo does not exist.');
+        $this->expectExceptionMessage('Property PHPStan\BetterReflection\Reflection\Adapter\ReflectionClass::$foo does not exist.');
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $reflectionClassAdapter->foo;
     }
