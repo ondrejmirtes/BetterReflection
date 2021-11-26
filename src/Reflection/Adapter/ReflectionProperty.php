@@ -396,4 +396,9 @@ final class ReflectionProperty extends CoreReflectionProperty
 
         return $this->betterReflectionProperty->getName();
     }
+
+    public function getBetterReflection(): BetterReflectionProperty
+    {
+        return $this->betterReflectionProperty;
+    }
 }
