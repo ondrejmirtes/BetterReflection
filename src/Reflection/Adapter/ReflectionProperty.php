@@ -205,4 +205,9 @@ final class ReflectionProperty extends CoreReflectionProperty
 
         throw new OutOfBoundsException(sprintf('Property %s::$%s does not exist.', self::class, $name));
     }
+
+    public function getBetterReflection(): BetterReflectionProperty
+    {
+        return $this->betterReflectionProperty;
+    }
 }
