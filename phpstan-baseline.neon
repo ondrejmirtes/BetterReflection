@@ -1,2 +1,7 @@
 parameters:
-	ignoreErrors: []
+	ignoreErrors:
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionAttribute\:\:newInstance\(\) should never return but return statement found\.$#'
+			identifier: return.never
+			count: 1
+			path: src/Reflection/Adapter/ReflectionAttribute.php
