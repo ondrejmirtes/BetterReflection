@@ -1,6 +1,3 @@
---TEST--
-ReflectionParameter::isDefaultValueConstant() && getDefaultValueConstantName() for namespace
---FILE--
 <?php
 
 namespace ReflectionTestNamespace {
@@ -23,8 +20,14 @@ namespace {
 	}
 	echo "==DONE==";
 }
+
+namespace {
 ?>
+--TEST--
+ReflectionParameter::isDefaultValueConstant() && getDefaultValueConstantName() for namespace
+--FILE--
 --EXPECT--
 ReflectionTestNamespace\TestClass::TEST_CONST_2
 ReflectionTestNamespace\CONST_TEST_1
 ==DONE==
+<?php } ?>
