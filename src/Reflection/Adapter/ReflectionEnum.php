@@ -27,6 +27,8 @@ use function constant;
 use function sprintf;
 use function strtolower;
 
+use const PHP_VERSION_ID;
+
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  * @psalm-immutable
@@ -484,6 +486,10 @@ final class ReflectionEnum extends CoreReflectionEnum
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
+        }
+
+        if (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80012) {
+            return [];
         }
 
         if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
