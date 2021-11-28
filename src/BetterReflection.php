@@ -22,8 +22,12 @@ use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\SourceLocator;
 use Roave\BetterReflection\Util\FindReflectionOnLine;
 
+use const PHP_VERSION_ID;
+
 final class BetterReflection
 {
+    public static int $phpVersion = PHP_VERSION_ID;
+
     private static SourceLocator|null $sharedSourceLocator = null;
 
     private SourceLocator|null $sourceLocator = null;
@@ -45,11 +49,13 @@ final class BetterReflection
     private static SourceStubber|null $sharedSourceStubber = null;
 
     public static function populate(
+        int $phpVersion,
         SourceLocator $sourceLocator,
         Reflector $classReflector,
         Parser $phpParser,
         SourceStubber $sourceStubber,
     ): void {
+        self::$phpVersion          = $phpVersion;
         self::$sharedSourceLocator = $sourceLocator;
         self::$sharedReflector     = $classReflector;
         self::$sharedPhpParser     = $phpParser;
@@ -107,7 +113,7 @@ final class BetterReflection
     {
         return $this->sourceStubber
             ?? $this->sourceStubber = new AggregateSourceStubber(
-                new PhpStormStubsSourceStubber($this->phpParser()),
+                new PhpStormStubsSourceStubber($this->phpParser(), self::$phpVersion),
                 new ReflectionSourceStubber(),
             );
     }
