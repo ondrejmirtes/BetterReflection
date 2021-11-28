@@ -5,3 +5,15 @@ parameters:
 			identifier: return.never
 			count: 1
 			path: src/Reflection/Adapter/ReflectionAttribute.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:addStringableInterfaceClassName\(\) should return list\<class\-string\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Undefined variable\: \$interfaces$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Reflection/ReflectionClass.php
