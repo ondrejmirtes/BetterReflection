@@ -368,12 +368,10 @@ class ReflectionParameter
     /**
      * Get the default value of the parameter.
      *
-     * @return scalar|array<scalar>|null
-     *
      * @throws LogicException
      * @throws UnableToCompileNode
      */
-    public function getDefaultValue(): string|int|float|bool|array|null
+    public function getDefaultValue(): mixed
     {
         /** @psalm-var scalar|array<scalar>|null $value */
         $value = $this->getCompiledDefaultValue()->value;
