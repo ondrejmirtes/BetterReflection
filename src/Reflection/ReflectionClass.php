@@ -1244,6 +1244,10 @@ class ReflectionClass implements Reflection
      */
     private function addStringableInterface(array $interfaces): array
     {
+        if (BetterReflection::$phpVersion < 80000) {
+            return $interfaces;
+        }
+
         /** @psalm-var class-string $stringableClassName */
         $stringableClassName = Stringable::class;
 
