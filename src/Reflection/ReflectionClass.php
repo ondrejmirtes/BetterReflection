@@ -1166,7 +1166,11 @@ class ReflectionClass implements Reflection
 
             $parentClassName = $this->parentClassName;
             while ($parentClassName !== null) {
-                $parentClass = $this->reflector->reflectClass($parentClassName);
+                try {
+                    $parentClass = $this->reflector->reflectClass($parentClassName);
+                } catch (IdentifierNotFound) {
+                    break;
+                }
 
                 if (
                     $this->name === $parentClassName
