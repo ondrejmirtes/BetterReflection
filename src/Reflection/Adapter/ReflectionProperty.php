@@ -20,6 +20,8 @@ use function array_map;
 use function gettype;
 use function sprintf;
 
+use const PHP_VERSION_ID;
+
 /** @psalm-suppress PropertyNotSetInConstructor */
 final class ReflectionProperty extends CoreReflectionProperty
 {
@@ -173,6 +175,10 @@ final class ReflectionProperty extends CoreReflectionProperty
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
+        }
+
+        if (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80012) {
+            return [];
         }
 
         if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
