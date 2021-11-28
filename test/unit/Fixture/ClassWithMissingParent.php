@@ -2,7 +2,7 @@
 
 namespace Roave\BetterReflectionTest\Fixture;
 
-class ClassWithMissingParent extends ParentThatDoesNotExist
+class ClassWithMissingParent implements InterfaceThatDoesNotExist
 {
 
 }
