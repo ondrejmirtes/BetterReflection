@@ -11,6 +11,7 @@ use ReflectionException as CoreReflectionException;
 use ReflectionExtension as CoreReflectionExtension;
 use ReflectionFunction as CoreReflectionFunction;
 use ReflectionType as CoreReflectionType;
+use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionFunction as BetterReflectionFunction;
@@ -32,139 +33,129 @@ final class ReflectionFunction extends CoreReflectionFunction
         unset($this->name);
     }
 
-    /**
-     * @return non-empty-string
-     *
-     * @psalm-mutation-free
-     */
     public function __toString(): string
     {
         return $this->betterReflectionFunction->__toString();
     }
 
-    /** @psalm-mutation-free */
     public function inNamespace(): bool
     {
         return $this->betterReflectionFunction->inNamespace();
     }
 
-    /** @psalm-mutation-free */
     public function isClosure(): bool
     {
         return $this->betterReflectionFunction->isClosure();
     }
 
-    /** @psalm-mutation-free */
     public function isDeprecated(): bool
     {
         return $this->betterReflectionFunction->isDeprecated();
     }
 
-    /** @psalm-mutation-free */
     public function isInternal(): bool
     {
         return $this->betterReflectionFunction->isInternal();
     }
 
-    /** @psalm-mutation-free */
     public function isUserDefined(): bool
     {
         return $this->betterReflectionFunction->isUserDefined();
     }
 
-    /** @psalm-mutation-free */
-    public function getClosureThis(): object|null
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getClosureThis()
     {
         throw new NotImplemented('Not implemented');
     }
 
-    /** @psalm-mutation-free */
     public function getClosureScopeClass(): CoreReflectionClass|null
     {
         throw new NotImplemented('Not implemented');
     }
 
-    /** @psalm-mutation-free */
     public function getClosureCalledClass(): CoreReflectionClass|null
     {
         throw new NotImplemented('Not implemented');
     }
 
-    /** @psalm-mutation-free */
-    public function getDocComment(): string|false
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getDocComment()
     {
         return $this->betterReflectionFunction->getDocComment() ?? false;
     }
 
-    /** @psalm-mutation-free */
-    public function getStartLine(): int|false
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getStartLine()
     {
         return $this->betterReflectionFunction->getStartLine();
     }
 
-    /** @psalm-mutation-free */
-    public function getEndLine(): int|false
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getEndLine()
     {
         return $this->betterReflectionFunction->getEndLine();
     }
 
-    /** @psalm-mutation-free */
+    /** @psalm-suppress ImplementedReturnTypeMismatch */
     public function getExtension(): CoreReflectionExtension|null
     {
         throw new NotImplemented('Not implemented');
     }
 
     /**
-     * @return non-empty-string|false
-     *
-     * @psalm-mutation-free
+     * {@inheritDoc}
      */
-    public function getExtensionName(): string|false
+    #[ReturnTypeWillChange]
+    public function getExtensionName()
     {
-        return $this->betterReflectionFunction->getExtensionName() ?? false;
+        return $this->betterReflectionFunction->getExtensionName() ?? '';
     }
 
     /**
-     * @return non-empty-string|false
-     *
-     * @psalm-mutation-free
+     * {@inheritDoc}
      */
-    public function getFileName(): string|false
+    #[ReturnTypeWillChange]
+    public function getFileName()
     {
         $fileName = $this->betterReflectionFunction->getFileName();
 
         return $fileName !== null ? FileHelper::normalizeSystemPath($fileName) : false;
     }
 
-    /** @psalm-mutation-free */
     public function getName(): string
     {
         return $this->betterReflectionFunction->getName();
     }
 
-    /** @psalm-mutation-free */
     public function getNamespaceName(): string
     {
         return $this->betterReflectionFunction->getNamespaceName() ?? '';
     }
 
-    /** @psalm-mutation-free */
     public function getNumberOfParameters(): int
     {
         return $this->betterReflectionFunction->getNumberOfParameters();
     }
 
-    /** @psalm-mutation-free */
     public function getNumberOfRequiredParameters(): int
     {
         return $this->betterReflectionFunction->getNumberOfRequiredParameters();
     }
 
-    /**
-     * @return list<ReflectionParameter>
-     *
-     * @psalm-mutation-free
-     */
+    /** @return list<ReflectionParameter> */
     public function getParameters(): array
     {
         return array_map(
@@ -173,19 +164,16 @@ final class ReflectionFunction extends CoreReflectionFunction
         );
     }
 
-    /** @psalm-mutation-free */
     public function hasReturnType(): bool
     {
         return $this->betterReflectionFunction->hasReturnType();
     }
 
-    /** @psalm-mutation-free */
     public function getReturnType(): CoreReflectionType|null
     {
         return ReflectionType::fromTypeOrNull($this->betterReflectionFunction->getReturnType());
     }
 
-    /** @psalm-mutation-free */
     public function getShortName(): string
     {
         return $this->betterReflectionFunction->getShortName();
@@ -197,50 +185,57 @@ final class ReflectionFunction extends CoreReflectionFunction
         throw new NotImplemented('Not implemented');
     }
 
-    /** @psalm-mutation-free */
     public function returnsReference(): bool
     {
         return $this->betterReflectionFunction->returnsReference();
     }
 
-    /** @psalm-mutation-free */
     public function isGenerator(): bool
     {
         return $this->betterReflectionFunction->isGenerator();
     }
 
-    /** @psalm-mutation-free */
     public function isVariadic(): bool
     {
         return $this->betterReflectionFunction->isVariadic();
     }
 
-    /** @psalm-mutation-free */
     public function isDisabled(): bool
     {
         return $this->betterReflectionFunction->isDisabled();
     }
 
-    public function invoke(mixed ...$args): mixed
+    /**
+     * @param mixed $arg
+     * @param mixed ...$args
+     *
+     * @return mixed
+     *
+     * @throws CoreReflectionException
+     */
+    #[ReturnTypeWillChange]
+    public function invoke($arg = null, ...$args)
     {
         try {
             return $this->betterReflectionFunction->invoke(...func_get_args());
         } catch (Throwable $e) {
-            throw new CoreReflectionException($e->getMessage(), previous: $e);
+            throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
-    /** @param list<mixed> $args */
-    public function invokeArgs(array $args): mixed
+    /**
+     * @param mixed[] $args
+     */
+    #[ReturnTypeWillChange]
+    public function invokeArgs(array $args)
     {
         try {
             return $this->betterReflectionFunction->invokeArgs($args);
         } catch (Throwable $e) {
-            throw new CoreReflectionException($e->getMessage(), previous: $e);
+            throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
-    /** @psalm-mutation-free */
     public function getClosure(): Closure
     {
         return $this->betterReflectionFunction->getClosure();
