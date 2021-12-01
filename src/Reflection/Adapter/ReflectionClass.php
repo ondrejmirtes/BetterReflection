@@ -9,6 +9,7 @@ use ReflectionClass as CoreReflectionClass;
 use ReflectionException as CoreReflectionException;
 use ReflectionExtension as CoreReflectionExtension;
 use ReflectionMethod as CoreReflectionMethod;
+use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
@@ -107,31 +108,42 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
+     * {@inheritDoc}
      * @return non-empty-string|false
-     *
-     * @psalm-mutation-free
      */
-    public function getFileName(): string|false
+    #[ReturnTypeWillChange]
+    public function getFileName()
     {
         $fileName = $this->betterReflectionClass->getFileName();
 
         return $fileName !== null ? FileHelper::normalizeSystemPath($fileName) : false;
     }
 
-    /** @psalm-mutation-free */
-    public function getStartLine(): int
+    /**
+     * {@inheritDoc}
+     * @psalm-mutation-free
+     */
+    #[ReturnTypeWillChange]
+    public function getStartLine()
     {
         return $this->betterReflectionClass->getStartLine();
     }
 
-    /** @psalm-mutation-free */
-    public function getEndLine(): int
+    /**
+     * {@inheritDoc}
+     * @psalm-mutation-free
+     */
+    #[ReturnTypeWillChange]
+    public function getEndLine()
     {
         return $this->betterReflectionClass->getEndLine();
     }
 
-    /** @psalm-mutation-free */
-    public function getDocComment(): string|false
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getDocComment()
     {
         return $this->betterReflectionClass->getDocComment() ?? false;
     }
@@ -148,8 +160,10 @@ final class ReflectionClass extends CoreReflectionClass
         return new ReflectionMethod($constructor);
     }
 
-    /** @psalm-mutation-free */
-    public function hasMethod(string $name): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function hasMethod($name): bool
     {
         if ($name === '') {
             return false;
@@ -158,8 +172,10 @@ final class ReflectionClass extends CoreReflectionClass
         return $this->betterReflectionClass->hasMethod($name);
     }
 
-    /** @psalm-mutation-free */
-    public function getMethod(string $name): ReflectionMethod
+    /**
+     * {@inheritDoc}
+     */
+    public function getMethod($name): \ReflectionMethod
     {
         $method = $name !== '' ? $this->betterReflectionClass->getMethod($name) : null;
 
@@ -171,13 +187,11 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
+     * {@inheritDoc}
      * @param int-mask-of<ReflectionMethod::IS_*>|null $filter
-     *
      * @return list<ReflectionMethod>
-     *
-     * @psalm-mutation-free
      */
-    public function getMethods(int|null $filter = null): array
+    public function getMethods($filter = null): array
     {
         /** @psalm-suppress ImpureFunctionCall */
         return array_values(array_map(
@@ -186,8 +200,10 @@ final class ReflectionClass extends CoreReflectionClass
         ));
     }
 
-    /** @psalm-mutation-free */
-    public function hasProperty(string $name): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function hasProperty($name): bool
     {
         if ($name === '') {
             return false;
@@ -196,8 +212,10 @@ final class ReflectionClass extends CoreReflectionClass
         return $this->betterReflectionClass->hasProperty($name);
     }
 
-    /** @psalm-mutation-free */
-    public function getProperty(string $name): ReflectionProperty
+    /**
+     * {@inheritDoc}
+     */
+    public function getProperty($name): \ReflectionProperty
     {
         $betterReflectionProperty = $name !== '' ? $this->betterReflectionClass->getProperty($name) : null;
 
@@ -209,13 +227,11 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
+     * {@inheritDoc}
      * @param int-mask-of<ReflectionProperty::IS_*>|null $filter
-     *
      * @return list<ReflectionProperty>
-     *
-     * @psalm-mutation-free
      */
-    public function getProperties(int|null $filter = null): array
+    public function getProperties($filter = null): array
     {
         /** @psalm-suppress ImpureFunctionCall */
         return array_values(array_map(
@@ -224,8 +240,10 @@ final class ReflectionClass extends CoreReflectionClass
         ));
     }
 
-    /** @psalm-mutation-free */
-    public function hasConstant(string $name): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function hasConstant($name): bool
     {
         if ($name === '') {
             return false;
@@ -254,8 +272,11 @@ final class ReflectionClass extends CoreReflectionClass
         );
     }
 
-    /** @psalm-mutation-free */
-    public function getConstant(string $name): mixed
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getConstant($name)
     {
         if ($name === '') {
             return false;
@@ -286,8 +307,11 @@ final class ReflectionClass extends CoreReflectionClass
         return $betterConstantOrEnumCase->getValue();
     }
 
-    /** @psalm-mutation-free */
-    public function getReflectionConstant(string $name): ReflectionClassConstant|false
+    /**
+     * {@inheritdoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getReflectionConstant($name)
     {
         if ($name === '') {
             return false;
@@ -446,14 +470,22 @@ final class ReflectionClass extends CoreReflectionClass
         return $this->betterReflectionClass->getModifiers();
     }
 
-    /** @psalm-mutation-free */
-    public function isInstance(object $object): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function isInstance($object): bool
     {
         return $this->betterReflectionClass->isInstance($object);
     }
 
-    /** @return never */
-    public function newInstance(mixed ...$args): self
+    /**
+     * @param mixed $arg
+     * @param mixed ...$args
+     *
+     * @return object
+     */
+    #[ReturnTypeWillChange]
+    public function newInstance($arg = null, ...$args)
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
@@ -496,8 +528,7 @@ final class ReflectionClass extends CoreReflectionClass
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
-    /** @return never */
-    public function getLazyInitializer(object $object): callable|null
+    public function getLazyInitializer(object $object): ?callable
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
@@ -526,8 +557,12 @@ final class ReflectionClass extends CoreReflectionClass
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
-    /** @psalm-mutation-free */
-    public function getParentClass(): ReflectionClass|false
+    /**
+     * {@inheritDoc}
+     * @psalm-mutation-free
+     */
+    #[ReturnTypeWillChange]
+    public function getParentClass()
     {
         $parentClass = $this->betterReflectionClass->getParentClass();
 
@@ -538,8 +573,10 @@ final class ReflectionClass extends CoreReflectionClass
         return new self($parentClass);
     }
 
-    /** @psalm-mutation-free */
-    public function isSubclassOf(CoreReflectionClass|string $class): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function isSubclassOf($class): bool
     {
         $realParentClassNames = $this->betterReflectionClass->getParentClassNames();
 
@@ -567,7 +604,11 @@ final class ReflectionClass extends CoreReflectionClass
         return $this->betterReflectionClass->getStaticProperties();
     }
 
-    public function getStaticPropertyValue(string $name, mixed $default = null): mixed
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getStaticPropertyValue($name, $default = null)
     {
         $betterReflectionProperty = $name !== '' ? $this->betterReflectionClass->getProperty($name) : null;
 
@@ -588,7 +629,10 @@ final class ReflectionClass extends CoreReflectionClass
         return $property->getValue();
     }
 
-    public function setStaticPropertyValue(string $name, mixed $value): void
+    /**
+     * {@inheritDoc}
+     */
+    public function setStaticPropertyValue($name, $value): void
     {
         $betterReflectionProperty = $name !== '' ? $this->betterReflectionClass->getProperty($name) : null;
 
@@ -627,8 +671,10 @@ final class ReflectionClass extends CoreReflectionClass
         return $this->isIterateable();
     }
 
-    /** @psalm-mutation-free */
-    public function implementsInterface(CoreReflectionClass|string $interface): bool
+    /**
+     * @param \ReflectionClass|string $interface
+     */
+    public function implementsInterface($interface): bool
     {
         $realInterfaceNames = $this->betterReflectionClass->getInterfaceNames();
 
@@ -653,11 +699,10 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
-     * @return non-empty-string|false
-     *
-     * @psalm-mutation-free
+     * {@inheritDoc}
      */
-    public function getExtensionName(): string|false
+    #[ReturnTypeWillChange]
+    public function getExtensionName()
     {
         return $this->betterReflectionClass->getExtensionName() ?? false;
     }
