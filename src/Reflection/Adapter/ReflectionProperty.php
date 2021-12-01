@@ -10,6 +10,7 @@ use PropertyHookType;
 use ReflectionException as CoreReflectionException;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
+use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
 use Roave\BetterReflection\Reflection\Exception\NotAnObject;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
@@ -76,20 +77,23 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->betterReflectionProperty->__toString();
     }
 
-    /** @psalm-mutation-free */
     public function getName(): string
     {
         return $this->betterReflectionProperty->getName();
     }
 
-    public function getValue(object|null $object = null): mixed
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getValue($object = null): mixed
     {
         try {
             return $this->betterReflectionProperty->getValue($object);
         } catch (NoObjectProvided) {
             return null;
         } catch (Throwable $e) {
-            throw new CoreReflectionException($e->getMessage(), previous: $e);
+            throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
@@ -103,7 +107,7 @@ final class ReflectionProperty extends CoreReflectionProperty
         } catch (NotAnObject) {
             throw new TypeError(sprintf('ReflectionProperty::setValue(): Argument #1 ($objectOrValue) must be of type object, %s given', gettype($objectOrValue)));
         } catch (Throwable $e) {
-            throw new CoreReflectionException($e->getMessage(), previous: $e);
+            throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
@@ -129,19 +133,20 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->betterReflectionProperty->hasType();
     }
 
-    /** @psalm-mutation-free */
-    public function getType(): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    /**
+     * @psalm-mutation-free
+     */
+    public function getType(): ?\ReflectionType
     {
+        /** @psalm-suppress ImpureMethodCall */
         return ReflectionType::fromTypeOrNull($this->betterReflectionProperty->getType());
     }
 
-    /** @psalm-mutation-free */
     public function isPublic(): bool
     {
         return $this->betterReflectionProperty->isPublic();
     }
 
-    /** @psalm-mutation-free */
     public function isPrivate(): bool
     {
         return $this->betterReflectionProperty->isPrivate();
@@ -205,49 +210,56 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->betterReflectionProperty->getModifiers();
     }
 
-    /** @psalm-mutation-free */
     public function getDeclaringClass(): ReflectionClass
     {
         return new ReflectionClass($this->betterReflectionProperty->getImplementingClass());
     }
 
-    /** @psalm-mutation-free */
-    public function getDocComment(): string|false
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function getDocComment()
     {
         return $this->betterReflectionProperty->getDocComment() ?? false;
     }
 
     /**
+     * {@inheritDoc}
      * @codeCoverageIgnore
      * @infection-ignore-all
-     * @psalm-mutation-free
      */
-    public function setAccessible(bool $accessible): void
+    public function setAccessible($accessible): void
     {
     }
 
-    /** @psalm-mutation-free */
     public function hasDefaultValue(): bool
     {
         return $this->betterReflectionProperty->hasDefaultValue();
     }
 
-    /** @psalm-mutation-free */
-    public function getDefaultValue(): mixed
+    /**
+     * @return mixed
+     */
+    #[ReturnTypeWillChange]
+    public function getDefaultValue()
     {
         return $this->betterReflectionProperty->getDefaultValue();
     }
 
-    public function isInitialized(object|null $object = null): bool
+    /**
+     * {@inheritDoc}
+     */
+    #[ReturnTypeWillChange]
+    public function isInitialized($object = null)
     {
         try {
             return $this->betterReflectionProperty->isInitialized($object);
         } catch (Throwable $e) {
-            throw new CoreReflectionException($e->getMessage(), previous: $e);
+            throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
-    /** @psalm-mutation-free */
     public function isPromoted(): bool
     {
         return $this->betterReflectionProperty->isPromoted();
@@ -279,7 +291,6 @@ final class ReflectionProperty extends CoreReflectionProperty
         return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute => new ReflectionAttribute($betterReflectionAttribute), $attributes);
     }
 
-    /** @psalm-mutation-free */
     public function isReadOnly(): bool
     {
         return $this->betterReflectionProperty->isReadOnly();
