@@ -222,7 +222,7 @@ class ReflectionParameter
                 return self::createFromClosure($spec, $parameterName);
             }
         } catch (OutOfBoundsException $e) {
-            throw new InvalidArgumentException('Could not create reflection from the spec given', previous: $e);
+            throw new InvalidArgumentException('Could not create reflection from the spec given', 0, $e);
         }
 
         throw new InvalidArgumentException('Could not create reflection from the spec given');
