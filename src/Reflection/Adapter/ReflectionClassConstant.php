@@ -6,6 +6,7 @@ namespace Roave\BetterReflection\Reflection\Adapter;
 
 use OutOfBoundsException;
 use ReflectionClassConstant as CoreReflectionClassConstant;
+use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
@@ -54,7 +55,8 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return ReflectionType::fromTypeOrNull($this->betterClassConstantOrEnumCase->getType());
     }
 
-    public function getValue(): mixed
+    #[ReturnTypeWillChange]
+    public function getValue()
     {
         if ($this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase) {
             return constant(sprintf('%s::%s', $this->betterClassConstantOrEnumCase->getDeclaringClass()->getName(), $this->betterClassConstantOrEnumCase->getName()));
@@ -108,7 +110,13 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return new ReflectionClass($this->betterClassConstantOrEnumCase->getImplementingClass());
     }
 
-    public function getDocComment(): string|false
+    /**
+     * Returns the doc comment for this constant
+     *
+     * @return string|false
+     */
+    #[ReturnTypeWillChange]
+    public function getDocComment()
     {
         return $this->betterClassConstantOrEnumCase->getDocComment() ?? false;
     }
