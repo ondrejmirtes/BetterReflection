@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection;
 
 use Attribute;
+use LogicException;
 use PhpParser\Node;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -86,6 +87,7 @@ class ReflectionAttribute
             $this->owner instanceof ReflectionEnumCase => Attribute::TARGET_CLASS_CONSTANT,
             // @infection-ignore-all InstanceOf_: There's no other option
             $this->owner instanceof ReflectionParameter => Attribute::TARGET_PARAMETER,
+            default => throw new LogicException('unknown owner'), // @phpstan-ignore-line
         };
     }
 
