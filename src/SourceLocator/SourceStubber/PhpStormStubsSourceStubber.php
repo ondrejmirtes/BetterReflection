@@ -706,7 +706,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         }
 
         foreach ($deprecatedAttribute->args as $attributeArg) {
-            if ($attributeArg->name?->toString() === 'since') {
+            if ($attributeArg->name !== null && $attributeArg->name->toString() === 'since') {
                 assert($attributeArg->value instanceof Node\Scalar\String_);
 
                 return $this->parsePhpVersion($attributeArg->value->value) <= $this->phpVersion;
@@ -755,7 +755,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                     $fromVersion = $this->parsePhpVersion($attributeArg->value->value);
                 }
 
-                if ($attributeArg->name?->toString() !== 'to') {
+                if ($attributeArg->name !== null && $attributeArg->name->toString() !== 'to') {
                     continue;
                 }
 

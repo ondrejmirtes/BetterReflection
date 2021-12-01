@@ -58,6 +58,9 @@ class ReflectionEnum extends ReflectionClass
         LocatedSource $locatedSource,
         string|null $namespace = null,
     ): self {
+        $node = $node;
+        assert($node instanceof EnumNode);
+
         return new self($reflector, $node, $locatedSource, $namespace);
     }
 
