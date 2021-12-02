@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="Roave/BetterReflection coding standard">
-    <config name="php_version" value="80100"/>
+    <config name="php_version" value="70100"/>
     <arg value="p"/>
     <arg value="s"/>
     <arg name="colors"/>
@@ -24,17 +24,13 @@
             <property name="allowMultiLine" value="true"/>
         </properties>
     </rule>
-    <rule ref="SlevomatCodingStandard.Functions.RequireArrowFunction">
-        <properties>
-            <property name="allowNested" value="false"/>
-        </properties>
-    </rule>
     <rule ref="SlevomatCodingStandard.PHP.RequireExplicitAssertion">
         <properties>
             <property name="enableIntegerRanges" value="true"/>
             <property name="enableAdvancedStringTypes" value="true"/>
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingParameterTypeHint">
         <exclude-pattern>src/Reflection/Adapter/*</exclude-pattern>
     </rule>
