@@ -12,7 +12,4 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         'src/Reflection/Adapter/ReflectionEnum*'
     ]);
     $containerConfigurator->import(DowngradeLevelSetList::DOWN_TO_PHP_73);
-
-    $services = $containerConfigurator->services();
-    $services->set(\Rector\DowngradePhp72\Rector\FunctionLike\DowngradeObjectTypeDeclarationRector::class);
 };
