@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="Roave/BetterReflection coding standard">
-    <config name="php_version" value="80200"/>
+    <config name="php_version" value="70400"/>
     <arg value="p"/>
     <arg value="s"/>
     <arg name="colors"/>
@@ -17,16 +17,15 @@
         <exclude name="Squiz.Commenting.FunctionComment.InvalidNoReturn"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"/>
+        <!-- native types are left out on purpose where the code is downgraded or overrides native reflection -->
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
     </rule>
 
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
         <properties>
             <property name="allowMultiLine" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Functions.RequireArrowFunction">
-        <properties>
-            <property name="allowNested" value="false"/>
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.PHP.RequireExplicitAssertion">
@@ -35,6 +34,7 @@
             <property name="enableAdvancedStringTypes" value="true"/>
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingParameterTypeHint">
         <exclude-pattern>src/Reflection/Adapter/*</exclude-pattern>
     </rule>
