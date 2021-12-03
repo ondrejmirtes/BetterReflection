@@ -317,3 +317,15 @@ parameters:
 			identifier: phpunit.assertCount
 			count: 1
 			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
