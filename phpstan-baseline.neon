@@ -322,6 +322,42 @@ parameters:
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
 			identifier: greaterOrEqual.alwaysTrue
 			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumBackedCaseTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumBackedCaseTest.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumTest.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
 			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
 
 		-
