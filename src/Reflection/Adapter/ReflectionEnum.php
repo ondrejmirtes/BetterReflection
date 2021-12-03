@@ -492,6 +492,10 @@ final class ReflectionEnum extends CoreReflectionEnum
             return [];
         }
 
+        if (PHP_VERSION_ID < 70200) {
+            return [];
+        }
+
         if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
             $attributes = $this->betterReflectionEnum->getAttributesByInstance($name);
         } elseif ($name !== null) {

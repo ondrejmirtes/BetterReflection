@@ -150,6 +150,10 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
             return [];
         }
 
+        if (PHP_VERSION_ID < 70200) {
+            return [];
+        }
+
         if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
             $attributes = $this->betterClassConstantOrEnumCase->getAttributesByInstance($name);
         } elseif ($name !== null) {

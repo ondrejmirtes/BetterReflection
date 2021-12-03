@@ -359,6 +359,10 @@ final class ReflectionMethod extends CoreReflectionMethod
             return [];
         }
 
+        if (PHP_VERSION_ID < 70200) {
+            return [];
+        }
+
         if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
             $attributes = $this->betterReflectionMethod->getAttributesByInstance($name);
         } elseif ($name !== null) {
