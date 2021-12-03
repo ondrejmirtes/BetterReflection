@@ -81,6 +81,16 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
     private Reflector $reflector;
 
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        if (PHP_VERSION_ID >= 80000) {
+            return;
+        }
+
+        self::markTestSkipped('Test requires PHP 8.0');
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
