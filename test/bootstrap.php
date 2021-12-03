@@ -12,5 +12,7 @@ if (PHP_VERSION_ID >= 80000) {
 }
 
 require __DIR__ . '/../stubs/ReflectionIntersectionType.php';
+require __DIR__ . '/../stubs/ReflectionUnionType.php';
+require __DIR__ . '/../stubs/ReflectionAttribute.php';
 
 $GLOBALS['loader'] = require __DIR__ . '/../vendor/autoload.php';
