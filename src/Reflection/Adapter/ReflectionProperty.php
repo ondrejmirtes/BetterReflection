@@ -187,6 +187,10 @@ final class ReflectionProperty extends CoreReflectionProperty
             return [];
         }
 
+        if (PHP_VERSION_ID < 70200) {
+            return [];
+        }
+
         if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
             $attributes = $this->betterReflectionProperty->getAttributesByInstance($name);
         } elseif ($name !== null) {
