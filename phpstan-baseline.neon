@@ -13,6 +13,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionAttribute.php
 
 		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionClass.php
+
+		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -37,6 +43,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionClass.php
 
 		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionClassConstant.php
+
+		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -53,6 +65,12 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Reflection/Adapter/ReflectionClassConstant.php
+
+		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionEnum.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
@@ -73,6 +91,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionEnum.php
 
 		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionEnumBackedCase.php
+
+		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -91,6 +115,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionEnumBackedCase.php
 
 		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionEnumUnitCase.php
+
+		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -107,6 +137,12 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Reflection/Adapter/ReflectionEnumUnitCase.php
+
+		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionFunction.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
@@ -139,6 +175,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionFunction.php
 
 		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionMethod.php
+
+		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -155,6 +197,12 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Reflection/Adapter/ReflectionMethod.php
+
+		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
@@ -187,6 +235,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionParameter.php
+
+		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -203,6 +257,12 @@ parameters:
 			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Reflection/Adapter/ReflectionParameter.php
+
+		-
+			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionProperty.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
