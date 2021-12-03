@@ -333,7 +333,7 @@ final class ReflectionSourceStubber implements SourceStubber
             $this->addPropertyModifiers($propertyNode, $propertyReflection);
             $this->addDocComment($propertyNode, $propertyReflection);
 
-            if ($propertyReflection->hasDefaultValue()) {
+            if (method_exists($propertyReflection, 'hasDefaultValue') && $propertyReflection->hasDefaultValue()) {
                 try {
                     $propertyNode->setDefault($propertyReflection->getDefaultValue());
                 } catch (LogicException) {
