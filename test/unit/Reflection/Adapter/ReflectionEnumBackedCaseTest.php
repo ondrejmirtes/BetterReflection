@@ -24,9 +24,21 @@ use function array_combine;
 use function array_map;
 use function get_class_methods;
 
+use const PHP_VERSION_ID;
+
 #[CoversClass(ReflectionEnumBackedCaseAdapter::class)]
 class ReflectionEnumBackedCaseTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        if (PHP_VERSION_ID >= 80000) {
+            return;
+        }
+
+        self::markTestSkipped('Test requires PHP 8.0');
+    }
+
     /** @return array<string, array{0: string}> */
     public static function coreReflectionMethodNamesProvider(): array
     {
