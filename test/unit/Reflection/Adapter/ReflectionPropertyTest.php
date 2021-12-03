@@ -36,7 +36,6 @@ use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
 use stdClass;
 use Throwable;
 use TypeError;
-use ValueError;
 
 use function array_combine;
 use function array_map;
@@ -495,7 +494,7 @@ class ReflectionPropertyTest extends TestCase
         $betterReflectionProperty  = self::createStub(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
 
-        $this->expectException(ValueError::class);
+        $this->expectException(Error::class);
         $reflectionPropertyAdapter->getAttributes(null, 123);
     }
 

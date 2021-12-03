@@ -331,6 +331,18 @@ parameters:
 			path: test/unit/Reflection/Adapter/ReflectionEnumBackedCaseTest.php
 
 		-
+			message: '#^Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase\:\:expectException\(\) expects class\-string\<Throwable\>, class\-string\<Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumBackedCaseTest.php
+
+		-
+			message: '#^Parameter \$expectedException of method Roave\\BetterReflectionTest\\Reflection\\Adapter\\ReflectionEnumBackedCaseTest\:\:testAdapterMethods\(\) has invalid type Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumBackedCaseTest.php
+
+		-
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
@@ -355,10 +367,58 @@ parameters:
 			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
 
 		-
+			message: '#^Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase\:\:expectException\(\) expects class\-string\<Throwable\>, class\-string\<Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
+
+		-
+			message: '#^Parameter \$expectedException of method Roave\\BetterReflectionTest\\Reflection\\Adapter\\ReflectionEnumUnitCaseTest\:\:testAdapterMethods\(\) has invalid type Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
+
+		-
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
 			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
+
+		-
+			message: '#^Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase\:\:expectException\(\) expects class\-string\<Throwable\>, class\-string\<Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionMethodTest.php
+
+		-
+			message: '#^Parameter \$expectedException of method Roave\\BetterReflectionTest\\Reflection\\Adapter\\ReflectionMethodTest\:\:testAdapterMethods\(\) has invalid type Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionMethodTest.php
+
+		-
+			message: '#^Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase\:\:expectException\(\) expects class\-string\<Throwable\>, class\-string\<Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionObjectTest.php
+
+		-
+			message: '#^Parameter \$expectedException of method Roave\\BetterReflectionTest\\Reflection\\Adapter\\ReflectionObjectTest\:\:testAdapterMethods\(\) has invalid type Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionObjectTest.php
+
+		-
+			message: '#^Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase\:\:expectException\(\) expects class\-string\<Throwable\>, class\-string\<Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionParameterTest.php
+
+		-
+			message: '#^Parameter \$expectedException of method Roave\\BetterReflectionTest\\Reflection\\Adapter\\ReflectionParameterTest\:\:testAdapterMethods\(\) has invalid type Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionParameterTest.php
 
 		-
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
