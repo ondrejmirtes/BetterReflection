@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflectionTest\Reflection\Adapter;
 
 use ArgumentCountError;
+use Error;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -31,7 +32,6 @@ use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProp
 use stdClass;
 use Throwable;
 use TypeError;
-use ValueError;
 
 use function array_combine;
 use function array_map;
@@ -438,7 +438,7 @@ class ReflectionPropertyTest extends TestCase
         $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
 
-        $this->expectException(ValueError::class);
+        $this->expectException(Error::class);
         $reflectionPropertyAdapter->getAttributes(null, 123);
     }
 
