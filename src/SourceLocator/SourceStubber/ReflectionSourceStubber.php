@@ -53,6 +53,7 @@ use function implode;
 use function in_array;
 use function is_resource;
 use function is_string;
+use function method_exists;
 use function preg_replace;
 use function sprintf;
 
@@ -341,7 +342,7 @@ final class ReflectionSourceStubber implements SourceStubber
             $this->addPropertyModifiers($propertyNode, $propertyReflection);
             $this->addDocComment($propertyNode, $propertyReflection);
 
-            if ($propertyReflection->hasDefaultValue()) {
+            if (method_exists($propertyReflection, 'hasDefaultValue') && $propertyReflection->hasDefaultValue()) {
                 try {
                     $propertyNode->setDefault($propertyReflection->getDefaultValue());
                 } catch (LogicException) {
