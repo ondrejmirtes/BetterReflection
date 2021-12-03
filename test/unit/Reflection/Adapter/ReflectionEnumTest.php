@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflectionTest\Reflection\Adapter;
 
+use Error;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -39,7 +40,6 @@ use Roave\BetterReflectionTest\Reflection\Adapter\ReflectionEnumTest\ExampleUnit
 use stdClass;
 use Throwable;
 use UnitEnum;
-use ValueError;
 
 use function array_combine;
 use function array_map;
@@ -671,7 +671,7 @@ class ReflectionEnumTest extends TestCase
         $betterReflectionEnum  = self::createStub(BetterReflectionEnum::class);
         $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
 
-        $this->expectException(ValueError::class);
+        $this->expectException(Error::class);
         $reflectionEnumAdapter->getAttributes(null, 123);
     }
 
