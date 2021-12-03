@@ -870,6 +870,12 @@ class PhpStormStubsSourceStubberTest extends TestCase
             ['dom_import_simplexml', 80000, true, 'DOMElement'],
             // Not core functions
             ['newrelic_add_custom_parameter', 40000, true, 'bool'],
+            ['bcdiv', 70200, true, 'string|null'],
+            ['bcdiv', 70400, true, 'string|null'],
+            ['bcdiv', 80000, true, 'string'],
+            ['bcdiv', 80100, true, 'string'],
+            ['bcdiv', 80199, true, 'string'],
+            ['bcdiv', 80200, true, 'string'],
         ];
     }
 

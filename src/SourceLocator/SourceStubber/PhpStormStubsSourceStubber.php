@@ -712,14 +712,32 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
         $elementsAvailable = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Internal\PhpStormStubsElementAvailable');
         if ($elementsAvailable !== null) {
-            foreach ($elementsAvailable->args as $attributeArg) {
-                if ($attributeArg->name === null || $attributeArg->name->toString() === 'from') {
+            foreach ($elementsAvailable->args as $i => $attributeArg) {
+                $isFrom = false;
+                if ($attributeArg->name !== null && $attributeArg->name->toString() === 'from') {
+                    $isFrom = true;
+                }
+
+                if ($attributeArg->name === null && $i === 0) {
+                    $isFrom = true;
+                }
+
+                if ($isFrom) {
                     assert($attributeArg->value instanceof Node\Scalar\String_);
 
                     $fromVersion = $this->parsePhpVersion($attributeArg->value->value);
                 }
 
-                if ($attributeArg->name !== null && $attributeArg->name->toString() !== 'to') {
+                $isTo = false;
+                if ($attributeArg->name !== null && $attributeArg->name->toString() === 'to') {
+                    $isTo = true;
+                }
+
+                if ($attributeArg->name === null && $i === 1) {
+                    $isTo = true;
+                }
+
+                if (! $isTo) {
                     continue;
                 }
 
