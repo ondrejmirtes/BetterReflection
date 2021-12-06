@@ -295,18 +295,6 @@ parameters:
 			path: src/Reflection/ReflectionAttribute.php
 
 		-
-			message: '#^Method Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:addStringableInterfaceClassName\(\) should return list\<class\-string\> but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Reflection/ReflectionClass.php
-
-		-
-			message: '#^Undefined variable\: \$interfaces$#'
-			identifier: variable.undefined
-			count: 1
-			path: src/Reflection/ReflectionClass.php
-
-		-
 			message: '#^Call to function is_object\(\) with array\<bool\|float\|int\|string\>\|bool\|float\|int\|string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
