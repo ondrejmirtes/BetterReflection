@@ -13,6 +13,7 @@ use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionParameter;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 use Roave\BetterReflection\Reflector\Reflector;
+use Roave\BetterReflection\Util\FileHelper;
 
 /** @internal */
 class CompilerContext
@@ -32,11 +33,25 @@ class CompilerContext
     public function getFileName(): string|null
     {
         if ($this->contextReflection instanceof ReflectionConstant) {
-            return $this->contextReflection->getFileName();
+            $fileName = $this->contextReflection->getFileName();
+            if ($fileName === null) {
+                return null;
+            }
+
+            return $this->realPath($fileName);
         }
 
-        // @infection-ignore-all Coalesce: There's no difference
-        return $this->getClass()?->getFileName() ?? $this->getFunction()?->getFileName();
+        $fileName = $this->getClass()?->getFileName() ?? $this->getFunction()?->getFileName();
+        if ($fileName === null) {
+            return null;
+        }
+
+        return $this->realPath($fileName);
+    }
+
+    private function realPath(string $fileName): string
+    {
+        return FileHelper::normalizePath($fileName, '/');
     }
 
     public function getNamespace(): string|null
