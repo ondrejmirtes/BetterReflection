@@ -9,12 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\Identifier\Identifier;
 use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\SourceLocator\Type\Composer\Psr\Exception\InvalidPrefixMapping;
 use Roave\BetterReflection\SourceLocator\Type\Composer\Psr\Psr4Mapping;
-
-use function sys_get_temp_dir;
-use function tempnam;
-use function uniqid;
 
 #[CoversClass(Psr4Mapping::class)]
 class Psr4MappingTest extends TestCase
@@ -83,17 +78,17 @@ class Psr4MappingTest extends TestCase
     public static function classLookupMappings(): array
     {
         return [
-            'empty mappings, no match'                         => [
+            'empty mappings, no match' => [
                 [],
                 new Identifier('Foo', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [],
             ],
-            'one mapping, no match for function identifier'    => [
+            'one mapping, no match for function identifier' => [
                 ['Foo\\' => [__DIR__]],
                 new Identifier('Foo\\Bar', new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION)),
                 [],
             ],
-            'one mapping, match'                               => [
+            'one mapping, match' => [
                 ['Foo\\' => [__DIR__]],
                 new Identifier('Foo\\Bar', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [__DIR__ . '/Bar.php'],
@@ -103,15 +98,15 @@ class Psr4MappingTest extends TestCase
                 new Identifier('Foo\\Bar', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [__DIR__ . '/Bar.php'],
             ],
-            'one mapping, no match if class === prefix'        => [
+            'one mapping, no match if class === prefix' => [
                 ['Foo' => [__DIR__]],
                 new Identifier('Foo', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [],
             ],
-            'multiple mappings, match when class !== prefix'   => [
+            'multiple mappings, match when class !== prefix' => [
                 [
                     'Foo\\Bar' => [__DIR__ . '/../..'],
-                    'Foo'      => [__DIR__ . '/..'],
+                    'Foo' => [__DIR__ . '/..'],
                 ],
                 new Identifier('Foo\\Bar', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [__DIR__ . '/../Bar.php'],
@@ -119,33 +114,12 @@ class Psr4MappingTest extends TestCase
             'multiple mappings, multiple possible matches (but not all)' => [
                 [
                     'Foo\\Bar' => [__DIR__ . '/../..'],
-                    'Boo'      => [__DIR__],
-                    'Foo'      => [__DIR__ . '/..'],
+                    'Boo' => [__DIR__],
+                    'Foo' => [__DIR__ . '/..'],
                 ],
                 new Identifier('Foo\\Bar\\Boo', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [__DIR__ . '/../../Boo.php', __DIR__ . '/../Bar/Boo.php'],
             ],
-        ];
-    }
-
-    /** @param array<string, list<string>> $invalidMappings */
-    #[DataProvider('invalidMappings')]
-    public function testRejectsInvalidMappings(array $invalidMappings): void
-    {
-        $this->expectException(InvalidPrefixMapping::class);
-
-        Psr4Mapping::fromArrayMappings($invalidMappings);
-    }
-
-    /** @return array<string, list<array<string, list<string>|mixed>>> */
-    public static function invalidMappings(): array
-    {
-        return [
-            'array contains empty prefixes'                            => [['' => 'bar']],
-            'array contains empty paths'                               => [['foo' => ['']]],
-            'array contains empty path list'                           => [['foo' => []]],
-            'array contains path pointing to a file'                   => [['foo' => [tempnam(sys_get_temp_dir(), 'non_existing')]]],
-            'array contains path pointing to a non-existing directory' => [['foo' => [sys_get_temp_dir() . '/' . uniqid('not_existing', true)]]],
         ];
     }
 }
