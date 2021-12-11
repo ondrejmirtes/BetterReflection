@@ -9,12 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\Identifier\Identifier;
 use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\SourceLocator\Type\Composer\Psr\Exception\InvalidPrefixMapping;
 use Roave\BetterReflection\SourceLocator\Type\Composer\Psr\Psr0Mapping;
-
-use function sys_get_temp_dir;
-use function tempnam;
-use function uniqid;
 
 #[CoversClass(Psr0Mapping::class)]
 class Psr0MappingTest extends TestCase
@@ -126,27 +121,6 @@ class Psr0MappingTest extends TestCase
                 new Identifier('Foo_Bar', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
                 [__DIR__ . '/../Foo/Bar.php'],
             ],
-        ];
-    }
-
-    /** @param array<string, list<string>> $invalidMappings */
-    #[DataProvider('invalidMappings')]
-    public function testRejectsInvalidMappings(array $invalidMappings): void
-    {
-        $this->expectException(InvalidPrefixMapping::class);
-
-        Psr0Mapping::fromArrayMappings($invalidMappings);
-    }
-
-    /** @return array<string, list<array<string, list<string>|mixed>>> */
-    public static function invalidMappings(): array
-    {
-        return [
-            'array contains empty prefixes'                            => [['' => 'bar']],
-            'array contains empty paths'                               => [['foo' => ['']]],
-            'array contains empty path list'                           => [['foo' => []]],
-            'array contains path pointing to a file'                   => [['foo' => [tempnam(sys_get_temp_dir(), 'non_existing')]]],
-            'array contains path pointing to a non-existing directory' => [['foo' => [sys_get_temp_dir() . '/' . uniqid('not_existing', true)]]],
         ];
     }
 }
