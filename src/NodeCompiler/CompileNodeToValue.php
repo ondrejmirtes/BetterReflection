@@ -10,7 +10,6 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionEnum;
 use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Util\FileHelper;
 
 use function array_map;
 use function assert;
@@ -20,7 +19,6 @@ use function defined;
 use function dirname;
 use function explode;
 use function in_array;
-use function realpath;
 use function is_file;
 use function sprintf;
 
@@ -288,12 +286,7 @@ class CompileNodeToValue
             throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
         }
 
-        $realPath = realpath($fileName);
-        if ($realPath === false) {
-            throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
-        }
-
-        return dirname(FileHelper::normalizeWindowsPath($realPath));
+        return dirname($fileName);
     }
 
     /**
@@ -311,12 +304,7 @@ class CompileNodeToValue
             throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
         }
 
-        $realPath = realpath($fileName);
-        if ($realPath === false) {
-            throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
-        }
-
-        return FileHelper::normalizeWindowsPath($realPath);
+        return $fileName;
     }
 
     /**
