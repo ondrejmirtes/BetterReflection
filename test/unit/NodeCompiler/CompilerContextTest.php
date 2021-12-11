@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflectionTest\NodeCompiler;
 
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflector\Reflector;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -246,5 +248,21 @@ PHP;
         $context = new CompilerContext($reflector, $constant);
 
         self::assertNull($context->getNamespace());
+    }
+
+    public function testFilenameRealPath(): void
+    {
+        $constant = $this->createMock(ReflectionConstant::class);
+        $constant->method('getFileName')->willReturn('/home/ondrej/../Test.php');
+        $context = new CompilerContext($this->createMock(Reflector::class), $constant);
+        self::assertSame('/home/Test.php', $context->getFileName());
+    }
+
+    public function testFilenameRealPathPhar(): void
+    {
+        $constant = $this->createMock(ReflectionConstant::class);
+        $constant->method('getFileName')->willReturn('phar:///home/ondrej/../Test.php');
+        $context = new CompilerContext($this->createMock(Reflector::class), $constant);
+        self::assertSame('phar:///home/Test.php', $context->getFileName());
     }
 }
