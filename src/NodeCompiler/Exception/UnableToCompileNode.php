@@ -100,6 +100,17 @@ class UnableToCompileNode extends LogicException
         ));
     }
 
+    public static function becauseOfNonexistentFile(
+        CompilerContext $context,
+        string $fileName,
+    ): self {
+        return new self(sprintf(
+            'File not found for %s: %s',
+            self::compilerContextToContextDescription($context),
+            $fileName,
+        ));
+    }
+
     public static function becauseOfClassCannotBeLoaded(
         CompilerContext $context,
         Node\Expr\New_ $newNode,
