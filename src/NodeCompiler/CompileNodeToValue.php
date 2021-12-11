@@ -21,6 +21,8 @@ use function defined;
 use function dirname;
 use function explode;
 use function in_array;
+use function realpath;
+use function is_file;
 use function sprintf;
 
 /** @internal */
@@ -322,7 +324,16 @@ class CompileNodeToValue
             throw Exception\UnableToCompileNode::becauseOfMissingFileName($context, $node);
         }
 
-        return dirname(FileHelper::normalizeWindowsPath($fileName));
+        if (! is_file($fileName)) {
+            throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
+        }
+
+        $realPath = realpath($fileName);
+        if ($realPath === false) {
+            throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
+        }
+
+        return dirname(FileHelper::normalizeWindowsPath($realPath));
     }
 
     /**
@@ -336,7 +347,16 @@ class CompileNodeToValue
             throw Exception\UnableToCompileNode::becauseOfMissingFileName($context, $node);
         }
 
-        return FileHelper::normalizeWindowsPath($fileName);
+        if (! is_file($fileName)) {
+            throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
+        }
+
+        $realPath = realpath($fileName);
+        if ($realPath === false) {
+            throw Exception\UnableToCompileNode::becauseOfNonexistentFile($context, $fileName);
+        }
+
+        return FileHelper::normalizeWindowsPath($realPath);
     }
 
     /**
