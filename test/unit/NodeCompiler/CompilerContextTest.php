@@ -7,8 +7,10 @@ namespace Roave\BetterReflectionTest\NodeCompiler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
+use Roave\BetterReflection\Reflection\ReflectionConstant;
 use Roave\BetterReflection\Reflection\ReflectionEnum;
 use Roave\BetterReflection\Reflector\DefaultReflector;
+use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Ast\Locator;
 use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
@@ -256,5 +258,21 @@ PHP;
         $context = new CompilerContext($reflector, $constant);
 
         self::assertNull($context->getNamespace());
+    }
+
+    public function testFilenameRealPath(): void
+    {
+        $constant = self::createStub(ReflectionConstant::class);
+        $constant->method('getFileName')->willReturn('/home/ondrej/../Test.php');
+        $context = new CompilerContext(self::createStub(Reflector::class), $constant);
+        self::assertSame('/home/Test.php', $context->getFileName());
+    }
+
+    public function testFilenameRealPathPhar(): void
+    {
+        $constant = self::createStub(ReflectionConstant::class);
+        $constant->method('getFileName')->willReturn('phar:///home/ondrej/../Test.php');
+        $context = new CompilerContext(self::createStub(Reflector::class), $constant);
+        self::assertSame('phar:///home/Test.php', $context->getFileName());
     }
 }

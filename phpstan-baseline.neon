@@ -7,6 +7,18 @@ parameters:
 			path: src/NodeCompiler/CompileNodeToValue.php
 
 		-
+			message: '#^Method Roave\\BetterReflection\\NodeCompiler\\CompilerContext\:\:getFileName\(\) should return non\-empty\-string\|null but returns string\.$#'
+			identifier: return.type
+			count: 2
+			path: src/NodeCompiler/CompilerContext.php
+
+		-
+			message: '#^Parameter \#1 \$originalPath of static method Roave\\BetterReflection\\Util\\FileHelper\:\:normalizePath\(\) expects non\-empty\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/NodeCompiler/CompilerContext.php
+
+		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionAttribute\:\:newInstance\(\) should never return but return statement found\.$#'
 			identifier: return.never
 			count: 1
@@ -37,6 +49,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionClass.php
 
 		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionClass\:\:getFileName\(\) should return non\-empty\-string\|false but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionClass.php
+
+		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -81,6 +99,12 @@ parameters:
 		-
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
 			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: src/Reflection/Adapter/ReflectionEnum.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionEnum\:\:getFileName\(\) should return non\-empty\-string\|false but returns string\|false\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Reflection/Adapter/ReflectionEnum.php
 
@@ -229,6 +253,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionObject\:\:getFileName\(\) should return non\-empty\-string\|false but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionObject.php
+
+		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -305,6 +335,24 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Util\\FileHelper\:\:normalizePath\(\) should return non\-empty\-string but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Util/FileHelper.php
+
+		-
+			message: '#^Parameter \#1 \$path of static method Roave\\BetterReflection\\Util\\FileHelper\:\:normalizeWindowsPath\(\) expects non\-empty\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Util/FileHelper.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-empty\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Util/FileHelper.php
 
 		-
 			message: '#^You should use assertCount\(\$expectedCount, \$variable\) instead of assertSame\(\$expectedCount, \$variable\-\>count\(\)\)\.$#'
