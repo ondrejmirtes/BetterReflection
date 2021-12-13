@@ -51,7 +51,11 @@ class ReflectionFunction implements Reflection
         $this->isGenerator = $this->nodeIsOrContainsYield($node);
     }
 
-    /** @throws IdentifierNotFound */
+    /**
+     * @deprecated Use Reflector instead.
+     *
+     * @throws IdentifierNotFound
+     */
     public static function createFromName(string $functionName): self
     {
         return (new BetterReflection())->reflector()->reflectFunction($functionName);
