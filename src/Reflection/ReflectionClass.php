@@ -224,6 +224,8 @@ class ReflectionClass implements Reflection
     /**
      * Create a ReflectionClass by name, using default reflectors etc.
      *
+     * @deprecated Use Reflector instead.
+     *
      * @throws IdentifierNotFound
      */
     public static function createFromName(string $className): self
