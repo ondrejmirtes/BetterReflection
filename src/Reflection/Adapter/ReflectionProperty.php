@@ -22,8 +22,6 @@ use function array_map;
 use function gettype;
 use function sprintf;
 
-use const PHP_VERSION_ID;
-
 /** @psalm-suppress PropertyNotSetInConstructor */
 #[IgnoreMethodForCodeCoverage(ReflectionMethod::class, 'setAccessible')]
 final class ReflectionProperty extends CoreReflectionProperty
@@ -177,7 +175,7 @@ final class ReflectionProperty extends CoreReflectionProperty
     /**
      * @param class-string|null $name
      *
-     * @return list<ReflectionAttribute>
+     * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
     public function getAttributes(string|null $name = null, int $flags = 0): array
     {
@@ -185,15 +183,7 @@ final class ReflectionProperty extends CoreReflectionProperty
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
         }
 
-        if (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80012) {
-            return [];
-        }
-
-        if (PHP_VERSION_ID < 70200) {
-            return [];
-        }
-
-        if ($name !== null && $flags & ReflectionAttribute::IS_INSTANCEOF) {
+        if ($name !== null && $flags !== 0) {
             $attributes = $this->betterReflectionProperty->getAttributesByInstance($name);
         } elseif ($name !== null) {
             $attributes = $this->betterReflectionProperty->getAttributesByName($name);
@@ -201,7 +191,7 @@ final class ReflectionProperty extends CoreReflectionProperty
             $attributes = $this->betterReflectionProperty->getAttributes();
         }
 
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute => new ReflectionAttribute($betterReflectionAttribute), $attributes);
+        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
     }
 
     public function isReadOnly(): bool
