@@ -25,22 +25,22 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionAttribute.php
 
 		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClass.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
-			path: src/Reflection/Adapter/ReflectionClass.php
+			path: src/Reflection/Adapter/ReflectionAttributeFactory.php
 
 		-
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
 			identifier: greaterOrEqual.alwaysTrue
 			count: 1
-			path: src/Reflection/Adapter/ReflectionClass.php
+			path: src/Reflection/Adapter/ReflectionAttributeFactory.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: src/Reflection/Adapter/ReflectionAttributeFactory.php
 
 		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionClass\:\:getEndLine\(\) never returns false so it can be removed from the return type\.$#'
@@ -55,130 +55,10 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionClass.php
 
 		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClass.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClassConstant.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClassConstant.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClassConstant.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClassConstant.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnum.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnum.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnum.php
-
-		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionEnum\:\:getFileName\(\) should return non\-empty\-string\|false but returns string\|false\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Reflection/Adapter/ReflectionEnum.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnum.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumBackedCase.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumBackedCase.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumBackedCase.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumBackedCase.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumUnitCase.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumUnitCase.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumUnitCase.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionEnumUnitCase.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionFunction.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionFunction.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionFunction.php
 
 		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionFunction\:\:getEndLine\(\) never returns false so it can be removed from the return type\.$#'
@@ -191,54 +71,6 @@ parameters:
 			identifier: return.unusedType
 			count: 1
 			path: src/Reflection/Adapter/ReflectionFunction.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionFunction.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionMethod.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionMethod.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionMethod.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionMethod.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionObject.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionObject.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionObject\:\:getDefaultProperties\(\) should return array\<string, array\<bool\|float\|int\|string\>\|bool\|float\|int\|string\|null\> but returns array\<string, mixed\>\.$#'
@@ -259,62 +91,8 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionObject.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionParameter.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionParameter.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionParameter.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionParameter.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 70200 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
-
-		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionProperty\:\:getSettableType\(\) should return Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionUnionType\|null but returns ReflectionType\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Reflection/Adapter/ReflectionProperty.php
 
