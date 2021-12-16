@@ -8,7 +8,6 @@ parameters:
     phpVersion:
         min: 80400
         max: 80699
-
     paths:
         - src
         - test/benchmark
