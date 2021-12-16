@@ -1,9 +1,13 @@
 includes:
-    - tools/vendor/phpstan/phpstan-phpunit/extension.neon
-    - tools/vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - phpstan-baseline.neon
 
 parameters:
     level: 8
+    phpVersion: 80100
+
+    checkGenericClassInNonGenericObjectType: false
 
     paths:
         - src
