@@ -53,3 +53,7 @@ parameters:
         -
             identifier: method.resultUnused
             path: test/unit/
+        -
+            message: "#^Declaring PHPStan namespace is not allowed in 3rd party packages\\.$#"
+            count: 1
+            path: src/BetterReflection.php
