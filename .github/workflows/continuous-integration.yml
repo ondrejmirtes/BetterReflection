@@ -83,39 +83,6 @@ jobs:
       - name: "PHPStan"
         run: "vendor/bin/phpstan analyse --memory-limit=-1"
 
-  static-analysis-psalm:
-    name: "Static Analysis by Psalm"
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      matrix:
-        dependencies:
-          - "locked"
-        php-version:
-          - "8.2"
-        operating-system:
-          - "ubuntu-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v4"
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.28.0"
-        with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          ini-values: memory_limit=-1
-
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@2.2.0"
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-
-      - name: "psalm"
-        run: "vendor/bin/psalm --shepherd --stats"
-
   compatibility:
     name: "Test Compatibility"
 
