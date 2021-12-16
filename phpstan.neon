@@ -30,3 +30,7 @@ parameters:
         -
             message: '#Method Roave\\BetterReflection\\Reflection\\ReflectionClass::computeModifiers\(\) never returns \d+ so it can be removed from the return type#'
             path: src/Reflection/ReflectionClass.php
+        -
+            message: "#^Declaring PHPStan namespace is not allowed in 3rd party packages\\.$#"
+            count: 1
+            path: src/BetterReflection.php
