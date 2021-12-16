@@ -1,0 +1,482 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$callback of function array_map expects \\(callable\\(PhpParser\\\\Node\\\\Arg\\|PhpParser\\\\Node\\\\VariadicPlaceholder\\)\\: mixed\\)\\|null, Closure\\(PhpParser\\\\Node\\\\Arg\\)\\: mixed given\\.$#"
+			count: 1
+			path: src/NodeCompiler/CompileNodeToValue.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionAttribute\\:\\:getName\\(\\) should return class\\-string\\<object\\> but returns string\\.$#"
+			count: 1
+			path: src/Reflection/Adapter/ReflectionAttribute.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionProperty\\:\\:getType\\(\\) should return ReflectionNamedType\\|ReflectionUnionType\\|null but returns PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionIntersectionType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionNamedType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionUnionType\\|null\\.$#"
+			count: 1
+			path: src/Reflection/Adapter/ReflectionProperty.php
+
+		-
+			message: "#^Cannot call method toString\\(\\) on PhpParser\\\\Node\\\\Name\\|false\\.$#"
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:getInterfaceNames\\(\\) should return array\\<int, class\\-string\\> but returns array\\<int, string\\>\\.$#"
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:getInterfaces\\(\\) should return array\\<class\\-string, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\> but returns array\\<string, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\>\\.$#"
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Property PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:\\$cachedName \\(class\\-string\\|null\\) does not accept string\\.$#"
+			count: 2
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Property PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:\\$cachedTraitsData \\(array\\{aliases\\: array\\<string, string\\>, modifiers\\: array\\<string, int\\>, precedences\\: array\\<string, string\\>\\}\\|null\\) does not accept array\\{aliases\\: non\\-empty\\-array\\<string, string\\>, modifiers\\?\\: array\\<string, int\\>, precedences\\?\\: array\\<string, string\\>\\}\\.$#"
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Property PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:\\$cachedTraitsData \\(array\\{aliases\\: array\\<string, string\\>, modifiers\\: array\\<string, int\\>, precedences\\: array\\<string, string\\>\\}\\|null\\) does not accept array\\{aliases\\?\\: array\\<string, string\\>, modifiers\\: non\\-empty\\-array\\<string, int\\<min, \\-1\\>\\|int\\<1, max\\>\\>, precedences\\?\\: array\\<string, string\\>\\}\\.$#"
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Property PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:\\$cachedTraitsData \\(array\\{aliases\\: array\\<string, string\\>, modifiers\\: array\\<string, int\\>, precedences\\: array\\<string, string\\>\\}\\|null\\) does not accept array\\{aliases\\?\\: array\\<string, string\\>, modifiers\\?\\: array\\<string, int\\>, precedences\\: non\\-empty\\-array\\<string, string\\>\\}\\.$#"
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: "#^Trying to invoke string but it might not be a callable\\.$#"
+			count: 2
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with array\\<bool\\|float\\|int\\|string\\>\\|bool\\|float\\|int\\|string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Reflection/StringCast/ReflectionConstantStringCast.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflector\\\\ClassReflector\\:\\:getAllClasses\\(\\) should return array\\<PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\> but returns iterable\\<int, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\>\\.$#"
+			count: 1
+			path: src/Reflector/ClassReflector.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflector\\\\ConstantReflector\\:\\:getAllConstants\\(\\) should return array\\<PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionConstant\\> but returns iterable\\<int, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionConstant\\>\\.$#"
+			count: 1
+			path: src/Reflector/ConstantReflector.php
+
+		-
+			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflector\\\\FunctionReflector\\:\\:getAllFunctions\\(\\) should return array\\<PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionFunction\\> but returns iterable\\<int, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionFunction\\>\\.$#"
+			count: 1
+			path: src/Reflector/FunctionReflector.php
+
+		-
+			message: "#^Parameter \\#1 \\$code of method PhpParser\\\\Parser\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: "#^Parameter \\#1 \\$code of method PhpParser\\\\Parser\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AnonymousClassObjectSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of static method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\FileChecker\\:\\:assertReadableFile\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AnonymousClassObjectSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AnonymousClassObjectSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AnonymousClassObjectSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\AnonymousLocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AnonymousClassObjectSourceLocator.php
+
+		-
+			message: "#^Parameter \\#2 \\$startLine of class class@anonymous/src/SourceLocator/Type/AnonymousClassObjectSourceLocator\\.php\\:89 constructor expects int, int\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AnonymousClassObjectSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$code of method PhpParser\\\\Parser\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AutoloadSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects class\\-string\\<T of object\\>\\|T of object, string given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AutoloadSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\AliasLocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AutoloadSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\LocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/AutoloadSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$code of method PhpParser\\\\Parser\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ClosureSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of static method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\FileChecker\\:\\:assertReadableFile\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ClosureSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ClosureSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ClosureSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\AnonymousLocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ClosureSourceLocator.php
+
+		-
+			message: "#^Parameter \\#2 \\$startLine of class class@anonymous/src/SourceLocator/Type/ClosureSourceLocator\\.php\\:82 constructor expects int, int\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ClosureSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\LocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/Composer/PsrAutoloaderLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\LocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/ComposerSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Located\\\\LocatedSource constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/SourceLocator/Type/SingleFileSourceLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$fileName of class PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\SingleFileSourceLocator constructor expects string, string\\|false given\\.$#"
+			count: 6
+			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 6
+			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
+
+		-
+			message: "#^You should use assertCount\\(\\$expectedCount, \\$variable\\) instead of assertSame\\(\\$expectedCount, \\$variable\\-\\>count\\(\\)\\)\\.$#"
+			count: 1
+			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionAttributeTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionClassConstantTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionClassTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionClassTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumBackedCaseTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionFunctionTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionFunctionTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionIntersectionTypeTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionMethodTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionMethodTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionNamedTypeTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionObjectTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionObjectTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionParameterTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionParameterTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionPropertyTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionPropertyTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$exception of method PHPUnit\\\\Framework\\\\TestCase\\:\\:expectException\\(\\) expects class\\-string\\<Throwable\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionUnionTypeTest.php
+
+		-
+			message: "#^Cannot access offset 0 on iterable\\<int, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\>\\.$#"
+			count: 2
+			path: test/unit/Reflection/ReflectionClassTest.php
+
+		-
+			message: "#^Cannot access offset 2 on iterable\\<int, PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\>\\.$#"
+			count: 2
+			path: test/unit/Reflection/ReflectionClassTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionClassTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$format of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertStringMatchesFormat\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionClassTest.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Arg\\|PhpParser\\\\Node\\\\VariadicPlaceholder\\:\\:\\$value\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionConstantTest.php
+
+		-
+			message: "#^Binary operation \"\\+\" between 0\\|0\\.0\\|''\\|'0'\\|array\\{\\}\\|false\\|null and 3 results in an error\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionFunctionAbstractTest.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionIntersectionType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionNamedType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionUnionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionMethodTest.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionIntersectionType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionNamedType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionUnionType\\:\\:getClass\\(\\)\\.$#"
+			count: 9
+			path: test/unit/Reflection/ReflectionNamedTypeTest.php
+
+		-
+			message: "#^Method Roave\\\\BetterReflectionTest\\\\Reflection\\\\ReflectionObjectTest\\:\\:reflectionClassMethodProvider\\(\\) should return array\\<string, array\\{string\\}\\> but returns array\\<int\\|string, array\\{mixed\\}\\>\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionObjectTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 2
+			path: test/unit/Reflection/ReflectionObjectTest.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\\\Error\\|PhpParser\\\\Node\\\\Expr\\\\Variable\\:\\:\\$name\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionParameterTest.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionIntersectionType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionNamedType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionUnionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 3
+			path: test/unit/Reflection/ReflectionParameterTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: test/unit/Reflection/ReflectionTypeTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$format of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertStringMatchesFormat\\(\\) expects string, string\\|false given\\.$#"
+			count: 4
+			path: test/unit/Reflection/StringCast/ReflectionClassStringCastTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function array_map expects \\(callable\\(array\\<PhpParser\\\\Node\\\\Stmt\\>\\|null\\)\\: mixed\\)\\|null, Closure\\(array\\)\\: string given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Ast/Parser/MemoizingParserTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$permissions of function chmod expects int, int\\|false given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/FileCheckerTest.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionIntersectionType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionNamedType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionUnionType\\:\\:getName\\(\\)\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\SourceStubber\\\\PhpStormStubsSourceStubber\\:\\:generateClassStub\\(\\) expects class\\-string, string given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AggregateSourceLocator\\:\\:locateIdentifier\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 4
+			path: test/unit/SourceLocator/Type/AggregateSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AggregateSourceLocator\\:\\:locateIdentifiersByType\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/AggregateSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 3
+			path: test/unit/SourceLocator/Type/AnonymousClassObjectSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method PHPStan\\\\BetterReflection\\\\Util\\\\FileHelper\\:\\:normalizeWindowsPath\\(\\) expects string, string\\|false given\\.$#"
+			count: 5
+			path: test/unit/SourceLocator/Type/ClosureSourceLocatorTest.php
+
+		-
+			message: "#^Method Roave\\\\BetterReflectionTest\\\\SourceLocator\\\\Type\\\\Composer\\\\Factory\\\\MakeLocatorForComposerInstalledJsonTest\\:\\:expectedLocators\\(\\) should return array\\<string, array\\{string, PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\SourceLocator\\}\\> but returns non\\-empty\\-array\\<string, array\\{non\\-empty\\-string\\|false, PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AggregateSourceLocator\\}\\>\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/Composer/Factory/MakeLocatorForComposerInstalledJsonTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$keys of function array_combine expects array\\<int\\|string\\>, array\\<int, string\\|false\\> given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/Composer/Factory/MakeLocatorForComposerInstalledJsonTest.php
+
+		-
+			message: "#^Method Roave\\\\BetterReflectionTest\\\\SourceLocator\\\\Type\\\\Composer\\\\Factory\\\\MakeLocatorForComposerJsonAndInstalledJsonTest\\:\\:expectedLocators\\(\\) should return array\\<string, array\\{string, PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\SourceLocator\\}\\> but returns non\\-empty\\-array\\<string, array\\{non\\-empty\\-string\\|false, PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AggregateSourceLocator\\}\\>\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/Composer/Factory/MakeLocatorForComposerJsonAndInstalledJsonTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$keys of function array_combine expects array\\<int\\|string\\>, array\\<int, string\\|false\\> given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/Composer/Factory/MakeLocatorForComposerJsonAndInstalledJsonTest.php
+
+		-
+			message: "#^Method Roave\\\\BetterReflectionTest\\\\SourceLocator\\\\Type\\\\Composer\\\\Factory\\\\MakeLocatorForComposerJsonTest\\:\\:expectedLocators\\(\\) should return array\\<string, array\\{string, PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\SourceLocator\\}\\> but returns non\\-empty\\-array\\<string, array\\{non\\-empty\\-string\\|false, PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AggregateSourceLocator\\}\\>\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/Composer/Factory/MakeLocatorForComposerJsonTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$keys of function array_combine expects array\\<int\\|string\\>, array\\<int, string\\|false\\> given\\.$#"
+			count: 1
+			path: test/unit/SourceLocator/Type/Composer/Factory/MakeLocatorForComposerJsonTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AbstractSourceLocator\\:\\:locateIdentifier\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 3
+			path: test/unit/SourceLocator/Type/ComposerSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AbstractSourceLocator\\:\\:locateIdentifier\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 8
+			path: test/unit/SourceLocator/Type/EvaledCodeSourceLocatorTest.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\SourceLocator\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\:\\:expects\\(\\)\\.$#"
+			count: 2
+			path: test/unit/SourceLocator/Type/MemoizingSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\MemoizingSourceLocator\\:\\:locateIdentifiersByType\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 4
+			path: test/unit/SourceLocator/Type/MemoizingSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#3 \\$reflectors of method Roave\\\\BetterReflectionTest\\\\SourceLocator\\\\Type\\\\MemoizingSourceLocatorTest\\:\\:assertMemoization\\(\\) expects array\\<int, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\>, array\\<int, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\> given\\.$#"
+			count: 3
+			path: test/unit/SourceLocator/Type/MemoizingSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AbstractSourceLocator\\:\\:locateIdentifier\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 7
+			path: test/unit/SourceLocator/Type/PhpInternalSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AbstractSourceLocator\\:\\:locateIdentifier\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 2
+			path: test/unit/SourceLocator/Type/SingleFileSourceLocatorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflector of method PHPStan\\\\BetterReflection\\\\SourceLocator\\\\Type\\\\AbstractSourceLocator\\:\\:locateIdentifier\\(\\) expects PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector, PHPStan\\\\BetterReflection\\\\Reflector\\\\Reflector\\|PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 2
+			path: test/unit/SourceLocator/Type/StringSourceLocatorTest.php
+
