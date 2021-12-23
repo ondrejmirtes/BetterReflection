@@ -350,7 +350,7 @@ final class ReflectionSourceStubber implements SourceStubber
                 }
             }
 
-            $propertyType = $propertyReflection->getType();
+            $propertyType = method_exists($propertyReflection, 'getType') ? $propertyReflection->getType() : null;
 
             if ($propertyType !== null) {
                 assert($propertyType instanceof CoreReflectionNamedType || $propertyType instanceof CoreReflectionUnionType || $propertyType instanceof CoreReflectionIntersectionType);
