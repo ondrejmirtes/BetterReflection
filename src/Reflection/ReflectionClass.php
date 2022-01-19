@@ -569,7 +569,7 @@ class ReflectionClass implements Reflection
      */
     private function addEnumMethods(EnumNode $node, array $methods): array
     {
-        $internalLocatedSource = new InternalLocatedSource('', $this->getName(), 'Core');
+        $internalLocatedSource = new InternalLocatedSource('', $this->getName(), 'Core', $this->getFileName());
         $createMethod          = fn (string $name, array $params, Node\Identifier|Node\NullableType $returnType): ReflectionMethod => ReflectionMethod::createFromNode(
             $this->reflector,
             new ClassMethod(
