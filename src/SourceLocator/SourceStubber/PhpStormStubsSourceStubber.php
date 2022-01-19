@@ -203,6 +203,37 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         self::$mapsInitialized = true;
     }
 
+    public function hasClass(string $className): bool
+    {
+        $lowercaseClassName = strtolower($className);
+
+        return array_key_exists($lowercaseClassName, self::$classMap);
+    }
+
+    public function isPresentClass(string $className): ?bool
+    {
+        $lowercaseClassName = strtolower($className);
+        if (! array_key_exists($lowercaseClassName, self::$classMap)) {
+            return null;
+        }
+
+        $classNode = $this->getClassNodeData($lowercaseClassName);
+
+        return $classNode !== null;
+    }
+
+    public function isPresentFunction(string $functionName): ?bool
+    {
+        $lowercaseFunctionName = strtolower($functionName);
+        if (! array_key_exists($lowercaseFunctionName, self::$functionMap)) {
+            return null;
+        }
+
+        $functionNode = $this->getFunctionNodeData($lowercaseFunctionName);
+
+        return $functionNode !== null;
+    }
+
     /** @param class-string|trait-string $className */
     public function generateClassStub(string $className): StubData|null
     {
@@ -266,7 +297,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->classNodes[$lowercaseClassName];
     }
 
-    public function generateFunctionStub(string $functionName): StubData|null
+    /**
+     * @return array{0: Node\Stmt\Function_, 1: Node\Stmt\Namespace_|null}|null
+     */
+    private function getFunctionNodeData(string $functionName): ?array
     {
         $lowercaseFunctionName = strtolower($functionName);
 
@@ -281,17 +315,23 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
             /** @psalm-suppress RedundantCondition */
             if (! array_key_exists($lowercaseFunctionName, $this->functionNodes)) {
-                 // Save `null` so we don't parse the file again for the same $lowercaseFunctionName
-                 $this->functionNodes[$lowercaseFunctionName] = null;
+                // Save `null` so we don't parse the file again for the same $lowercaseFunctionName
+                $this->functionNodes[$lowercaseFunctionName] = null;
             }
         }
 
-        if ($this->functionNodes[$lowercaseFunctionName] === null) {
+        return $this->functionNodes[$lowercaseFunctionName];
+    }
+
+    public function generateFunctionStub(string $functionName): StubData|null
+    {
+        $functionNodeData = $this->getFunctionNodeData($functionName);
+
+        if ($functionNodeData === null) {
             return null;
         }
 
-        $functionNodeData = $this->functionNodes[$lowercaseFunctionName];
-        $extension        = $this->getExtensionFromFilePath($filePath);
+        $extension = $this->getExtensionFromFilePath(self::$functionMap[strtolower($functionName)]);
 
         return new StubData($this->createStub($functionNodeData[0], $functionNodeData[1]), $extension);
     }
