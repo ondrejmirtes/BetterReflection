@@ -596,7 +596,7 @@ class ReflectionClass implements Reflection
      */
     private function addEnumMethods(EnumNode $node, array $methods): array
     {
-        $internalLocatedSource = new InternalLocatedSource('', $this->getName(), 'Core');
+        $internalLocatedSource = new InternalLocatedSource('', $this->getName(), 'Core', $this->getFileName());
         $createMethod          = function (string $name, array $params, Node\Identifier|Node\NullableType $returnType) use ($internalLocatedSource): ReflectionMethod {
             /** @var array{flags: int, params: Node\Param[], returnType: Node\Identifier|Node\NullableType} $classMethodSubnodes */
             $classMethodSubnodes = [
