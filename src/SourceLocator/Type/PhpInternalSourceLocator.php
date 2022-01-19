@@ -95,6 +95,7 @@ final class PhpInternalSourceLocator extends AbstractSourceLocator
             $stubData->getStub(),
             $identifier->getName(),
             $extensionName,
+            $stubData->getFileName(),
             $aliasName,
         );
     }
