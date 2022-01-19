@@ -12,9 +12,9 @@ namespace Roave\BetterReflection\SourceLocator\Located;
 class InternalLocatedSource extends LocatedSource
 {
     /** @param non-empty-string $extensionName */
-    public function __construct(string $source, string $name, private string $extensionName)
+    public function __construct(string $source, string $name, private string $extensionName, ?string $fileName = null)
     {
-        parent::__construct($source, $name);
+        parent::__construct($source, $name, $fileName);
     }
 
     public function isInternal(): bool
