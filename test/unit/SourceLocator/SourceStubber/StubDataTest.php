@@ -15,7 +15,7 @@ class StubDataTest extends TestCase
     {
         $stub          = '<?php';
         $extensionName = 'Core';
-        $stubData      = new StubData($stub, $extensionName);
+        $stubData      = new StubData($stub, $extensionName, null);
 
         self::assertSame($stub, $stubData->getStub());
         self::assertSame($extensionName, $stubData->getExtensionName());

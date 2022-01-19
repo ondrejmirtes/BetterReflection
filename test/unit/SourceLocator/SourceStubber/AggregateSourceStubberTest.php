@@ -34,7 +34,7 @@ class AggregateSourceStubberTest extends TestCase
         $sourceStubber3 = $this->createMock(SourceStubber::class);
         $sourceStubber4 = $this->createMock(SourceStubber::class);
 
-        $stubData = new StubData('<?php class SomeClass {}', null);
+        $stubData = new StubData('<?php class SomeClass {}', null, null);
 
         $sourceStubber1->expects($this->once())->method('generateClassStub');
         $sourceStubber2->expects($this->once())->method('generateClassStub');
@@ -73,7 +73,7 @@ class AggregateSourceStubberTest extends TestCase
         $sourceStubber3 = $this->createMock(SourceStubber::class);
         $sourceStubber4 = $this->createMock(SourceStubber::class);
 
-        $stubData = new StubData('<?php function someFunction () {}', null);
+        $stubData = new StubData('<?php function someFunction () {}', null, null);
 
         $sourceStubber1->expects($this->once())->method('generateFunctionStub');
         $sourceStubber2->expects($this->once())->method('generateFunctionStub');
@@ -109,7 +109,7 @@ class AggregateSourceStubberTest extends TestCase
         $sourceStubber3 = $this->createMock(SourceStubber::class);
         $sourceStubber4 = $this->createMock(SourceStubber::class);
 
-        $stubData = new StubData('<?php const SOME_CONSTANT = 1;', null);
+        $stubData = new StubData('<?php const SOME_CONSTANT = 1;', null, null);
 
         $sourceStubber1->expects($this->once())->method('generateConstantStub');
         $sourceStubber2->expects($this->once())->method('generateConstantStub');
