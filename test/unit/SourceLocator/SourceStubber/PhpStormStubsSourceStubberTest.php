@@ -63,6 +63,7 @@ use function get_declared_traits;
 use function get_defined_constants;
 use function get_defined_functions;
 use function in_array;
+use function realpath;
 use function sort;
 use function spl_autoload_register;
 use function spl_autoload_unregister;
@@ -1444,5 +1445,11 @@ class PhpStormStubsSourceStubberTest extends TestCase
         $stub = $this->sourceStubber->generateClassStub($className);
 
         self::assertNull($stub);
+    }
+
+    public function testFilename(): void
+    {
+        $reflection = $this->reflector->reflectClass('XMLReader');
+        $this->assertSame(realpath(__DIR__ . '/../../../../vendor/jetbrains/phpstorm-stubs/xmlreader/xmlreader.php'), realpath($reflection->getFileName()));
     }
 }
