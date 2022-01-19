@@ -48,9 +48,9 @@ final class UnableToCompileNodeTest extends TestCase
             $className,
         );
 
-        self::assertSame(
+        self::assertStringContainsString(
             sprintf(
-                'Cound not load class "%s" while evaluating expression in %s in file "" (line -1)',
+                'Cound not load class "%s" while evaluating expression in %s in file',
                 $className,
                 $contextName,
             ),
@@ -69,9 +69,9 @@ final class UnableToCompileNodeTest extends TestCase
             $constantName,
         );
 
-        self::assertSame(
+        self::assertStringContainsString(
             sprintf(
-                'Could not locate constant "%s" while evaluating expression in %s in file "" (line -1)',
+                'Could not locate constant "%s" while evaluating expression in %s in file',
                 $constantName,
                 $contextName,
             ),
@@ -91,9 +91,9 @@ final class UnableToCompileNodeTest extends TestCase
             ->method('getName')
             ->willReturn('An\\Example');
 
-        self::assertSame(
+        self::assertStringContainsString(
             sprintf(
-                'Could not locate constant An\Example::SOME_CONSTANT while trying to evaluate constant expression in %s in file "" (line -1)',
+                'Could not locate constant An\Example::SOME_CONSTANT while trying to evaluate constant expression in %s in file',
                 $contextName,
             ),
             UnableToCompileNode::becauseOfNotFoundClassConstantReference(
@@ -139,9 +139,9 @@ final class UnableToCompileNodeTest extends TestCase
     #[DataProvider('supportedContextTypes')]
     public function testForUnRecognizedExpressionInContext(CompilerContext $context, string $contextName): void
     {
-        self::assertSame(
+        self::assertStringContainsString(
             sprintf(
-                'Unable to compile expression in %s: unrecognized node type %s in file "" (line -1)',
+                'Unable to compile expression in %s: unrecognized node type %s in file',
                 $contextName,
                 Yield_::class,
             ),
