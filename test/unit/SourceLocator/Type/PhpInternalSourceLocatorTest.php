@@ -219,7 +219,7 @@ class PhpInternalSourceLocatorTest extends TestCase
         $sourceStubber
             ->method('generateClassStub')
             ->with('Foo')
-            ->willReturn(new StubData('stub', null));
+            ->willReturn(new StubData('stub', null, null));
 
         $phpInternalSourceLocator = new PhpInternalSourceLocator(BetterReflectionSingleton::instance()->astLocator(), $sourceStubber);
 
