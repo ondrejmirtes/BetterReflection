@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Roave\BetterReflectionTest\NodeCompiler;
 
 use ArrayObject;
-use BadMethodCallException;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\Yield_;
@@ -14,16 +13,12 @@ use PhpParser\Parser;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
 use Roave\BetterReflection\NodeCompiler\Exception\UnableToCompileNode;
-use Roave\BetterReflection\Reflection\Reflection;
 use Roave\BetterReflection\Reflector\DefaultReflector;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
 use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
@@ -785,103 +780,6 @@ PHP;
             ['_METHOD', ''],
             ['_FUNCTION', ''],
         ];
-    }
-
-    public function testCanRetrieveMagicConstantValueWhenUsingFakeSourceLocator(): void
-    {
-        $astLocatorProducingLocatedSourcesWithFakeFilePath = new class ($this->astLocator) extends Locator {
-            public function __construct(private Locator $next)
-            {
-            }
-
-            /** {@inheritDoc} */
-            public function findReflection(
-                Reflector $reflector,
-                LocatedSource $locatedSource,
-                Identifier $identifier,
-            ): Reflection {
-                return $this->next->findReflection(
-                    $reflector,
-                    new class ($locatedSource) extends LocatedSource {
-                        public function __construct(private LocatedSource $next)
-                        {
-                        }
-
-                        public function getSource(): string
-                        {
-                            return $this->next->getSource();
-                        }
-
-                        public function getName(): string|null
-                        {
-                            return $this->next->getName();
-                        }
-
-                        public function getFileName(): string|null
-                        {
-                            return '/non/existing/path/to/sources.php';
-                        }
-
-                        public function isInternal(): bool
-                        {
-                            return false;
-                        }
-
-                        public function getExtensionName(): string|null
-                        {
-                            return null;
-                        }
-
-                        public function isEvaled(): bool
-                        {
-                            return false;
-                        }
-
-                        public function getAliasName(): string|null
-                        {
-                            return null;
-                        }
-                    },
-                    $identifier,
-                );
-            }
-
-            /** {@inheritDoc} */
-            public function findReflectionsOfType(
-                Reflector $reflector,
-                LocatedSource $locatedSource,
-                IdentifierType $identifierType,
-            ): array {
-                throw new BadMethodCallException('Not expected to be called');
-            }
-        };
-
-        $reflector = (new DefaultReflector(new StringSourceLocator(
-            <<<'PHP'
-<?php
-
-const CURRENT_DIR = __DIR__;
-const CURRENT_FILE = __FILE__;
-PHP
-            ,
-            $astLocatorProducingLocatedSourcesWithFakeFilePath,
-        )));
-
-        self::assertSame(
-            '/non/existing/path/to',
-            $reflector
-                ->reflectConstant('CURRENT_DIR')
-                ->getValue(),
-            '__DIR__ is correctly identified, even if the located source does not exist on disk',
-        );
-
-        self::assertSame(
-            '/non/existing/path/to/sources.php',
-            $reflector
-                ->reflectConstant('CURRENT_FILE')
-                ->getValue(),
-            '__FILE__ is correctly identified, even if the located source does not exist on disk',
-        );
     }
 
     #[DataProvider('magicConstantsInNamespaceProvider')]
