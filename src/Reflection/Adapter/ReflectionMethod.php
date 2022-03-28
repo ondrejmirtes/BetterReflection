@@ -284,7 +284,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     public function invoke($object = null, $arg = null, ...$args)
     {
         try {
-            return $this->betterReflectionMethod->invoke($object, ...$args);
+            return $this->betterReflectionMethod->invoke($object, $arg, ...$args);
         } catch (NoObjectProvided) {
             return null;
         } catch (Throwable $e) {
