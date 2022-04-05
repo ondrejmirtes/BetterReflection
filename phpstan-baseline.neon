@@ -31,11 +31,6 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
-			message: "#^Property PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:\\$cachedName \\(class\\-string\\|null\\) does not accept string\\.$#"
-			count: 2
-			path: src/Reflection/ReflectionClass.php
-
-		-
 			message: "#^Property PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionClass\\:\\:\\$cachedTraitsData \\(array\\{aliases\\: array\\<string, string\\>, modifiers\\: array\\<string, int\\>, precedences\\: array\\<string, string\\>\\}\\|null\\) does not accept array\\{aliases\\: non\\-empty\\-array\\<string, string\\>, modifiers\\?\\: array\\<string, int\\>, precedences\\?\\: array\\<string, string\\>\\}\\.$#"
 			count: 1
 			path: src/Reflection/ReflectionClass.php
