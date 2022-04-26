@@ -43,7 +43,6 @@ use Stringable;
 use Traversable;
 use UnitEnum;
 
-use function array_combine;
 use function array_filter;
 use function array_key_exists;
 use function array_keys;
@@ -1327,10 +1326,16 @@ class ReflectionClass implements Reflection
             return $this->cachedTraits;
         }
 
-        return $this->cachedTraits = array_map(
-            fn (string $traitClassName): ReflectionClass => $this->reflector->reflectClass($traitClassName),
-            $this->traitClassNames,
-        );
+        $traits = [];
+        foreach ($this->traitClassNames as $traitClassName) {
+            try {
+                $traits[] = $this->reflector->reflectClass($traitClassName);
+            } catch (IdentifierNotFound) {
+                // pass
+            }
+        }
+
+        return $this->cachedTraits = $traits;
     }
 
     /**
@@ -1657,15 +1662,16 @@ class ReflectionClass implements Reflection
             return [];
         }
 
-        $implementsClassName = $this->getInterfaceClassNames();
+        $interfaces = [];
+        foreach ($this->getInterfaceClassNames() as $interfaceClassName) {
+            try {
+                $interfaces[$interfaceClassName] = $this->reflector->reflectClass($interfaceClassName);
+            } catch (IdentifierNotFound) {
+                continue;
+            }
+        }
 
-        return array_combine(
-            $implementsClassName,
-            array_map(
-                fn (string $interfaceClassName): ReflectionClass => $this->reflector->reflectClass($interfaceClassName),
-                $implementsClassName,
-            ),
-        );
+        return $interfaces;
     }
 
     /**
@@ -1802,15 +1808,19 @@ class ReflectionClass implements Reflection
             return array_slice($this->getInterfacesHierarchy(AlreadyVisitedClasses::createEmpty()), 1);
         }
 
-        return array_merge(
-            [],
-            ...array_map(
-                fn (string $interfaceClassName): array => $this->reflector
-                    ->reflectClass($interfaceClassName)
-                    ->getInterfacesHierarchy(AlreadyVisitedClasses::createEmpty()),
-                $this->getInterfaceClassNames(),
-            ),
-        );
+        $interfaces = [];
+        foreach ($this->getInterfaceClassNames() as $name) {
+            try {
+                $interface = $this->reflector->reflectClass($name);
+                foreach ($interface->getInterfacesHierarchy(AlreadyVisitedClasses::createEmpty()) as $n => $i) {
+                    $interfaces[$n] = $i;
+                }
+            } catch (IdentifierNotFound) {
+                continue;
+            }
+        }
+
+        return $interfaces;
     }
 
     /**
