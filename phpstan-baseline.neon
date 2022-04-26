@@ -115,6 +115,12 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
+			message: '#^Dead catch \- Roave\\BetterReflection\\Reflector\\Exception\\IdentifierNotFound is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:getName\(\) should return class\-string but returns string\.$#'
 			identifier: return.type
 			count: 1

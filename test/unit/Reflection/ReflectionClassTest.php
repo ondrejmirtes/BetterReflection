@@ -37,7 +37,6 @@ use Roave\BetterReflection\Reflection\ReflectionParameter;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 use Roave\BetterReflection\Reflection\ReflectionUnionType;
 use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
 use Roave\BetterReflection\SourceLocator\Ast\Locator;
 use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
@@ -1444,12 +1443,10 @@ PHP;
         public function method1() {}
         public function method2() {}
     }
-
     trait Trait2Fixture {
         public function method3() {}
         public function method4() {}
     }
-
     class ClassFixture {
         use Trait1Fixture, Trait2Fixture {
             method1 as alias1;
@@ -1474,30 +1471,6 @@ PHP;
             'alias3',
             'method4',
         ], array_keys($classInfo->getMethods()));
-    }
-
-    public function testGetTraitNamesWithMissingTraitDefinitions(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassUsesUnknownTrait.php',
-            $this->astLocator,
-        ));
-
-        $this->expectException(IdentifierNotFound::class);
-
-        $reflector->reflectClass(Fixture\ClassUsesUnknownTrait::class)->getTraitNames();
-    }
-
-    public function testGetTraitsWithMissingTraitDefinitions(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassUsesUnknownTrait.php',
-            $this->astLocator,
-        ));
-
-        $this->expectException(IdentifierNotFound::class);
-
-        $reflector->reflectClass(Fixture\ClassUsesUnknownTrait::class)->getTraits();
     }
 
     public function testGetTraitAliasesWithMissingTraitDefinitions(): void
