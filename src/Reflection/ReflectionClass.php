@@ -42,7 +42,6 @@ use Stringable;
 use Traversable;
 use UnitEnum;
 
-use function array_combine;
 use function array_filter;
 use function array_key_exists;
 use function array_keys;
@@ -1266,10 +1265,16 @@ class ReflectionClass implements Reflection
             return $this->cachedTraits;
         }
 
-        return $this->cachedTraits = array_map(
-            fn (string $traitClassName): ReflectionClass => $this->reflector->reflectClass($traitClassName),
-            $this->traitClassNames,
-        );
+        $traits = [];
+        foreach ($this->traitClassNames as $traitClassName) {
+            try {
+                $traits[] = $this->reflector->reflectClass($traitClassName);
+            } catch (IdentifierNotFound) {
+                // pass
+            }
+        }
+
+        return $this->cachedTraits = $traits;
     }
 
     /**
@@ -1533,13 +1538,14 @@ class ReflectionClass implements Reflection
             return [];
         }
 
-        $interfaces = array_combine(
-            $this->implementsClassNames,
-            array_map(
-                fn (string $interfaceClassName): ReflectionClass => $this->reflector->reflectClass($interfaceClassName),
-                $this->implementsClassNames,
-            ),
-        );
+        $interfaces = [];
+        foreach ($this->implementsClassNames as $interfaceClassName) {
+            try {
+                $interfaces[$interfaceClassName] = $this->reflector->reflectClass($interfaceClassName);
+            } catch (IdentifierNotFound) {
+                continue;
+            }
+        }
 
         if ($this->isEnum) {
             $interfaces = $this->addEnumInterfaces($interfaces);
@@ -1682,15 +1688,17 @@ class ReflectionClass implements Reflection
             return array_slice($this->getInterfacesHierarchy(AlreadyVisitedClasses::createEmpty()), 1);
         }
 
-        $interfaces = array_merge(
-            [],
-            ...array_map(
-                fn (string $interfaceClassName): array => $this->reflector
-                    ->reflectClass($interfaceClassName)
-                    ->getInterfacesHierarchy(AlreadyVisitedClasses::createEmpty()),
-                $this->implementsClassNames,
-            ),
-        );
+        $interfaces = [];
+        foreach ($this->implementsClassNames as $name) {
+            try {
+                $interface = $this->reflector->reflectClass($name);
+                foreach ($interface->getInterfacesHierarchy(AlreadyVisitedClasses::createEmpty()) as $n => $i) {
+                    $interfaces[$n] = $i;
+                }
+            } catch (IdentifierNotFound) {
+                continue;
+            }
+        }
 
         if ($this->isEnum) {
             $interfaces = $this->addEnumInterfaces($interfaces);
