@@ -91,12 +91,6 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
-			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionProperty\:\:getSettableType\(\) should return Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionUnionType\|null but returns ReflectionType\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
-
-		-
 			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionParameter and Roave\\BetterReflection\\Reflection\\ReflectionParameter will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -143,6 +137,18 @@ parameters:
 			identifier: phpunit.assertCount
 			count: 1
 			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertSame\(\) with ''DeclaringClass'' and class\-string will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionClassConstantTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertSame\(\) with ''DeclaringEnum'' and class\-string will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionClassConstantTest.php
 
 		-
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
@@ -205,6 +211,12 @@ parameters:
 			path: test/unit/Reflection/Adapter/ReflectionEnumUnitCaseTest.php
 
 		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertSame\(\) with ''DeclaringClass'' and class\-string will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionMethodTest.php
+
+		-
 			message: '#^Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase\:\:expectException\(\) expects class\-string\<Throwable\>, class\-string\<Roave\\BetterReflectionTest\\Reflection\\Adapter\\Throwable\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -239,6 +251,12 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: test/unit/Reflection/Adapter/ReflectionParameterTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertSame\(\) with ''DeclaringClass'' and class\-string will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionPropertyTest.php
 
 		-
 			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
