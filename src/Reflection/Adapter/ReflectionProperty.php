@@ -79,11 +79,10 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /**
-     * @psalm-mutation-free
+     * @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
      */
     public function getType(): ?\ReflectionType
     {
-        /** @psalm-suppress ImpureMethodCall */
         return ReflectionType::fromTypeOrNull($this->betterReflectionProperty->getType());
     }
 
