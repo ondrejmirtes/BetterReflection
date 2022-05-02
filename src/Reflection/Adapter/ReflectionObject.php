@@ -130,7 +130,7 @@ final class ReflectionObject extends CoreReflectionObject
     /**
      * {@inheritDoc}
      */
-    public function getMethod($name): \ReflectionMethod
+    public function getMethod($name): ReflectionMethod
     {
         $method = $name !== '' ? $this->betterReflectionObject->getMethod($this->getMethodRealName($name)) : null;
 
@@ -158,8 +158,8 @@ final class ReflectionObject extends CoreReflectionObject
     }
 
     /**
-     * {@inheritDoc}
      * @param int-mask-of<ReflectionMethod::IS_*>|null $filter
+     * @return ReflectionMethod[]
      */
     public function getMethods($filter = null): array
     {
@@ -182,7 +182,8 @@ final class ReflectionObject extends CoreReflectionObject
     }
 
     /**
-     * {@inheritDoc}
+     * @param string $name
+     * @return ReflectionProperty
      */
     public function getProperty($name): \ReflectionProperty
     {
@@ -196,8 +197,8 @@ final class ReflectionObject extends CoreReflectionObject
     }
 
     /**
-     * {@inheritDoc}
      * @param int-mask-of<ReflectionProperty::IS_*>|null $filter
+     * @return ReflectionProperty[]
      */
     public function getProperties($filter = null): array
     {
@@ -251,7 +252,8 @@ final class ReflectionObject extends CoreReflectionObject
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @return ReflectionClassConstant|false
      */
     #[ReturnTypeWillChange]
     public function getReflectionConstant($name)
@@ -282,7 +284,7 @@ final class ReflectionObject extends CoreReflectionObject
         ));
     }
 
-    /** @return array<class-string, CoreReflectionClass> */
+    /** @return array<class-string, ReflectionClass> */
     public function getInterfaces(): array
     {
         return array_map(
@@ -392,7 +394,7 @@ final class ReflectionObject extends CoreReflectionObject
     }
 
     /**
-     * {@inheritDoc}
+     * @return ReflectionClass|false
      */
     #[ReturnTypeWillChange]
     public function getParentClass()
