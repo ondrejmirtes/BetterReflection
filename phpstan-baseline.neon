@@ -11,11 +11,6 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionAttribute.php
 
 		-
-			message: "#^Method PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionProperty\\:\\:getType\\(\\) should return ReflectionNamedType\\|ReflectionUnionType\\|null but returns PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionIntersectionType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionNamedType\\|PHPStan\\\\BetterReflection\\\\Reflection\\\\Adapter\\\\ReflectionUnionType\\|null\\.$#"
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
-
-		-
 			message: "#^Cannot call method toString\\(\\) on PhpParser\\\\Node\\\\Name\\|false\\.$#"
 			count: 1
 			path: src/Reflection/ReflectionClass.php
