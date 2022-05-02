@@ -167,6 +167,7 @@ final class ReflectionFunction extends CoreReflectionFunction
         return $this->betterReflectionFunction->hasReturnType();
     }
 
+    /** @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null */
     public function getReturnType(): CoreReflectionType|null
     {
         return ReflectionType::fromTypeOrNull($this->betterReflectionFunction->getReturnType());
@@ -250,6 +251,7 @@ final class ReflectionFunction extends CoreReflectionFunction
         return $this->betterReflectionFunction->hasTentativeReturnType();
     }
 
+    /** @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null */
     public function getTentativeReturnType(): CoreReflectionType|null
     {
         return ReflectionType::fromTypeOrNull($this->betterReflectionFunction->getTentativeReturnType());
