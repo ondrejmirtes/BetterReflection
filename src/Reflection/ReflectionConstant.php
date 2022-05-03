@@ -232,6 +232,10 @@ class ReflectionConstant implements Reflection
         return $this->value;
     }
 
+    /**
+     * @deprecated Use getValueExpr()
+     * @return mixed
+     */
     public function getValue(): mixed
     {
         if ($this->compiledValue === null) {
