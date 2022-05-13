@@ -33,6 +33,7 @@ final class FakeReflectionAttribute
         return $this->betterReflectionAttribute->getArguments();
     }
 
+    /** @deprecated */
     public function newInstance(): object
     {
         $class = $this->getName();
