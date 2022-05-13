@@ -602,6 +602,10 @@ class ReflectionClass implements Reflection
                 $this,
             );
 
+            if (array_key_exists($method->getName(), $methods)) {
+                continue;
+            }
+
             $methods[$method->getName()] = $method;
         }
 
