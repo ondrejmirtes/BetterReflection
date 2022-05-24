@@ -607,7 +607,11 @@ final class ReflectionSourceStubber implements SourceStubber
         }
 
         if (! $parameterReflection->isDefaultValueAvailable()) {
-            $parameterNode->setDefault(null);
+            if ($parameterReflection->allowsNull()) {
+                $parameterNode->setDefault(null);
+            } else {
+                $parameterNode->setDefault(new Node\Expr\ConstFetch(new FullyQualified('UNKNOWN')));
+            }
 
             return;
         }
