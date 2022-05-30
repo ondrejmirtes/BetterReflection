@@ -6,6 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\SourceStubber;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionEnum as CoreReflectionEnum;
@@ -25,6 +26,8 @@ use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
 use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
+use Roave\BetterReflectionTest\Fixture\ClassWithSelfAndParentParametersForSourceStubber;
+use Roave\BetterReflectionTest\Fixture\PHP83ClassForSourceStubber;
 use Traversable;
 
 use function array_filter;
@@ -106,6 +109,39 @@ class ReflectionSourceStubberTest extends TestCase
         /** @phpstan-var class-string $someClassName */
         $someClassName = 'SomeClass';
         self::assertNull($this->stubber->generateClassStub($someClassName));
+    }
+
+    #[RequiresPhp('>= 8.3.0')]
+    public function testClassStubWithTypedConstants(): void
+    {
+        require_once __DIR__ . '/../../Fixture/PHP83ClassForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(PHP83ClassForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/PHP83ClassForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    #[RequiresPhp('<8.5.0')]
+    public function testClassStubWithSelfAndParentParameters(): void
+    {
+        require_once __DIR__ . '/../../Fixture/ClassWithSelfAndParentParametersForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(ClassWithSelfAndParentParametersForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/ClassWithSelfAndParentParametersForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    #[RequiresPhp('>=8.5.0')]
+    public function testClassStubWithSelfAndParentParametersWithPHP85Changes(): void
+    {
+        require_once __DIR__ . '/../../Fixture/ClassWithSelfAndParentParametersForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(ClassWithSelfAndParentParametersForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/PHP85ClassWithSelfAndParentParametersForSourceStubberExpected.php', $stubData->getStub());
     }
 
     /** @return list<array{0: string}> */

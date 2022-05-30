@@ -90,14 +90,7 @@ final class ReflectionSourceStubber implements SourceStubber
         /** phpcs:enable */
 
         $classReflection = $isEnum ? new CoreReflectionEnum($className) : new CoreReflectionClass($className);
-        if (
-            $classReflection->getExtensionName() === false
-            && ($classReflection->getFileName() !== false && is_file($classReflection->getFileName()))
-        ) {
-            return null;
-        }
-
-        $classNode = $this->createClass($classReflection);
+        $classNode       = $this->createClass($classReflection);
 
         if ($classNode instanceof Class_) {
             $this->addClassModifiers($classNode, $classReflection);
@@ -133,7 +126,7 @@ final class ReflectionSourceStubber implements SourceStubber
         $extensionName = $classReflection->getExtension()?->getName();
         assert((is_string($extensionName) && $extensionName !== '') || $extensionName === null);
 
-        return $this->createStubData($stub, $extensionName);
+        return $this->createStubData($stub, $extensionName, $classReflection->getFileName() !== false ? $classReflection->getFileName() : null);
     }
 
     public function generateFunctionStub(string $functionName): StubData|null
@@ -166,10 +159,10 @@ final class ReflectionSourceStubber implements SourceStubber
         assert((is_string($extensionName) && $extensionName !== '') || $extensionName === null);
 
         if (! $functionReflection->inNamespace()) {
-            return $this->createStubData($this->generateStub($functionNode->getNode()), $extensionName);
+            return $this->createStubData($this->generateStub($functionNode->getNode()), $extensionName, null);
         }
 
-        return $this->createStubData($this->generateStubInNamespace($functionNode->getNode(), $functionReflection->getNamespaceName()), $extensionName);
+        return $this->createStubData($this->generateStubInNamespace($functionNode->getNode(), $functionReflection->getNamespaceName()), $extensionName, null);
     }
 
     public function generateConstantStub(string $constantName): StubData|null
@@ -191,7 +184,7 @@ final class ReflectionSourceStubber implements SourceStubber
 
         $constantNode = $this->builderFactory->funcCall('define', [$constantName, $constantValue]);
 
-        return $this->createStubData($this->generateStub($constantNode), $extensionName);
+        return $this->createStubData($this->generateStub($constantNode), $extensionName, null);
     }
 
     /** @return array{0: scalar|list<scalar>|resource|null, 1: non-empty-string|null}|null */
@@ -691,8 +684,8 @@ final class ReflectionSourceStubber implements SourceStubber
     }
 
     /** @param non-empty-string|null $extensionName */
-    private function createStubData(string $stub, string|null $extensionName): StubData
+    private function createStubData(string $stub, string|null $extensionName, string|null $fileName): StubData
     {
-        return new StubData($stub, $extensionName, null);
+        return new StubData($stub, $extensionName, $fileName);
     }
 }
