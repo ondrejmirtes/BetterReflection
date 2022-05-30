@@ -86,13 +86,6 @@ final class ReflectionSourceStubber implements SourceStubber
         /** phpcs:enable */
 
         $classReflection = $isEnum ? new CoreReflectionEnum($className) : new CoreReflectionClass($className);
-        if (
-            $classReflection->getExtensionName() === false
-            && ($classReflection->getFileName() !== false && is_file($classReflection->getFileName()))
-        ) {
-            return null;
-        }
-
         $classNode = $this->createClass($classReflection);
 
         if ($classNode instanceof Class_) {
