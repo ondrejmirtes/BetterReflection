@@ -80,7 +80,7 @@ final class ReflectionSourceStubber implements SourceStubber
     public function generateClassStub(string $className): StubData|null
     {
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
-        if (! ClassExistenceChecker::exists($className)) {
+        if (! ClassExistenceChecker::exists($className, false)) {
             return null;
         }
 
