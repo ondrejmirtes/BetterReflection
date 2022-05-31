@@ -448,8 +448,8 @@ class ReflectionMethod
     /** @throws ClassDoesNotExist */
     private function assertClassExist(string $className): void
     {
-        if (! ClassExistenceChecker::classExists($className) && ! ClassExistenceChecker::traitExists($className)) {
-            throw new ClassDoesNotExist(sprintf('Method of class %s cannot be used as the class is not loaded', $className));
+        if (! ClassExistenceChecker::classExists($className, true) && ! ClassExistenceChecker::traitExists($className, true)) {
+            throw new ClassDoesNotExist(sprintf('Method of class %s cannot be used as the class does not exist', $className));
         }
     }
 

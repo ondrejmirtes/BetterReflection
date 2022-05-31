@@ -552,8 +552,8 @@ class ReflectionProperty
      */
     private function assertClassExist(string $className): void
     {
-        if (! ClassExistenceChecker::classExists($className) && ! ClassExistenceChecker::traitExists($className)) {
-            throw new ClassDoesNotExist('Property cannot be retrieved as the class is not loaded');
+        if (! ClassExistenceChecker::classExists($className, true) && ! ClassExistenceChecker::traitExists($className, true)) {
+            throw new ClassDoesNotExist('Property cannot be retrieved as the class does not exist');
         }
     }
 

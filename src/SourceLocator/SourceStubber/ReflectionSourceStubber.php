@@ -77,7 +77,7 @@ final class ReflectionSourceStubber implements SourceStubber
     /** @param class-string|trait-string $className */
     public function generateClassStub(string $className): StubData|null
     {
-        if (! ClassExistenceChecker::exists($className)) {
+        if (! ClassExistenceChecker::exists($className, false)) {
             return null;
         }
 

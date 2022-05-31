@@ -152,7 +152,7 @@ class AutoloadSourceLocator extends AbstractSourceLocator
      */
     private function locateClassByName(string $className): array|null
     {
-        if (ClassExistenceChecker::exists($className)) {
+        if (ClassExistenceChecker::exists($className, false)) {
             $classReflection = new ReflectionClass($className);
 
             $filename = $classReflection->getFileName();
