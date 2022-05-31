@@ -54,7 +54,7 @@ final class EvaledCodeSourceLocator extends AbstractSourceLocator
 
         $name = $identifier->getName();
 
-        if (! ClassExistenceChecker::exists($name)) {
+        if (! ClassExistenceChecker::exists($name, false)) {
             return null; // not an available internal class
         }
 

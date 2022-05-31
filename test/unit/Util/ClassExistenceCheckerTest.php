@@ -58,7 +58,7 @@ class ClassExistenceCheckerTest extends TestCase
     #[DataProvider('dataClassExists')]
     public function testClassExists(string $name, bool $exists): void
     {
-        self::assertSame($exists, ClassExistenceChecker::classExists($name));
+        self::assertSame($exists, ClassExistenceChecker::classExists($name, false));
     }
 
     /** @return list<array{0: string, 1: bool}> */
@@ -80,7 +80,7 @@ class ClassExistenceCheckerTest extends TestCase
     #[DataProvider('dataExists')]
     public function testExists(string $name, bool $exists): void
     {
-        self::assertSame($exists, ClassExistenceChecker::exists($name));
+        self::assertSame($exists, ClassExistenceChecker::exists($name, false));
     }
 
     /** @return list<array{0: string, 1: bool}> */
@@ -97,7 +97,7 @@ class ClassExistenceCheckerTest extends TestCase
     #[DataProvider('dataInterfaceExists')]
     public function testInterfaceExists(string $name, bool $exists): void
     {
-        self::assertSame($exists, ClassExistenceChecker::interfaceExists($name));
+        self::assertSame($exists, ClassExistenceChecker::interfaceExists($name, false));
     }
 
     /** @return list<array{0: string, 1: bool}> */
@@ -114,6 +114,6 @@ class ClassExistenceCheckerTest extends TestCase
     #[DataProvider('dataTraitExists')]
     public function testTraitExists(string $name, bool $exists): void
     {
-        self::assertSame($exists, ClassExistenceChecker::traitExists($name));
+        self::assertSame($exists, ClassExistenceChecker::traitExists($name, false));
     }
 }
