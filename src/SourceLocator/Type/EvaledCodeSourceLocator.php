@@ -55,7 +55,7 @@ final class EvaledCodeSourceLocator extends AbstractSourceLocator
         /** @psalm-var class-string|trait-string $name */
         $name = $identifier->getName();
 
-        if (! ClassExistenceChecker::exists($name)) {
+        if (! ClassExistenceChecker::exists($name, false)) {
             return null; // not an available internal class
         }
 
