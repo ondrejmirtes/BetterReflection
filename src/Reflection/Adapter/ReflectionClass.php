@@ -17,6 +17,7 @@ use Roave\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
 use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
+use Roave\BetterReflection\Util\ClassExistenceChecker;
 use Roave\BetterReflection\Util\FileHelper;
 use ValueError;
 
@@ -24,6 +25,7 @@ use function array_combine;
 use function array_map;
 use function array_values;
 use function constant;
+use function func_get_args;
 use function func_num_args;
 use function sprintf;
 use function strtolower;
@@ -497,26 +499,34 @@ final class ReflectionClass extends CoreReflectionClass
 
     /**
      * @param mixed $arg
-     * @param mixed ...$args
+     * @param mixed $args
      *
      * @return object
      */
     #[ReturnTypeWillChange]
     public function newInstance($arg = null, ...$args)
     {
-        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
+        ClassExistenceChecker::classExists($this->getName(), true);
+        $reflection = new CoreReflectionClass($this->getName());
+
+        return $reflection->newInstance(...func_get_args());
     }
 
     /** @return never */
     public function newInstanceWithoutConstructor(): object
     {
-        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
+        ClassExistenceChecker::classExists($this->getName(), true);
+        $reflection = new CoreReflectionClass($this->getName());
+
+        return $reflection->newInstanceWithoutConstructor();
     }
 
-    /** @return never */
-    public function newInstanceArgs(array|null $args = null): object
+    public function newInstanceArgs(?array $args = null): object
     {
-        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
+        ClassExistenceChecker::classExists($this->getName(), true);
+        $reflection = new CoreReflectionClass($this->getName());
+
+        return $reflection->newInstanceArgs($args);
     }
 
     /**
