@@ -17,6 +17,7 @@ use Roave\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
 use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
+use Roave\BetterReflection\Util\ClassExistenceChecker;
 use Roave\BetterReflection\Util\FileHelper;
 use ValueError;
 
@@ -466,25 +467,31 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
-     * @param mixed $arg
-     * @param mixed ...$args
-     *
      * @return object
      */
     #[ReturnTypeWillChange]
-    public function newInstance($arg = null, ...$args)
+    public function newInstance(mixed ...$args)
     {
-        throw new Exception\NotImplemented('Not implemented');
+        ClassExistenceChecker::classExists($this->getName(), true);
+        $reflection = new CoreReflectionClass($this->getName());
+
+        return $reflection->newInstance(...$args);
     }
 
     public function newInstanceWithoutConstructor(): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        ClassExistenceChecker::classExists($this->getName(), true);
+        $reflection = new CoreReflectionClass($this->getName());
+
+        return $reflection->newInstanceWithoutConstructor();
     }
 
-    public function newInstanceArgs(array|null $args = null): object
+    public function newInstanceArgs(array $args = null): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        ClassExistenceChecker::classExists($this->getName(), true);
+        $reflection = new CoreReflectionClass($this->getName());
+
+        return $reflection->newInstanceArgs($args);
     }
 
     /**
