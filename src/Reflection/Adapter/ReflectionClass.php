@@ -25,6 +25,7 @@ use function array_combine;
 use function array_map;
 use function array_values;
 use function constant;
+use function func_get_args;
 use function func_num_args;
 use function sprintf;
 use function strtolower;
@@ -468,14 +469,16 @@ final class ReflectionClass extends CoreReflectionClass
 
     /**
      * @return object
+     * @param mixed $arg
+     * @param mixed $args
      */
     #[ReturnTypeWillChange]
-    public function newInstance(mixed ...$args)
+    public function newInstance($arg = null, ...$args)
     {
         ClassExistenceChecker::classExists($this->getName(), true);
         $reflection = new CoreReflectionClass($this->getName());
 
-        return $reflection->newInstance(...$args);
+        return $reflection->newInstance(...func_get_args());
     }
 
     public function newInstanceWithoutConstructor(): object
