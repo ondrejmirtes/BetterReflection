@@ -51,7 +51,6 @@ use function function_exists;
 use function get_defined_constants;
 use function implode;
 use function in_array;
-use function is_file;
 use function is_resource;
 use function is_string;
 use function method_exists;
@@ -135,14 +134,11 @@ final class ReflectionSourceStubber implements SourceStubber
             return null;
         }
 
-        $functionReflection = new CoreReflectionFunction($functionName);
-        if (
-            $functionReflection->getExtensionName() === false
-            && ($functionReflection->getFileName() !== false && is_file($functionReflection->getFileName()))
-        ) {
-            return null;
-        }
+        return $this->generateFunctionStubFromReflection(new CoreReflectionFunction($functionName));
+    }
 
+    public function generateFunctionStubFromReflection(CoreReflectionFunction $functionReflection): ?StubData
+    {
         $functionNode = $this->builderFactory->function($functionReflection->getShortName());
 
         $this->addDocComment($functionNode, $functionReflection);
@@ -159,10 +155,10 @@ final class ReflectionSourceStubber implements SourceStubber
         assert((is_string($extensionName) && $extensionName !== '') || $extensionName === null);
 
         if (! $functionReflection->inNamespace()) {
-            return $this->createStubData($this->generateStub($functionNode->getNode()), $extensionName, null);
+            return $this->createStubData($this->generateStub($functionNode->getNode()), $extensionName, $functionReflection->getFileName() !== false ? $functionReflection->getFileName() : null);
         }
 
-        return $this->createStubData($this->generateStubInNamespace($functionNode->getNode(), $functionReflection->getNamespaceName()), $extensionName, null);
+        return $this->createStubData($this->generateStubInNamespace($functionNode->getNode(), $functionReflection->getNamespaceName()), $extensionName, $functionReflection->getFileName() !== false ? $functionReflection->getFileName() : null);
     }
 
     public function generateConstantStub(string $constantName): StubData|null
