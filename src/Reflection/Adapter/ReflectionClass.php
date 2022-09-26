@@ -263,6 +263,8 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
+     * @deprecated Use getReflectionConstants()
+     *
      * @param int-mask-of<ReflectionClassConstant::IS_*>|null $filter
      *
      * @return array<non-empty-string, mixed>
@@ -279,7 +281,8 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated Use getReflectionConstant()
+     * @return mixed
      */
     #[ReturnTypeWillChange]
     public function getConstant($name)
@@ -307,7 +310,7 @@ final class ReflectionClass extends CoreReflectionClass
     private function getConstantValue(BetterReflectionClassConstant|BetterReflectionEnumCase $betterConstantOrEnumCase): mixed
     {
         if ($betterConstantOrEnumCase instanceof BetterReflectionEnumCase) {
-            return constant(sprintf('%s::%s', $betterConstantOrEnumCase->getDeclaringClass()->getName(), $betterConstantOrEnumCase->getName()));
+            throw new Exception\NotImplemented('Not implemented');
         }
 
         return $betterConstantOrEnumCase->getValue();

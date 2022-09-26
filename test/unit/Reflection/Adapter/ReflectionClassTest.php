@@ -1185,36 +1185,6 @@ class ReflectionClassTest extends TestCase
         self::assertTrue($reflectionClassAdapter->hasConstant('ENUM_CASE'));
     }
 
-    #[RunInSeparateProcess]
-    public function testGetConstantWithEnumCase(): void
-    {
-        $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
-        $betterReflectionEnumCase
-            ->method('getName')
-            ->willReturn('ENUM_CASE');
-
-        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
-        $betterReflectionEnum
-            ->method('getName')
-            ->willReturn(AutoloadableEnum::class);
-        $betterReflectionEnum
-            ->method('hasCase')
-            ->willReturnMap([['ENUM_CASE', true]]);
-        $betterReflectionEnum
-            ->expects($this->once())
-            ->method('getCase')
-            ->with('ENUM_CASE')
-            ->willReturn($betterReflectionEnumCase);
-
-        $betterReflectionEnumCase
-            ->method('getDeclaringClass')
-            ->willReturn($betterReflectionEnum);
-
-        $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionEnum);
-
-        self::assertInstanceOf(AutoloadableEnum::class, $reflectionClassAdapter->getConstant('ENUM_CASE'));
-    }
-
     public function testGetReflectionConstantWithEnumCase(): void
     {
         $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
