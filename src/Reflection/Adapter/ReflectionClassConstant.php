@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection\Adapter;
 
 use OutOfBoundsException;
+use PhpParser\Node\Expr;
 use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
@@ -55,14 +56,30 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return ReflectionType::fromTypeOrNull($this->betterClassConstantOrEnumCase->getType());
     }
 
+    /**
+     * @deprecated Use getValueExpression()
+     */
     #[ReturnTypeWillChange]
     public function getValue()
     {
         if ($this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase) {
-            return constant(sprintf('%s::%s', $this->betterClassConstantOrEnumCase->getDeclaringClass()->getName(), $this->betterClassConstantOrEnumCase->getName()));
+            throw new Exception\NotImplemented('Not implemented');
         }
 
         return $this->betterClassConstantOrEnumCase->getValue();
+    }
+
+    /**
+     * @deprecated Use getValueExpression()
+     */
+    public function getValueExpr(): Expr
+    {
+        return $this->getValueExpression();
+    }
+
+    public function getValueExpression(): Expr
+    {
+        return $this->betterClassConstantOrEnumCase->getValueExpression();
     }
 
     public function isPublic(): bool
