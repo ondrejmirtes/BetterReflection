@@ -107,7 +107,7 @@ final class ReflectionEnum extends CoreReflectionEnum
         return $this->betterReflectionEnum->getDocComment() ?? false;
     }
 
-    public function getConstructor(): CoreReflectionMethod|null
+    public function getConstructor(): ?CoreReflectionMethod
     {
         $constructor = $this->betterReflectionEnum->getConstructor();
 
@@ -509,8 +509,7 @@ final class ReflectionEnum extends CoreReflectionEnum
         return $this->betterReflectionEnum->implementsInterface($realInterfaceName);
     }
 
-    /** @return never */
-    public function getExtension(): CoreReflectionExtension|null
+    public function getExtension(): ?CoreReflectionExtension
     {
         throw new Exception\NotImplemented('Not implemented');
     }
