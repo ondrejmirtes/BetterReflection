@@ -358,6 +358,14 @@ class ReflectionParameter
         return $this->default !== null;
     }
 
+    /**
+     * @deprecated Use getDefaultValueExpression()
+     */
+    public function getDefaultValueExpr(): Node\Expr|null
+    {
+        return $this->getDefaultValueExpression();
+    }
+
     public function getDefaultValueExpression(): Node\Expr|null
     {
         return $this->default;
@@ -365,6 +373,8 @@ class ReflectionParameter
 
     /**
      * Get the default value of the parameter.
+     *
+     * @deprecated Use getDefaultValueExpression()
      *
      * @throws LogicException
      * @throws UnableToCompileNode
