@@ -70,12 +70,12 @@ final class ReflectionFunction extends CoreReflectionFunction
         throw new NotImplemented('Not implemented');
     }
 
-    public function getClosureScopeClass(): CoreReflectionClass|null
+    public function getClosureScopeClass(): ?CoreReflectionClass
     {
         throw new NotImplemented('Not implemented');
     }
 
-    public function getClosureCalledClass(): CoreReflectionClass|null
+    public function getClosureCalledClass(): ?CoreReflectionClass
     {
         throw new NotImplemented('Not implemented');
     }
@@ -108,7 +108,7 @@ final class ReflectionFunction extends CoreReflectionFunction
     }
 
     /** @psalm-suppress ImplementedReturnTypeMismatch */
-    public function getExtension(): CoreReflectionExtension|null
+    public function getExtension(): ?CoreReflectionExtension
     {
         throw new NotImplemented('Not implemented');
     }
@@ -168,7 +168,7 @@ final class ReflectionFunction extends CoreReflectionFunction
     }
 
     /** @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null */
-    public function getReturnType(): CoreReflectionType|null
+    public function getReturnType(): ?CoreReflectionType
     {
         return ReflectionType::fromTypeOrNull($this->betterReflectionFunction->getReturnType());
     }
@@ -252,7 +252,7 @@ final class ReflectionFunction extends CoreReflectionFunction
     }
 
     /** @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null */
-    public function getTentativeReturnType(): CoreReflectionType|null
+    public function getTentativeReturnType(): ?CoreReflectionType
     {
         return ReflectionType::fromTypeOrNull($this->betterReflectionFunction->getTentativeReturnType());
     }
