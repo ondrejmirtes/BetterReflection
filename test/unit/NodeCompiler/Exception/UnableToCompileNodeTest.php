@@ -117,9 +117,9 @@ final class UnableToCompileNodeTest extends TestCase
             ->method('getName')
             ->willReturn('An\\Example');
 
-        self::assertSame(
+        self::assertStringContainsString(
             sprintf(
-                'Could not get An\Example::SOME_CONSTANT->value while trying to evaluate constant expression in %s in file "" (line -1)',
+                'Could not get An\Example::SOME_CONSTANT->value while trying to evaluate constant expression in %s in file',
                 $contextName,
             ),
             UnableToCompileNode::becauseOfInvalidEnumCasePropertyFetch(
