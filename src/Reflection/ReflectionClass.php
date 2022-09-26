@@ -168,14 +168,16 @@ class ReflectionClass implements Reflection
         $this->shortName = null;
         if ($node->name instanceof Node\Identifier) {
             $namespacedName = $node->namespacedName;
-            assert($namespacedName instanceof Node\Name);
-            /** @psalm-var class-string|trait-string */
-            $name      = $namespacedName->toString();
-            $shortName = $node->name->name;
-            assert($shortName !== '');
+            if ($namespacedName === null) {
+                /** @psalm-var class-string|trait-string */
+                $name = $node->name->name;
+            } else {
+                /** @psalm-var class-string|trait-string */
+                $name = $namespacedName->toString();
+            }
 
             $this->name      = $name;
-            $this->shortName = $shortName;
+            $this->shortName = $node->name->name;
         }
 
         $this->isInterface  = $node instanceof InterfaceNode;
