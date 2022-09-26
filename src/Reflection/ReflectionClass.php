@@ -179,9 +179,14 @@ class ReflectionClass implements Reflection
 
         if ($node->name instanceof Node\Identifier) {
             $namespacedName = $node->namespacedName;
-            assert($namespacedName instanceof Node\Name);
-            /** @psalm-var class-string|trait-string */
-            $name      = $namespacedName->toString();
+            if ($namespacedName === null) {
+                /** @psalm-var class-string|trait-string */
+                $name = $node->name->name;
+            } else {
+                /** @psalm-var class-string|trait-string */
+                $name = $namespacedName->toString();
+            }
+
             $shortName = $node->name->name;
         }
 
