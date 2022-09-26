@@ -511,7 +511,7 @@ final class ReflectionObject extends CoreReflectionObject
         return $this->betterReflectionObject->implementsInterface($realInterfaceName);
     }
 
-    public function getExtension(): CoreReflectionExtension|null
+    public function getExtension(): ?CoreReflectionExtension
     {
         throw new Exception\NotImplemented('Not implemented');
     }
