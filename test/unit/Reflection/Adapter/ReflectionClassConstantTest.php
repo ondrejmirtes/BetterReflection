@@ -105,42 +105,6 @@ class ReflectionClassConstantTest extends TestCase
         self::assertSame($expectedValue, $reflectionClassConstantAdapter->{$methodName}());
     }
 
-    public function testHasTypeForEnumCase(): void
-    {
-        $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter($this->createMock(BetterReflectionEnumCase::class));
-
-        self::assertFalse($reflectionClassConstantAdapter->hasType());
-    }
-
-    public function testGetTypeForEnumCase(): void
-    {
-        $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter($this->createMock(BetterReflectionEnumCase::class));
-
-        self::assertNull($reflectionClassConstantAdapter->getType());
-    }
-
-    public function testGetValueForEnumCase(): void
-    {
-        require_once __DIR__ . '/../../Fixture/Enums.php';
-
-        $reflectionClassAdapter = $this->createMock(BetterReflectionClass::class);
-        $reflectionClassAdapter
-            ->method('getName')
-            ->willReturn(PureEnum::class);
-
-        $reflectionEnumCaseAdapter = $this->createMock(BetterReflectionEnumCase::class);
-        $reflectionEnumCaseAdapter
-            ->method('getDeclaringClass')
-            ->willReturn($reflectionClassAdapter);
-        $reflectionEnumCaseAdapter
-            ->method('getName')
-            ->willReturn('ONE');
-
-        $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter($reflectionEnumCaseAdapter);
-
-        self::assertInstanceOf(PureEnum::class, $reflectionClassConstantAdapter->getValue());
-    }
-
     public function testGetDocCommentReturnsFalseWhenNoDocComment(): void
     {
         $betterReflectionClassConstant = $this->createMock(BetterReflectionClassConstant::class);
