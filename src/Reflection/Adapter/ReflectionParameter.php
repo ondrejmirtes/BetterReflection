@@ -76,7 +76,7 @@ final class ReflectionParameter extends CoreReflectionParameter
     }
 
     /** @return ReflectionClass|null */
-    public function getDeclaringClass(): CoreReflectionClass|null
+    public function getDeclaringClass(): ?CoreReflectionClass
     {
         $declaringClass = $this->betterReflectionParameter->getDeclaringClass();
 
@@ -88,7 +88,7 @@ final class ReflectionParameter extends CoreReflectionParameter
     }
 
     /** @return ReflectionClass|null */
-    public function getClass(): CoreReflectionClass|null
+    public function getClass(): ?CoreReflectionClass
     {
         $type = $this->betterReflectionParameter->getType();
 
