@@ -3119,7 +3119,7 @@ PHP;
             $new->class,
             new LocatedSource($source, null),
         );
-        $array     = $anonymous->getConstant('CACHE_MAP');
+        $array     = $anonymous->getConstant('CACHE_MAP')->getValue();
         self::assertIsArray($array);
     }
 }
