@@ -239,13 +239,22 @@ class ReflectionConstant implements Reflection
         return DeprecatedHelper::isDeprecated($this);
     }
 
+    /**
+     * @deprecated Use getValueExpression()
+     * @return Node\Expr
+     */
+    public function getValueExpr(): Node\Expr
+    {
+        return $this->getValueExpression();
+    }
+
     public function getValueExpression(): Node\Expr
     {
         return $this->value;
     }
 
     /**
-     * @deprecated Use getValueExpr()
+     * @deprecated Use getValueExpression()
      * @return mixed
      */
     public function getValue(): mixed
