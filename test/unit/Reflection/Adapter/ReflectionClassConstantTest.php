@@ -19,7 +19,6 @@ use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
-use Roave\BetterReflectionTest\Fixture\PureEnum;
 use Throwable;
 
 use function array_combine;
@@ -109,42 +108,6 @@ class ReflectionClassConstantTest extends TestCase
         $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter(self::createStub(BetterReflectionEnumCase::class));
 
         self::assertSame($expectedValue, $reflectionClassConstantAdapter->{$methodName}());
-    }
-
-    public function testHasTypeForEnumCase(): void
-    {
-        $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter(self::createStub(BetterReflectionEnumCase::class));
-
-        self::assertFalse($reflectionClassConstantAdapter->hasType());
-    }
-
-    public function testGetTypeForEnumCase(): void
-    {
-        $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter(self::createStub(BetterReflectionEnumCase::class));
-
-        self::assertNull($reflectionClassConstantAdapter->getType());
-    }
-
-    public function testGetValueForEnumCase(): void
-    {
-        require_once __DIR__ . '/../../Fixture/Enums.php';
-
-        $reflectionClassAdapter = self::createStub(BetterReflectionClass::class);
-        $reflectionClassAdapter
-            ->method('getName')
-            ->willReturn(PureEnum::class);
-
-        $reflectionEnumCaseAdapter = self::createStub(BetterReflectionEnumCase::class);
-        $reflectionEnumCaseAdapter
-            ->method('getDeclaringClass')
-            ->willReturn($reflectionClassAdapter);
-        $reflectionEnumCaseAdapter
-            ->method('getName')
-            ->willReturn('ONE');
-
-        $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter($reflectionEnumCaseAdapter);
-
-        self::assertInstanceOf(PureEnum::class, $reflectionClassConstantAdapter->getValue());
     }
 
     public function testGetDocCommentReturnsFalseWhenNoDocComment(): void

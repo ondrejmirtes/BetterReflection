@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflection\Reflection\Adapter;
 
+use PhpParser\Node\Expr;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 
 final class FakeReflectionAttribute
@@ -27,10 +28,20 @@ final class FakeReflectionAttribute
         return $this->betterReflectionAttribute->isRepeated();
     }
 
-    /** @return array<int|string, mixed> */
+    /**
+     * @deprecated Use getArgumentsExpressions()
+     *
+     * @return array<int|string, mixed>
+     */
     public function getArguments(): array
     {
         return $this->betterReflectionAttribute->getArguments();
+    }
+
+    /** @return array<int|string, Expr> */
+    public function getArgumentsExpressions(): array
+    {
+        return $this->betterReflectionAttribute->getArgumentsExpressions();
     }
 
     /** @deprecated */

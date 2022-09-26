@@ -454,6 +454,12 @@ class ReflectionProperty
         return ! $this->hasType() || $this->default !== null;
     }
 
+    /** @deprecated Use getDefaultValueExpression() */
+    public function getDefaultValueExpr(): Node\Expr|null
+    {
+        return $this->getDefaultValueExpression();
+    }
+
     public function getDefaultValueExpression(): Node\Expr|null
     {
         return $this->default;
@@ -462,6 +468,8 @@ class ReflectionProperty
     /**
      * Get the default value of the property (as defined before constructor is
      * called, when the property is defined)
+     *
+     * @deprecated Use getDefaultValueExpr()
      */
     public function getDefaultValue(): mixed
     {

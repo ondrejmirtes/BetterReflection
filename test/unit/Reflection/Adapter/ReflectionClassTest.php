@@ -8,7 +8,6 @@ use Error;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionClassConstant as CoreReflectionClassConstant;
@@ -32,7 +31,6 @@ use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProp
 use Roave\BetterReflection\Util\FileHelper;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\ClassesWithPublicOrNonPublicConstructor\ClassWithConstructorAndArguments;
-use Roave\BetterReflectionTest\Fixture\AutoloadableEnum;
 use stdClass;
 use Throwable;
 
@@ -1183,36 +1181,6 @@ class ReflectionClassTest extends TestCase
         $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionEnum);
 
         self::assertTrue($reflectionClassAdapter->hasConstant('ENUM_CASE'));
-    }
-
-    #[RunInSeparateProcess]
-    public function testGetConstantWithEnumCase(): void
-    {
-        $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
-        $betterReflectionEnumCase
-            ->method('getName')
-            ->willReturn('ENUM_CASE');
-
-        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
-        $betterReflectionEnum
-            ->method('getName')
-            ->willReturn(AutoloadableEnum::class);
-        $betterReflectionEnum
-            ->method('hasCase')
-            ->willReturnMap([['ENUM_CASE', true]]);
-        $betterReflectionEnum
-            ->expects($this->once())
-            ->method('getCase')
-            ->with('ENUM_CASE')
-            ->willReturn($betterReflectionEnumCase);
-
-        $betterReflectionEnumCase
-            ->method('getDeclaringClass')
-            ->willReturn($betterReflectionEnum);
-
-        $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionEnum);
-
-        self::assertInstanceOf(AutoloadableEnum::class, $reflectionClassAdapter->getConstant('ENUM_CASE'));
     }
 
     public function testGetReflectionConstantWithEnumCase(): void

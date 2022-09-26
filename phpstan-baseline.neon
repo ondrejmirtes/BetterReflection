@@ -19,12 +19,6 @@ parameters:
 			path: src/NodeCompiler/CompilerContext.php
 
 		-
-			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionAttribute\:\:newInstance\(\) should never return but return statement found\.$#'
-			identifier: return.never
-			count: 1
-			path: src/Reflection/Adapter/ReflectionAttribute.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<80400, 80699\> and 80012 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -101,6 +95,30 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: src/Reflection/Adapter/ReflectionObject.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionParameter\:\:getDefaultValueExpr\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionParameter.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionParameter\:\:getDefaultValueExpression\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionParameter.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionProperty\:\:getDefaultValueExpr\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionProperty.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionProperty\:\:getDefaultValueExpression\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionProperty.php
 
 		-
 			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionParameter and Roave\\BetterReflection\\Reflection\\ReflectionParameter will always evaluate to true\.$#'

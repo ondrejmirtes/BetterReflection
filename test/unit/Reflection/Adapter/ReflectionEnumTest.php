@@ -8,7 +8,6 @@ use Error;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionClassConstant as CoreReflectionClassConstant;
@@ -35,7 +34,6 @@ use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnum
 use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
 use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
-use Roave\BetterReflectionTest\Fixture\AutoloadableEnum;
 use Roave\BetterReflectionTest\Reflection\Adapter\ReflectionEnumTest\ExampleUnitEnum;
 use stdClass;
 use Throwable;
@@ -836,92 +834,6 @@ class ReflectionEnumTest extends TestCase
         $reflectionClassAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
 
         self::assertTrue($reflectionClassAdapter->hasConstant('ENUM_CASE'));
-    }
-
-    public function testHasConstantReturnsFalseWhenConstantNameIsEmpty(): void
-    {
-        $betterReflectionEnum  = self::createStub(BetterReflectionEnum::class);
-        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
-
-        self::assertFalse($reflectionEnumAdapter->hasConstant(''));
-    }
-
-    public function testGetConstant(): void
-    {
-        $betterReflectionClassConstant = self::createStub(BetterReflectionClassConstant::class);
-        $betterReflectionClassConstant
-            ->method('getValue')
-            ->willReturn(123);
-
-        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
-        $betterReflectionEnum
-            ->expects($this->once())
-            ->method('getConstant')
-            ->with('FOO')
-            ->willReturn($betterReflectionClassConstant);
-
-        $reflectionClassAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
-
-        self::assertSame(123, $reflectionClassAdapter->getConstant('FOO'));
-    }
-
-    public function testGetConstantReturnsFalseWhenConstantNameIsEmpty(): void
-    {
-        $betterReflectionEnum   = self::createStub(BetterReflectionEnum::class);
-        $reflectionClassAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
-
-        self::assertFalse($reflectionClassAdapter->getConstant(''));
-    }
-
-    public function testGetConstantReturnsFalseWhenConstantDoesNotExist(): void
-    {
-        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
-        $betterReflectionEnum
-            ->expects($this->once())
-            ->method('getConstant')
-            ->with('FOO')
-            ->willReturn(null);
-
-        $reflectionClassAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
-
-        self::assertFalse($reflectionClassAdapter->getConstant('FOO'));
-    }
-
-    #[RunInSeparateProcess]
-    public function testGetConstantWithEnumCase(): void
-    {
-        $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
-        $betterReflectionEnumCase
-            ->method('getName')
-            ->willReturn('ENUM_CASE');
-
-        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
-        $betterReflectionEnum
-            ->method('getName')
-            ->willReturn(AutoloadableEnum::class);
-        $betterReflectionEnum
-            ->method('hasCase')
-            ->willReturnMap([['ENUM_CASE', true]]);
-        $betterReflectionEnum
-            ->expects($this->once())
-            ->method('getCase')
-            ->willReturnMap([['ENUM_CASE', $betterReflectionEnumCase]]);
-
-        $betterReflectionEnumCase
-            ->method('getDeclaringClass')
-            ->willReturn($betterReflectionEnum);
-
-        $reflectionClassAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
-
-        self::assertInstanceOf(AutoloadableEnum::class, $reflectionClassAdapter->getConstant('ENUM_CASE'));
-    }
-
-    public function testGetReflectionConstantReturnsFalseWhenConstantNameIsEmpty(): void
-    {
-        $betterReflectionEnum   = self::createStub(BetterReflectionEnum::class);
-        $reflectionClassAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
-
-        self::assertFalse($reflectionClassAdapter->getReflectionConstant(''));
     }
 
     public function testGetReflectionConstantWithEnumCase(): void
