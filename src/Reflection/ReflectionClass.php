@@ -133,9 +133,22 @@ class ReflectionClass implements Reflection
      */
     private array|null $cachedProperties = null;
 
+    /** @var array<class-string, ReflectionClass>|null */
+    private array|null $cachedInterfaces = null;
+
+    /** @var list<class-string>|null */
+    private array|null $cachedInterfaceNames = null;
+
+    /** @var list<ReflectionClass>|null */
+    private array|null $cachedTraits = null;
+
+    private ReflectionMethod|null $cachedConstructor = null;
+
+    private string|null $cachedName = null;
+
     /**
-     * @var array<lowercase-string, ReflectionMethod>|null
      * @psalm-allow-private-mutation
+     * @var array<lowercase-string, ReflectionMethod>|null
      */
     private array|null $cachedMethods = null;
 
@@ -311,14 +324,18 @@ class ReflectionClass implements Reflection
      */
     public function getName(): string
     {
+        if ($this->cachedName !== null) {
+            return $this->cachedName;
+        }
+
         if (! $this->inNamespace()) {
             /** @psalm-var class-string|trait-string */
-            return $this->getShortName();
+            return $this->cachedName = $this->getShortName();
         }
 
         assert($this->name !== null);
 
-        return $this->name;
+        return $this->cachedName = $this->name;
     }
 
     /** @return class-string|null */
@@ -782,9 +799,13 @@ class ReflectionClass implements Reflection
      */
     public function getConstructor(): ReflectionMethod|null
     {
+        if ($this->cachedConstructor !== null) {
+            return $this->cachedConstructor;
+        }
+
         $constructors = array_values(array_filter($this->getMethods(), static fn (ReflectionMethod $method): bool => $method->isConstructor()));
 
-        return $constructors[0] ?? null;
+        return $this->cachedConstructor = $constructors[0] ?? null;
     }
 
     /**
@@ -1241,7 +1262,11 @@ class ReflectionClass implements Reflection
      */
     public function getTraits(): array
     {
-        return array_map(
+        if ($this->cachedTraits !== null) {
+            return $this->cachedTraits;
+        }
+
+        return $this->cachedTraits = array_map(
             fn (string $traitClassName): ReflectionClass => $this->reflector->reflectClass($traitClassName),
             $this->traitClassNames,
         );
@@ -1481,6 +1506,10 @@ class ReflectionClass implements Reflection
      */
     public function getInterfaces(): array
     {
+        if ($this->cachedInterfaces !== null) {
+            return $this->cachedInterfaces;
+        }
+
         $interfaces = array_merge(
             [$this->getCurrentClassImplementedInterfacesIndexedByName()],
             array_map(
@@ -1489,7 +1518,7 @@ class ReflectionClass implements Reflection
             ),
         );
 
-        return array_merge(...array_reverse($interfaces));
+        return $this->cachedInterfaces = array_merge(...array_reverse($interfaces));
     }
 
     /**
@@ -1528,7 +1557,11 @@ class ReflectionClass implements Reflection
      */
     public function getInterfaceNames(): array
     {
-        return array_values(array_map(
+        if ($this->cachedInterfaceNames !== null) {
+            return $this->cachedInterfaceNames;
+        }
+
+        return $this->cachedInterfaceNames = array_values(array_map(
             static fn (self $interface): string => $interface->getName(),
             $this->getInterfaces(),
         ));
