@@ -6,6 +6,7 @@ namespace Roave\BetterReflection\Reflection\Adapter;
 
 use ArgumentCountError;
 use OutOfBoundsException;
+use PhpParser\Node\Expr;
 use PHPUnit\Framework\Attributes\IgnoreMethodForCodeCoverage;
 use ReflectionException as CoreReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
@@ -145,12 +146,26 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /**
+     * @deprecated Use getDefaultValueExpression()
      * @return mixed
      */
     #[ReturnTypeWillChange]
     public function getDefaultValue()
     {
         return $this->betterReflectionProperty->getDefaultValue();
+    }
+
+    /**
+     * @deprecated Use getDefaultValueExpression()
+     */
+    public function getDefaultValueExpr(): Expr
+    {
+        return $this->betterReflectionProperty->getDefaultValueExpression();
+    }
+
+    public function getDefaultValueExpression(): Expr
+    {
+        return $this->betterReflectionProperty->getDefaultValueExpression();
     }
 
     /**

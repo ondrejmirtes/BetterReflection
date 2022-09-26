@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection\Adapter;
 
 use OutOfBoundsException;
+use PhpParser\Node\Expr;
 use ReflectionEnumBackedCase as CoreReflectionEnumBackedCase;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
@@ -114,9 +115,25 @@ final class ReflectionEnumBackedCase extends CoreReflectionEnumBackedCase
         return new ReflectionEnum($this->betterReflectionEnumCase->getDeclaringEnum());
     }
 
+    /**
+     * @deprecated Use getValueExpression()
+     */
     public function getBackingValue(): int|string
     {
         return $this->betterReflectionEnumCase->getValue();
+    }
+
+    /**
+     * @deprecated Use getValueExpression()
+     */
+    public function getValueExpr(): Expr
+    {
+        return $this->getValueExpression();
+    }
+
+    public function getValueExpression(): Expr
+    {
+        return $this->betterReflectionEnumCase->getValueExpression();
     }
 
     public function __get(string $name): mixed
