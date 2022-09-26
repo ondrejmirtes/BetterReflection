@@ -66,7 +66,10 @@ class ReflectionAttribute
         return $this->arguments;
     }
 
-    /** @return array<int|string, mixed> */
+    /**
+     * @deprecated Use getArgumentsExpressions()
+     * @return array<int|string, mixed>
+     */
     public function getArguments(): array
     {
         $compiler = new CompileNodeToValue();
