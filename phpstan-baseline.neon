@@ -109,6 +109,18 @@ parameters:
 			path: src/Reflection/ReflectionAttribute.php
 
 		-
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 5
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:getName\(\) should return class\-string but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
 			message: '#^Call to function is_object\(\) with array\<bool\|float\|int\|string\>\|bool\|float\|int\|string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
