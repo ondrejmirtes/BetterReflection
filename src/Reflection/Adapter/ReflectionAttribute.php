@@ -6,6 +6,7 @@ namespace Roave\BetterReflection\Reflection\Adapter;
 
 use Attribute;
 use OutOfBoundsException;
+use PhpParser\Node\Expr;
 use ReflectionAttribute as CoreReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 
@@ -44,13 +45,22 @@ final class ReflectionAttribute extends CoreReflectionAttribute
         return $this->betterReflectionAttribute->isRepeated();
     }
 
-    /** @return array<int|string, mixed> */
+    /**
+     * @deprecated Use getArgumentsExpressions()
+     * @return array<int|string, mixed>
+     */
     public function getArguments(): array
     {
         return $this->betterReflectionAttribute->getArguments();
     }
 
-    /** @return never */
+    /** @return array<int|string, Expr> */
+    public function getArgumentsExpressions(): array
+    {
+        return $this->betterReflectionAttribute->getArgumentsExpressions();
+    }
+
+    /** @deprecated */
     public function newInstance(): object
     {
         $class = $this->getName();
