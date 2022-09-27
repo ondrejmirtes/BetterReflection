@@ -185,7 +185,7 @@ class ReflectionClassConstant
      */
     public function isPublic(): bool
     {
-        return (bool) ($this->modifiers & CoreReflectionClassConstant::IS_PUBLIC);
+        return (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_PUBLIC);
     }
 
     /**
@@ -194,7 +194,7 @@ class ReflectionClassConstant
     public function isPrivate(): bool
     {
         // Private constant cannot be final
-        return $this->modifiers === CoreReflectionClassConstant::IS_PRIVATE;
+        return $this->modifiers === ReflectionClassConstantAdapter::IS_PRIVATE;
     }
 
     /**
@@ -202,7 +202,7 @@ class ReflectionClassConstant
      */
     public function isProtected(): bool
     {
-        return (bool) ($this->modifiers & CoreReflectionClassConstant::IS_PROTECTED);
+        return (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_PROTECTED);
     }
 
     public function isFinal(): bool
