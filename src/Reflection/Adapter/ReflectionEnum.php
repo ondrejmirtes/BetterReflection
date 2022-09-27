@@ -107,6 +107,7 @@ final class ReflectionEnum extends CoreReflectionEnum
         return $this->betterReflectionEnum->getDocComment() ?? false;
     }
 
+    /** @return ReflectionMethod|null */
     public function getConstructor(): ?CoreReflectionMethod
     {
         $constructor = $this->betterReflectionEnum->getConstructor();
