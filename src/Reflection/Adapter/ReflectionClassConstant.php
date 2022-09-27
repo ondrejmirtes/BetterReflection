@@ -22,6 +22,18 @@ use function sprintf;
  */
 final class ReflectionClassConstant extends CoreReflectionClassConstant
 {
+    /** @internal */
+    public const IS_PUBLIC_COMPATIBILITY = 1;
+
+    /** @internal */
+    public const IS_PROTECTED_COMPATIBILITY = 2;
+
+    /** @internal */
+    public const IS_PRIVATE_COMPATIBILITY = 4;
+
+    /** @internal */
+    public const IS_FINAL_COMPATIBILITY = 32;
+
     public function __construct(private BetterReflectionClassConstant|BetterReflectionEnumCase $betterClassConstantOrEnumCase)
     {
         unset($this->name);
@@ -105,7 +117,7 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
     public function getModifiers(): int
     {
         if ($this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase) {
-            return CoreReflectionClassConstant::IS_PUBLIC;
+            return self::IS_PUBLIC_COMPATIBILITY;
         }
 
         return $this->betterClassConstantOrEnumCase->getModifiers();
