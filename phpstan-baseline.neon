@@ -145,6 +145,102 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$startColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$startColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$startColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$startColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$startColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$startColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$startColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$startColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
 			message: '#^Call to function is_object\(\) with array\<bool\|float\|int\|string\>\|bool\|float\|int\|string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
