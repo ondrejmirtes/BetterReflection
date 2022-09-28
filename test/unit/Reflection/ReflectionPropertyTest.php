@@ -395,34 +395,6 @@ class ReflectionPropertyTest extends TestCase
         $propertyReflection->getEndLine();
     }
 
-    public function testGetStartColumnThrowsExceptionForMagicallyAddedEnumProperty(): void
-    {
-        $reflector = new DefaultReflector(new AggregateSourceLocator([
-            new SingleFileSourceLocator(__DIR__ . '/../Fixture/Enums.php', $this->astLocator),
-            BetterReflectionSingleton::instance()->sourceLocator(),
-        ]));
-
-        $classReflection    = $reflector->reflectClass(StringEnum::class);
-        $propertyReflection = $classReflection->getProperty('name');
-
-        $this->expectException(CodeLocationMissing::class);
-        $propertyReflection->getStartColumn();
-    }
-
-    public function testGetEndColumnThrowsExceptionForMagicallyAddedEnumProperty(): void
-    {
-        $reflector = new DefaultReflector(new AggregateSourceLocator([
-            new SingleFileSourceLocator(__DIR__ . '/../Fixture/Enums.php', $this->astLocator),
-            BetterReflectionSingleton::instance()->sourceLocator(),
-        ]));
-
-        $classReflection    = $reflector->reflectClass(StringEnum::class);
-        $propertyReflection = $classReflection->getProperty('name');
-
-        $this->expectException(CodeLocationMissing::class);
-        $propertyReflection->getEndColumn();
-    }
-
     public function testGetDeclaringAndImplementingClassWithPropertyFromTrait(): void
     {
         $reflector          = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/ClassWithPropertiesAndTraitProperties.php', $this->astLocator));
