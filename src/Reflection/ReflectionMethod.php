@@ -397,7 +397,16 @@ class ReflectionMethod
      */
     public function isConstructor(): bool
     {
-        return strtolower($this->name) === '__construct';
+        if (strtolower($this->getName()) === '__construct') {
+            return true;
+        }
+
+        $declaringClass = $this->getDeclaringClass();
+        if ($declaringClass->inNamespace()) {
+            return false;
+        }
+
+        return strtolower($this->getName()) === strtolower($declaringClass->getShortName());
     }
 
     /**
