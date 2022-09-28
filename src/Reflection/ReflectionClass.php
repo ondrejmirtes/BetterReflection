@@ -376,8 +376,28 @@ class ReflectionClass implements Reflection
         $methodHash      = $this->methodHash($method->getImplementingClass()->getName(), $method->getName());
 
         if (array_key_exists($methodHash, $this->traitsData['modifiers'])) {
-            // PhpParser modifiers are compatible with PHP reflection modifiers
-            $methodModifiers = ($methodModifiers & ~ Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK) | $this->traitsData['modifiers'][$methodHash];
+            $methodModifiersWithoutVisibility = $methodModifiers;
+            if (($methodModifiers & CoreReflectionMethod::IS_PUBLIC) === CoreReflectionMethod::IS_PUBLIC) {
+                $methodModifiersWithoutVisibility -= CoreReflectionMethod::IS_PUBLIC;
+            }
+            if (($methodModifiers & CoreReflectionMethod::IS_PROTECTED) === CoreReflectionMethod::IS_PROTECTED) {
+                $methodModifiersWithoutVisibility -= CoreReflectionMethod::IS_PROTECTED;
+            }
+            if (($methodModifiers & CoreReflectionMethod::IS_PRIVATE) === CoreReflectionMethod::IS_PRIVATE) {
+                $methodModifiersWithoutVisibility -= CoreReflectionMethod::IS_PRIVATE;
+            }
+            $newModifierAst = $this->traitsData['modifiers'][$methodHash];
+            $newModifier = 0;
+            if (($newModifierAst & ClassNode::MODIFIER_PUBLIC) === ClassNode::MODIFIER_PUBLIC) {
+                $newModifier = CoreReflectionMethod::IS_PUBLIC;
+            }
+            if (($newModifierAst & ClassNode::MODIFIER_PROTECTED) === ClassNode::MODIFIER_PROTECTED) {
+                $newModifier = CoreReflectionMethod::IS_PROTECTED;
+            }
+            if (($newModifierAst & ClassNode::MODIFIER_PRIVATE) === ClassNode::MODIFIER_PRIVATE) {
+                $newModifier = CoreReflectionMethod::IS_PRIVATE;
+            }
+            $methodModifiers = $methodModifiersWithoutVisibility | $newModifier;
         }
 
         $createMethod = function (string|null $aliasMethodName) use ($method, $methodModifiers): ReflectionMethod {
