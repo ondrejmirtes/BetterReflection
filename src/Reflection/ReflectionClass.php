@@ -383,14 +383,31 @@ class ReflectionClass implements Reflection
         $methodHash      = $this->methodHash($method->getImplementingClass()->getName(), $method->getName());
 
         if (array_key_exists($methodHash, $this->traitsData['modifiers'])) {
-            // PhpParser modifiers are compatible with PHP reflection modifiers
-            if ($this->traitsData['modifiers'][$methodHash] & Modifiers::VISIBILITY_MASK) {
-                $methodModifiers = ($methodModifiers & ~ Modifiers::VISIBILITY_MASK) | $this->traitsData['modifiers'][$methodHash];
+            $methodModifiersWithoutVisibility = $methodModifiers;
+            if (($methodModifiers & CoreReflectionMethod::IS_PUBLIC) === CoreReflectionMethod::IS_PUBLIC) {
+                $methodModifiersWithoutVisibility -= CoreReflectionMethod::IS_PUBLIC;
             }
-
-            if ($this->traitsData['modifiers'][$methodHash] & Modifiers::FINAL) {
-                $methodModifiers |= Modifiers::FINAL;
+            if (($methodModifiers & CoreReflectionMethod::IS_PROTECTED) === CoreReflectionMethod::IS_PROTECTED) {
+                $methodModifiersWithoutVisibility -= CoreReflectionMethod::IS_PROTECTED;
             }
+            if (($methodModifiers & CoreReflectionMethod::IS_PRIVATE) === CoreReflectionMethod::IS_PRIVATE) {
+                $methodModifiersWithoutVisibility -= CoreReflectionMethod::IS_PRIVATE;
+            }
+            $newModifierAst = $this->traitsData['modifiers'][$methodHash];
+            $newModifier = 0;
+            if (($newModifierAst & Modifiers::PUBLIC) === Modifiers::PUBLIC) {
+                $newModifier = CoreReflectionMethod::IS_PUBLIC;
+            }
+            if (($newModifierAst & Modifiers::PROTECTED) === Modifiers::PROTECTED) {
+                $newModifier = CoreReflectionMethod::IS_PROTECTED;
+            }
+            if (($newModifierAst & Modifiers::PRIVATE) === Modifiers::PRIVATE) {
+                $newModifier = CoreReflectionMethod::IS_PRIVATE;
+            }
+            if (($newModifierAst & Modifiers::FINAL) === Modifiers::FINAL) {
+                $newModifier = CoreReflectionMethod::IS_FINAL;
+            }
+            $methodModifiers = $methodModifiersWithoutVisibility | $newModifier;
         }
 
         $createMethod = function (string|null $aliasMethodName) use ($method, $methodModifiers): ReflectionMethod {
