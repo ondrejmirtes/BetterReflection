@@ -158,7 +158,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     #[ReturnTypeWillChange]
     public function getExtensionName()
     {
-        return $this->betterReflectionMethod->getExtensionName() ?? '';
+        return $this->betterReflectionMethod->getExtensionName() ?? false;
     }
 
     /**
