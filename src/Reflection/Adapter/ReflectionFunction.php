@@ -119,7 +119,7 @@ final class ReflectionFunction extends CoreReflectionFunction
     #[ReturnTypeWillChange]
     public function getExtensionName()
     {
-        return $this->betterReflectionFunction->getExtensionName() ?? '';
+        return $this->betterReflectionFunction->getExtensionName() ?? false;
     }
 
     /**
