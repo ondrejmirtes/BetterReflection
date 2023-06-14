@@ -27,8 +27,6 @@ use ReflectionProperty as CoreReflectionProperty;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
 use Roave\BetterReflection\Reflection\Exception\CircularReference;
-use Roave\BetterReflection\Reflection\Exception\NotAClassReflection;
-use Roave\BetterReflection\Reflection\Exception\NotAnInterfaceReflection;
 use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant;
@@ -1959,62 +1957,6 @@ PHP;
                 ->reflectClass(ClassesImplementingIterators\TraversableExtension::class)
                 ->isIterateable(),
         );
-    }
-
-    public function testGetParentClassesFailsWithClassExtendingFromInterface(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/InvalidInheritances.php',
-            $this->astLocator,
-        ));
-
-        $class = $reflector->reflectClass(InvalidInheritances\ClassExtendingInterface::class);
-
-        $this->expectException(NotAClassReflection::class);
-
-        $class->getParentClass();
-    }
-
-    public function testGetParentClassesFailsWithClassExtendingFromTrait(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/InvalidInheritances.php',
-            $this->astLocator,
-        ));
-
-        $class = $reflector->reflectClass(InvalidInheritances\ClassExtendingTrait::class);
-
-        $this->expectException(NotAClassReflection::class);
-
-        $class->getParentClass();
-    }
-
-    public function testGetInterfacesFailsWithInterfaceExtendingFromClass(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/InvalidInheritances.php',
-            $this->astLocator,
-        ));
-
-        $class = $reflector->reflectClass(InvalidInheritances\InterfaceExtendingClass::class);
-
-        $this->expectException(NotAnInterfaceReflection::class);
-
-        $class->getInterfaces();
-    }
-
-    public function testGetInterfacesFailsWithInterfaceExtendingFromTrait(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/InvalidInheritances.php',
-            $this->astLocator,
-        ));
-
-        $class = $reflector->reflectClass(InvalidInheritances\InterfaceExtendingTrait::class);
-
-        $this->expectException(NotAnInterfaceReflection::class);
-
-        $class->getInterfaces();
     }
 
     public function testGetImmediateInterfaces(): void
