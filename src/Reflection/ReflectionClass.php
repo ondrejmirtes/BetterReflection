@@ -26,8 +26,6 @@ use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\Exception\CircularReference;
 use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
 use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
-use Roave\BetterReflection\Reflection\Exception\NotAClassReflection;
-use Roave\BetterReflection\Reflection\Exception\NotAnInterfaceReflection;
 use Roave\BetterReflection\Reflection\Exception\NotAnObject;
 use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
 use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
@@ -1172,10 +1170,7 @@ class ReflectionClass implements Reflection
     }
 
     /**
-     * Get the parent class, if it is defined. If this class does not have a
-     * specified parent class, this will throw an exception.
-     *
-     * @throws NotAClassReflection
+     * Get the parent class, if it is defined.
      */
     public function getParentClass(): ReflectionClass|null
     {
@@ -1188,12 +1183,7 @@ class ReflectionClass implements Reflection
             throw CircularReference::fromClassName($parentClassName);
         }
 
-        $parentClass = $this->reflector->reflectClass($parentClassName);
-        if ($parentClass->isInterface() || $parentClass->isTrait()) {
-            throw NotAClassReflection::fromReflectionClass($parentClass);
-        }
-
-        return $parentClass;
+        return $this->reflector->reflectClass($parentClassName);
     }
 
     /**
@@ -1849,13 +1839,11 @@ class ReflectionClass implements Reflection
      * This method allows us to retrieve all interfaces parent of this interface. Do not use on class nodes!
      *
      * @return array<class-string, ReflectionClass> parent interfaces of this interface
-     *
-     * @throws NotAnInterfaceReflection
      */
     private function getInterfacesHierarchy(AlreadyVisitedClasses $alreadyVisitedClasses): array
     {
         if (! $this->isInterface) {
-            throw NotAnInterfaceReflection::fromReflectionClass($this);
+            return [];
         }
 
         $interfaceClassName = $this->getName();
