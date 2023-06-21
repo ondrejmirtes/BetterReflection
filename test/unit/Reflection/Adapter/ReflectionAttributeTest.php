@@ -12,6 +12,14 @@ use ReflectionAttribute as CoreReflectionAttribute;
 use ReflectionClass as CoreReflectionClass;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use Roave\BetterReflection\Reflector\DefaultReflector;
+use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
+use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use Roave\BetterReflectionTest\BetterReflectionSingleton;
+use Roave\BetterReflectionTest\Fixture\AttributeThatAcceptsArgument;
+use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatAcceptsArgument;
+use Roave\BetterReflectionTest\Fixture\SomeEnum;
 use Throwable;
 
 use function array_combine;
@@ -111,5 +119,24 @@ class ReflectionAttributeTest extends TestCase
         $reflectionAttributeAdapter = new ReflectionAttributeAdapter($betterReflectionAttribute);
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $reflectionAttributeAdapter->foo;
+    }
+
+    public function testNewInstanceWithEnum(): void
+    {
+        $astLocator = BetterReflectionSingleton::instance()->astLocator();
+        $path       = __DIR__ . '/../../Fixture/AttributeNewInstanceFixtures.php';
+        require_once $path;
+
+        $betterReflection = BetterReflectionSingleton::instance();
+        $reflector        = new DefaultReflector(new AggregateSourceLocator([new SingleFileSourceLocator($path, $astLocator), new PhpInternalSourceLocator($astLocator, $betterReflection->sourceStubber())]));
+        $reflection       = $reflector->reflectClass(ClassWithAttributeThatAcceptsArgument::class);
+        $attributes       = $reflection->getAttributesByName(AttributeThatAcceptsArgument::class);
+        $this->assertCount(1, $attributes);
+        $adapter  = new ReflectionAttributeAdapter($attributes[0]);
+        $instance = $adapter->newInstance();
+        $this->assertInstanceOf(AttributeThatAcceptsArgument::class, $instance);
+        $this->assertInstanceOf(SomeEnum::class, $instance->e);
+        $this->assertSame('ONE', $instance->e->name);
+        $this->assertSame(1, $instance->e->value);
     }
 }

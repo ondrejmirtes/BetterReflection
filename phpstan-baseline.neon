@@ -289,6 +289,12 @@ parameters:
 			path: test/unit/NodeCompiler/CompileNodeToValueTest.php
 
 		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Roave\\\\BetterReflectionTest\\\\Fixture\\\\SomeEnum'' and Roave\\BetterReflectionTest\\Fixture\\SomeEnum will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: test/unit/Reflection/Adapter/ReflectionAttributeTest.php
+
+		-
 			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertSame\(\) with ''DeclaringClass'' and class\-string will always evaluate to false\.$#'
 			identifier: staticMethod.impossibleType
 			count: 1

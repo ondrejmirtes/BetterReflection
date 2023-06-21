@@ -282,9 +282,13 @@ class CompileNodeToValue
 
         $classContext    = $context->getClass();
         $classReflection = $classContext !== null && $classContext->getName() === $className ? $classContext : $context->getReflector()->reflectClass($className);
-
         if ($classReflection instanceof ReflectionEnum) {
             if ($classReflection->hasCase($constantName)) {
+                // The case object can only be returned when the enum is loadable at runtime
+                if (class_exists($className)) {
+                    return constant(sprintf('%s::%s', $className, $constantName));
+                }
+
                 throw Exception\UnableToCompileNode::becauseOfValueIsEnum($context, $classReflection, $node);
             }
         }
