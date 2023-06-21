@@ -76,3 +76,28 @@ enum EnumWithAttributes
     #[AnotherAttr]
     case CASE_WITH_ATTRIBUTES;
 }
+
+enum SomeEnum: int
+{
+
+    case ONE = 1;
+    case TWO = 2;
+
+}
+
+#[Attribute]
+class AttributeThatAcceptsArgument
+{
+
+    public function __construct(public SomeEnum $e)
+    {
+
+    }
+
+}
+
+#[AttributeThatAcceptsArgument(e: SomeEnum::ONE)]
+class ClassWithAttributeThatAcceptsArgument
+{
+
+}
