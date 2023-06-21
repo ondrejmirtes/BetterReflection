@@ -282,6 +282,11 @@ class CompileNodeToValue
 
         $classContext    = $context->getClass();
         $classReflection = $classContext !== null && $classContext->getName() === $className ? $classContext : $context->getReflector()->reflectClass($className);
+        if ($classReflection instanceof ReflectionEnum) {
+            if ($classReflection->hasCase($constantName)) {
+                return constant(sprintf('%s::%s', $className, $constantName));
+            }
+        }
 
         if ($classReflection instanceof ReflectionEnum) {
             if ($classReflection->hasCase($constantName)) {
