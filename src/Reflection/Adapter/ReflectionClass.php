@@ -510,6 +510,14 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
+     * @return class-string|null
+     */
+    public function getParentClassName(): ?string
+    {
+        return $this->betterReflectionClass->getParentClassName();
+    }
+
+    /**
      * @return self|false
      */
     #[ReturnTypeWillChange]
