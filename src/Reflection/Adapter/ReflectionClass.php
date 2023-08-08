@@ -368,7 +368,7 @@ final class ReflectionClass extends CoreReflectionClass
     /** @return list<class-string> */
     public function getInterfaceClassNames(): array
     {
-        return $this->betterReflectionClass->getInterfaceNames();
+        return $this->betterReflectionClass->getInterfaceClassNames();
     }
 
     /**
