@@ -363,6 +363,12 @@ final class ReflectionClass extends CoreReflectionClass
         return $reflectionConstants;
     }
 
+    /** @return list<class-string> */
+    public function getInterfaceClassNames(): array
+    {
+        return $this->betterReflectionClass->getInterfaceNames();
+    }
+
     /**
      * @psalm-mutation-free
      * @return array<class-string, self>
@@ -390,6 +396,12 @@ final class ReflectionClass extends CoreReflectionClass
     public function isInterface(): bool
     {
         return $this->betterReflectionClass->isInterface();
+    }
+
+    /** @return list<trait-string> */
+    public function getTraitClassNames(): array
+    {
+        return $this->betterReflectionClass->getTraitClassNames();
     }
 
     /**
@@ -496,6 +508,12 @@ final class ReflectionClass extends CoreReflectionClass
         $reflection = new CoreReflectionClass($this->getName());
 
         return $reflection->newInstanceArgs($args);
+    }
+
+    /** @return class-string|null */
+    public function getParentClassName(): ?string
+    {
+        return $this->betterReflectionClass->getParentClassName();
     }
 
     /**
