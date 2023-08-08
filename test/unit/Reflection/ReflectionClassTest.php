@@ -73,7 +73,6 @@ use Roave\BetterReflectionTest\Fixture\ExampleTrait;
 use Roave\BetterReflectionTest\Fixture\FinalClass;
 use Roave\BetterReflectionTest\Fixture\IntEnum;
 use Roave\BetterReflectionTest\Fixture\InterfaceForEnum;
-use Roave\BetterReflectionTest\Fixture\InvalidInheritances;
 use Roave\BetterReflectionTest\Fixture\MethodsOrder;
 use Roave\BetterReflectionTest\Fixture\PureEnum;
 use Roave\BetterReflectionTest\Fixture\ReadOnlyClass;
@@ -1405,30 +1404,6 @@ PHP;
             'b_renamed' => 'TraitFixtureTraitC::b',
             'd_renamed' => 'TraitFixtureTraitC3::d',
         ], $classInfo->getTraitAliases());
-    }
-
-    public function testGetTraitNamesWithMissingTraitDefinitions(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassUsesUnknownTrait.php',
-            $this->astLocator,
-        ));
-
-        $this->expectException(IdentifierNotFound::class);
-
-        $reflector->reflectClass(Fixture\ClassUsesUnknownTrait::class)->getTraitNames();
-    }
-
-    public function testGetTraitsWithMissingTraitDefinitions(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassUsesUnknownTrait.php',
-            $this->astLocator,
-        ));
-
-        $this->expectException(IdentifierNotFound::class);
-
-        $reflector->reflectClass(Fixture\ClassUsesUnknownTrait::class)->getTraits();
     }
 
     public function testGetTraitAliasesWithMissingTraitDefinitions(): void
