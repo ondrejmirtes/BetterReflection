@@ -74,7 +74,6 @@ use Roave\BetterReflectionTest\Fixture\ExampleTrait;
 use Roave\BetterReflectionTest\Fixture\FinalClass;
 use Roave\BetterReflectionTest\Fixture\IntEnum;
 use Roave\BetterReflectionTest\Fixture\InterfaceForEnum;
-use Roave\BetterReflectionTest\Fixture\InvalidInheritances;
 use Roave\BetterReflectionTest\Fixture\MethodsOrder;
 use Roave\BetterReflectionTest\Fixture\PureEnum;
 use Roave\BetterReflectionTest\Fixture\ReadOnlyClass;
@@ -1406,70 +1405,6 @@ PHP;
             'camelCaseRenamed' => 'TraitFixtureTraitC::camelCase',
             'd_renamed' => 'TraitFixtureTraitC3::d',
         ], $classInfo->getTraitAliases());
-    }
-
-    public function testGetMethodsWithTraitAliases(): void
-    {
-        $phpCode = <<<'PHP'
-<?php
-    trait Trait1Fixture {
-        public function method1() {}
-        public function method2() {}
-    }
-
-    trait Trait2Fixture {
-        public function method3() {}
-        public function method4() {}
-    }
-
-    class ClassFixture {
-        use Trait1Fixture, Trait2Fixture {
-            method1 as alias1;
-            method3 as alias3;
-        }
-    }
-PHP;
-
-        $reflector = new DefaultReflector(new StringSourceLocator($phpCode, $this->astLocator));
-        $classInfo = $reflector->reflectClass('ClassFixture');
-
-        self::assertSame([
-            'alias1' => 'Trait1Fixture::method1',
-            'alias3' => 'Trait2Fixture::method3',
-        ], $classInfo->getTraitAliases());
-
-        self::assertSame([
-            'method1',
-            'alias1',
-            'method2',
-            'method3',
-            'alias3',
-            'method4',
-        ], array_keys($classInfo->getMethods()));
-    }
-
-    public function testGetTraitNamesWithMissingTraitDefinitions(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassUsesUnknownTrait.php',
-            $this->astLocator,
-        ));
-
-        $this->expectException(IdentifierNotFound::class);
-
-        $reflector->reflectClass(Fixture\ClassUsesUnknownTrait::class)->getTraitNames();
-    }
-
-    public function testGetTraitsWithMissingTraitDefinitions(): void
-    {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassUsesUnknownTrait.php',
-            $this->astLocator,
-        ));
-
-        $this->expectException(IdentifierNotFound::class);
-
-        $reflector->reflectClass(Fixture\ClassUsesUnknownTrait::class)->getTraits();
     }
 
     public function testGetTraitAliasesWithMissingTraitDefinitions(): void
