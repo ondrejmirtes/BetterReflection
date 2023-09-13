@@ -20,7 +20,11 @@ use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\AttributeThatAcceptsArgument;
+use Roave\BetterReflectionTest\Fixture\AttributeThatHasNestedClassUsingNamedArguments;
+use Roave\BetterReflectionTest\Fixture\AttributeThatNeedsNamedArguments;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatAcceptsArgument;
+use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatHasNestedClassUsingNamedArguments;
+use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatNeedsNamedArguments;
 use Roave\BetterReflectionTest\Fixture\SomeEnum;
 use function array_combine;
 use function array_map;
@@ -97,5 +101,23 @@ class ReflectionAttributeTest extends TestCase
         $this->assertInstanceOf(SomeEnum::class, $instance->e);
         $this->assertSame('ONE', $instance->e->name);
         $this->assertSame(1, $instance->e->value);
+    }
+
+    public function testNewInstanceWithNestedClassUsingNamedArguments(): void
+    {
+        $astLocator = BetterReflectionSingleton::instance()->astLocator();
+        $path = __DIR__ . '/../../Fixture/Attributes.php';
+        require_once($path);
+
+        $betterReflection = BetterReflectionSingleton::instance();
+        $reflector  = new DefaultReflector(new AggregateSourceLocator([new SingleFileSourceLocator($path, $astLocator), new PhpInternalSourceLocator($astLocator, $betterReflection->sourceStubber())]));
+        $reflection = $reflector->reflectClass(ClassWithAttributeThatHasNestedClassUsingNamedArguments::class);
+        $attributes = $reflection->getAttributesByName(AttributeThatHasNestedClassUsingNamedArguments::class);
+        $this->assertCount(1, $attributes);
+        $adapter = new ReflectionAttributeAdapter($attributes[0]);
+        $instance = $adapter->newInstance();
+        $this->assertInstanceOf(AttributeThatHasNestedClassUsingNamedArguments::class, $instance);
+        $this->assertNull($instance->nested->e);
+        $this->assertSame('string', $instance->nested->s);
     }
 }
