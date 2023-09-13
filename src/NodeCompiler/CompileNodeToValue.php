@@ -12,7 +12,6 @@ use Roave\BetterReflection\Reflection\ReflectionEnum;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
 
-use function array_map;
 use function assert;
 use function class_exists;
 use function constant;
@@ -313,7 +312,10 @@ class CompileNodeToValue
             throw Exception\UnableToCompileNode::becauseOfClassCannotBeLoaded($context, $node, $className);
         }
 
-        $arguments = array_map(fn (Node\Arg $arg): mixed => $this($arg->value, $context)->value, $node->args);
+        $arguments = [];
+        foreach ($node->args as $argNo => $arg) {
+            $arguments[(($argName = $arg->name) ? $argName->toString() : null) ?? $argNo] = $this($arg->value, $context)->value;
+        }
 
         return new $className(...$arguments);
     }
