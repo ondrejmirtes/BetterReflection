@@ -101,3 +101,23 @@ class ClassWithAttributeThatAcceptsArgument
 {
 
 }
+
+class NestedClassUsingNamedArguments
+{
+    public function __construct(public ?SomeEnum $e = null, public string $s = '')
+    {
+    }
+}
+
+#[Attribute]
+class AttributeThatHasNestedClassUsingNamedArguments
+{
+    public function __construct(public NestedClassUsingNamedArguments $nested)
+    {
+    }
+}
+
+#[AttributeThatHasNestedClassUsingNamedArguments(new NestedClassUsingNamedArguments(s: 'string'))]
+class ClassWithAttributeThatHasNestedClassUsingNamedArguments
+{
+}
