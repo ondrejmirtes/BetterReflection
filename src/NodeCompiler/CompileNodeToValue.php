@@ -271,7 +271,10 @@ class CompileNodeToValue
             throw Exception\UnableToCompileNode::becauseOfClassCannotBeLoaded($context, $node, $className);
         }
 
-        $arguments = array_map(fn (Node\Arg $arg): mixed => $this($arg->value, $context)->value, $node->args);
+        $arguments = [];
+        foreach ($node->args as $argNo => $arg) {
+            $arguments[(($argName = $arg->name) ? $argName->toString() : null) ?? $argNo] = $this($arg->value, $context)->value;
+        }
 
         return new $className(...$arguments);
     }
