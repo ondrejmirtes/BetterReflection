@@ -18,11 +18,19 @@ class Identifier
 
     private const VALID_NAME_REGEXP = '/([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)(\\\\[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)*/';
 
-    private string $name;
+    /**
+     * @var string
+     */
+    private $name;
+    /**
+     * @var \Roave\BetterReflection\Identifier\IdentifierType
+     */
+    private $type;
 
     /** @throws InvalidIdentifierName */
-    public function __construct(string $name, private IdentifierType $type)
+    public function __construct(string $name, IdentifierType $type)
     {
+        $this->type = $type;
         if (
             $name === self::WILDCARD
             || $name === ReflectionFunction::CLOSURE_NAME

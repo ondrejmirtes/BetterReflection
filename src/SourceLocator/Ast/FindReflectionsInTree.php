@@ -27,8 +27,13 @@ use function count;
 /** @internal */
 final class FindReflectionsInTree
 {
-    public function __construct(private AstConversionStrategy $astConversionStrategy)
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy
+     */
+    private $astConversionStrategy;
+    public function __construct(AstConversionStrategy $astConversionStrategy)
     {
+        $this->astConversionStrategy = $astConversionStrategy;
     }
 
     /**
@@ -38,25 +43,39 @@ final class FindReflectionsInTree
      *
      * @return list<ReflectionClass|ReflectionFunction|ReflectionConstant>
      */
-    public function __invoke(
-        Reflector $reflector,
-        array $ast,
-        IdentifierType $identifierType,
-        LocatedSource $locatedSource,
-    ): array {
+    public function __invoke(Reflector $reflector, array $ast, IdentifierType $identifierType, LocatedSource $locatedSource): array
+    {
         $nodeVisitor = new class ($reflector, $identifierType, $locatedSource, $this->astConversionStrategy) extends NodeVisitorAbstract
         {
             /** @var list<ReflectionClass|ReflectionFunction|ReflectionConstant> */
-            private array $reflections = [];
+            private $reflections = [];
 
-            private Namespace_|null $currentNamespace = null;
-
-            public function __construct(
-                private Reflector $reflector,
-                private IdentifierType $identifierType,
-                private LocatedSource $locatedSource,
-                private AstConversionStrategy $astConversionStrategy,
-            ) {
+            /**
+             * @var \PhpParser\Node\Stmt\Namespace_|null
+             */
+            private $currentNamespace = null;
+            /**
+             * @var \Roave\BetterReflection\Reflector\Reflector
+             */
+            private $reflector;
+            /**
+             * @var \Roave\BetterReflection\Identifier\IdentifierType
+             */
+            private $identifierType;
+            /**
+             * @var \Roave\BetterReflection\SourceLocator\Located\LocatedSource
+             */
+            private $locatedSource;
+            /**
+             * @var \Roave\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy
+             */
+            private $astConversionStrategy;
+            public function __construct(Reflector $reflector, IdentifierType $identifierType, LocatedSource $locatedSource, AstConversionStrategy $astConversionStrategy)
+            {
+                $this->reflector = $reflector;
+                $this->identifierType = $identifierType;
+                $this->locatedSource = $locatedSource;
+                $this->astConversionStrategy = $astConversionStrategy;
             }
 
             /**
@@ -107,7 +126,7 @@ final class FindReflectionsInTree
                         try {
                             /** @psalm-suppress InternalClass, InternalMethod */
                             ConstantNodeChecker::assertValidDefineFunctionCall($node);
-                        } catch (InvalidConstantNode) {
+                        } catch (InvalidConstantNode $exception) {
                             return null;
                         }
 
@@ -119,7 +138,7 @@ final class FindReflectionsInTree
                                 $this->reflector->reflectFunction($namespacedName->toString());
 
                                 return null;
-                            } catch (IdentifierNotFound) {
+                            } catch (IdentifierNotFound $exception) {
                                 // Global define()
                             }
                         }
@@ -149,12 +168,10 @@ final class FindReflectionsInTree
                 return $this->reflections;
             }
         };
-
         $nodeTraverser = new NodeTraverser();
         $nodeTraverser->addVisitor(new NameResolver());
         $nodeTraverser->addVisitor($nodeVisitor);
         $nodeTraverser->traverse($ast);
-
         return $nodeVisitor->getReflections();
     }
 }

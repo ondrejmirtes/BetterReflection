@@ -21,8 +21,14 @@ use Roave\BetterReflection\Reflector\Reflector;
 #[CoversClass(ReflectionUnionType::class)]
 class ReflectionTypeTest extends TestCase
 {
-    private Reflector $reflector;
-    private ReflectionParameter $owner;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionParameter
+     */
+    private $owner;
 
     protected function setUp(): void
     {
@@ -89,16 +95,13 @@ class ReflectionTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name|\PhpParser\Node\NullableType|\PhpParser\Node\UnionType|\PhpParser\Node\IntersectionType $node
+     */
     #[DataProvider('dataProvider')]
-    public function test(
-        Node\Identifier|Node\Name|Node\NullableType|Node\UnionType|Node\IntersectionType $node,
-        bool $forceAllowsNull,
-        string $expectedReflectionClass,
-        string $expectedTypeAsString,
-        bool $expectedAllowsNull,
-    ): void {
+    public function test($node, bool $forceAllowsNull, string $expectedReflectionClass, string $expectedTypeAsString, bool $expectedAllowsNull) : void
+    {
         $reflectionType = ReflectionType::createFromNode($this->reflector, $this->owner, $node, $forceAllowsNull);
-
         self::assertInstanceOf($expectedReflectionClass, $reflectionType);
         self::assertSame($expectedTypeAsString, $reflectionType->__toString());
         self::assertSame($expectedAllowsNull, $reflectionType->allowsNull());

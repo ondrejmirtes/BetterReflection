@@ -29,8 +29,13 @@ use function strtolower;
 /** @psalm-suppress PropertyNotSetInConstructor */
 final class ReflectionObject extends CoreReflectionObject
 {
-    public function __construct(private BetterReflectionObject $betterReflectionObject)
+    /**
+     * @var BetterReflectionObject
+     */
+    private $betterReflectionObject;
+    public function __construct(BetterReflectionObject $betterReflectionObject)
     {
+        $this->betterReflectionObject = $betterReflectionObject;
         unset($this->name);
     }
 
@@ -102,7 +107,7 @@ final class ReflectionObject extends CoreReflectionObject
         return $this->betterReflectionObject->getDocComment() ?? false;
     }
 
-    public function getConstructor(): ReflectionMethod|null
+    public function getConstructor(): ?\Roave\BetterReflection\Reflection\Adapter\ReflectionMethod
     {
         $constructor = $this->betterReflectionObject->getConstructor();
 
@@ -146,9 +151,13 @@ final class ReflectionObject extends CoreReflectionObject
      */
     private function getMethodRealName(string $name): string
     {
-        $realMethodNames = array_map(static fn (BetterReflectionMethod $method): string => $method->getName(), $this->betterReflectionObject->getMethods());
+        $realMethodNames = array_map(static function (BetterReflectionMethod $method) : string {
+            return $method->getName();
+        }, $this->betterReflectionObject->getMethods());
 
-        $methodNames = array_combine(array_map(static fn (string $methodName): string => strtolower($methodName), $realMethodNames), $realMethodNames);
+        $methodNames = array_combine(array_map(static function (string $methodName) : string {
+            return strtolower($methodName);
+        }, $realMethodNames), $realMethodNames);
 
         $lowercasedName = strtolower($name);
 
@@ -161,10 +170,9 @@ final class ReflectionObject extends CoreReflectionObject
      */
     public function getMethods($filter = null): array
     {
-        return array_values(array_map(
-            static fn (BetterReflectionMethod $method): ReflectionMethod => new ReflectionMethod($method),
-            $this->betterReflectionObject->getMethods($filter ?? 0),
-        ));
+        return array_values(array_map(static function (BetterReflectionMethod $method) : ReflectionMethod {
+            return new ReflectionMethod($method);
+        }, $this->betterReflectionObject->getMethods($filter ?? 0)));
     }
 
     /**
@@ -200,10 +208,9 @@ final class ReflectionObject extends CoreReflectionObject
      */
     public function getProperties($filter = null): array
     {
-        return array_values(array_map(
-            static fn (BetterReflectionProperty $property): ReflectionProperty => new ReflectionProperty($property),
-            $this->betterReflectionObject->getProperties($filter ?? 0),
-        ));
+        return array_values(array_map(static function (BetterReflectionProperty $property) : ReflectionProperty {
+            return new ReflectionProperty($property);
+        }, $this->betterReflectionObject->getProperties($filter ?? 0)));
     }
 
     /**
@@ -223,12 +230,11 @@ final class ReflectionObject extends CoreReflectionObject
      *
      * @return array<string, mixed>
      */
-    public function getConstants(int|null $filter = null): array
+    public function getConstants(?int $filter = null): array
     {
-        return array_map(
-            static fn (BetterReflectionClassConstant $betterConstant): mixed => $betterConstant->getValue(),
-            $this->betterReflectionObject->getConstants($filter ?? 0),
-        );
+        return array_map(static function (BetterReflectionClassConstant $betterConstant) {
+            return $betterConstant->getValue();
+        }, $this->betterReflectionObject->getConstants($filter ?? 0));
     }
 
     /**
@@ -274,21 +280,19 @@ final class ReflectionObject extends CoreReflectionObject
      *
      * @return list<ReflectionClassConstant>
      */
-    public function getReflectionConstants(int|null $filter = null): array
+    public function getReflectionConstants(?int $filter = null): array
     {
-        return array_values(array_map(
-            static fn (BetterReflectionClassConstant $betterConstant): ReflectionClassConstant => new ReflectionClassConstant($betterConstant),
-            $this->betterReflectionObject->getConstants($filter ?? 0),
-        ));
+        return array_values(array_map(static function (BetterReflectionClassConstant $betterConstant) : ReflectionClassConstant {
+            return new ReflectionClassConstant($betterConstant);
+        }, $this->betterReflectionObject->getConstants($filter ?? 0)));
     }
 
     /** @return array<class-string, ReflectionClass> */
     public function getInterfaces(): array
     {
-        return array_map(
-            static fn (BetterReflectionClass $interface): ReflectionClass => new ReflectionClass($interface),
-            $this->betterReflectionObject->getInterfaces(),
-        );
+        return array_map(static function (BetterReflectionClass $interface) : ReflectionClass {
+            return new ReflectionClass($interface);
+        }, $this->betterReflectionObject->getInterfaces());
     }
 
     /** @return list<class-string> */
@@ -308,12 +312,13 @@ final class ReflectionObject extends CoreReflectionObject
         $traits = $this->betterReflectionObject->getTraits();
 
         /** @var list<trait-string> $traitNames */
-        $traitNames = array_map(static fn (BetterReflectionClass $trait): string => $trait->getName(), $traits);
+        $traitNames = array_map(static function (BetterReflectionClass $trait) : string {
+            return $trait->getName();
+        }, $traits);
 
-        return array_combine(
-            $traitNames,
-            array_map(static fn (BetterReflectionClass $trait): ReflectionClass => new ReflectionClass($trait), $traits),
-        );
+        return array_combine($traitNames, array_map(static function (BetterReflectionClass $trait) : ReflectionClass {
+            return new ReflectionClass($trait);
+        }, $traits));
     }
 
     /** @return list<trait-string> */
@@ -413,7 +418,9 @@ final class ReflectionObject extends CoreReflectionObject
     {
         $realParentClassNames = $this->betterReflectionObject->getParentClassNames();
 
-        $parentClassNames = array_combine(array_map(static fn (string $parentClassName): string => strtolower($parentClassName), $realParentClassNames), $realParentClassNames);
+        $parentClassNames = array_combine(array_map(static function (string $parentClassName) : string {
+            return strtolower($parentClassName);
+        }, $realParentClassNames), $realParentClassNames);
 
         $className           = $class instanceof CoreReflectionClass ? $class->getName() : $class;
         $lowercasedClassName = strtolower($className);
@@ -501,7 +508,9 @@ final class ReflectionObject extends CoreReflectionObject
     {
         $realInterfaceNames = $this->betterReflectionObject->getInterfaceNames();
 
-        $interfaceNames = array_combine(array_map(static fn (string $interfaceName): string => strtolower($interfaceName), $realInterfaceNames), $realInterfaceNames);
+        $interfaceNames = array_combine(array_map(static function (string $interfaceName) : string {
+            return strtolower($interfaceName);
+        }, $realInterfaceNames), $realInterfaceNames);
 
         $interfaceName           = $interface instanceof CoreReflectionClass ? $interface->getName() : $interface;
         $lowercasedInterfaceName = strtolower($interfaceName);
@@ -550,7 +559,7 @@ final class ReflectionObject extends CoreReflectionObject
      *
      * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
-    public function getAttributes(string|null $name = null, int $flags = 0): array
+    public function getAttributes(?string $name = null, int $flags = 0): array
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
@@ -564,7 +573,9 @@ final class ReflectionObject extends CoreReflectionObject
             $attributes = $this->betterReflectionObject->getAttributes();
         }
 
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
+        return array_map(static function (BetterReflectionAttribute $betterReflectionAttribute) {
+            return ReflectionAttributeFactory::create($betterReflectionAttribute);
+        }, $attributes);
     }
 
     public function isEnum(): bool
@@ -572,7 +583,10 @@ final class ReflectionObject extends CoreReflectionObject
         return $this->betterReflectionObject->isEnum();
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterReflectionObject->getName();
