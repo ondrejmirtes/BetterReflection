@@ -7,6 +7,7 @@ namespace Roave\BetterReflection\Reflection\Adapter;
 use OutOfBoundsException;
 use PhpParser\Node\Expr;
 use ReflectionClassConstant as CoreReflectionClassConstant;
+use ReflectionType as CoreReflectionType;
 use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
@@ -52,8 +53,11 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return $this->betterClassConstantOrEnumCase->hasType();
     }
 
-    /** @psalm-mutation-free */
-    public function getType(): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    /**
+     * @psalm-mutation-free
+     * @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+     */
+    public function getType(): ?CoreReflectionType
     {
         if ($this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase) {
             return null;
