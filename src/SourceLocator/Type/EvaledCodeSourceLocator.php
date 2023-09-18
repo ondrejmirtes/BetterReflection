@@ -18,8 +18,13 @@ use function is_file;
 
 final class EvaledCodeSourceLocator extends AbstractSourceLocator
 {
-    public function __construct(Locator $astLocator, private SourceStubber $stubber)
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber
+     */
+    private $stubber;
+    public function __construct(Locator $astLocator, SourceStubber $stubber)
     {
+        $this->stubber = $stubber;
         parent::__construct($astLocator);
     }
 
@@ -29,7 +34,7 @@ final class EvaledCodeSourceLocator extends AbstractSourceLocator
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    protected function createLocatedSource(Identifier $identifier): LocatedSource|null
+    protected function createLocatedSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\LocatedSource
     {
         $classReflection = $this->getInternalReflectionClass($identifier);
 
@@ -46,7 +51,7 @@ final class EvaledCodeSourceLocator extends AbstractSourceLocator
         return new EvaledLocatedSource($stubData->getStub(), $classReflection->getName());
     }
 
-    private function getInternalReflectionClass(Identifier $identifier): ReflectionClass|null
+    private function getInternalReflectionClass(Identifier $identifier): ?\ReflectionClass
     {
         if (! $identifier->isClass()) {
             return null;

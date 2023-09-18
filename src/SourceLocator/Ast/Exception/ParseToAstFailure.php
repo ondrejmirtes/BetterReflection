@@ -54,9 +54,6 @@ class ParseToAstFailure extends RuntimeException
             $additionalInformation .= sprintf(': %s', $previous->getMessage());
         }
 
-        return new self(sprintf(
-            'AST failed to parse in located source%s',
-            $additionalInformation,
-        ), 0, $previous);
+        return new self(sprintf('AST failed to parse in located source%s', $additionalInformation), 0, $previous);
     }
 }
