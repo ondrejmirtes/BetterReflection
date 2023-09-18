@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type;
+namespace PHPStan\BetterReflection\SourceLocator\Type;
 
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\Reflection;
-use Roave\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\Reflection;
+use PHPStan\BetterReflection\Reflector\Reflector;
 
 use function array_key_exists;
 use function spl_object_id;
@@ -21,7 +21,7 @@ final class MemoizingSourceLocator implements SourceLocator
     /** @var array<string, list<Reflection>> indexed by reflector key and identifier type cache key */
     private $cacheByIdentifierTypeKeyAndOid = [];
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\SourceLocator
      */
     private $wrappedSourceLocator;
 
@@ -30,7 +30,7 @@ final class MemoizingSourceLocator implements SourceLocator
         $this->wrappedSourceLocator = $wrappedSourceLocator;
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\PHPStan\BetterReflection\Reflection\Reflection
     {
         $cacheKey = sprintf('%s_%s', $this->reflectorCacheKey($reflector), $this->identifierToCacheKey($identifier));
 
