@@ -12,16 +12,16 @@ use ReflectionException;
 use ReflectionFunction as CoreReflectionFunction;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionParameter as CoreReflectionParameter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionType;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionParameter;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionClassConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
+use PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Traversable;
 
@@ -45,17 +45,17 @@ class ReflectionSourceStubberTest extends TestCase
     private const EXTENSIONS = ['Core', 'standard', 'pcre', 'SPL'];
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber
+     * @var \PHPStan\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber
      */
     private $stubber;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator
      */
     private $phpInternalSourceLocator;
 
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector
+     * @var \PHPStan\BetterReflection\Reflector\Reflector
      */
     private $reflector;
 
