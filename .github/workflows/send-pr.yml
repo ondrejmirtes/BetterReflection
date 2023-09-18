@@ -1,0 +1,47 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name: "Send pull request"
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    send-pr:
+        name: "Send pull request"
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "8.2"
+
+            - name: "Checkout phpstan-src"
+              uses: actions/checkout@v4
+              with:
+                  repository: phpstan/phpstan-src
+                  path: phpstan-src
+                  token: ${{ secrets.PAT_TOKEN }}
+                  ref: 1.10.x
+
+            - name: "Install dependencies"
+              working-directory: ./phpstan-src
+              run: "composer install --no-interaction --no-progress --no-suggest"
+
+            - name: "Change composer.json"
+              working-directory: ./phpstan-src
+              run: "composer require ondrejmirtes/better-reflection:${{ github.ref_name }}"
+
+            - name: "Create Pull Request"
+              id: create-pr
+              uses: peter-evans/create-pull-request@v5
+              with:
+                  token: ${{ secrets.PAT_TOKEN }}
+                  path: ./phpstan-src
+                  branch-suffix: random
+                  delete-branch: true
+                  title: "Update BetterReflection"
+                  body: "Update BetterReflection to ${{ github.ref_name }}"
+                  committer: "phpstan-bot <ondrej+phpstanbot@mirtes.cz>"
+                  commit-message: "Update BetterReflection"
