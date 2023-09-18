@@ -8,10 +8,10 @@ use PhpParser\Lexer\Emulative;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Ast\Parser\MemoizingParser;
-use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Ast\Parser\MemoizingParser;
+use PHPStan\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
 use Roave\BetterReflectionTest\Fixture\ExampleClass;
 
 use function class_exists;

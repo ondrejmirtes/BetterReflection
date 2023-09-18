@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use OutOfBoundsException;
 use PhpParser\Node\Expr;
 use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReturnTypeWillChange;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
 use ValueError;
 
 use function array_map;
@@ -61,7 +61,7 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
     }
 
     /** @psalm-mutation-free
-     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null */
+     * @return \PHPStan\BetterReflection\Reflection\Adapter\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\Adapter\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null */
     public function getType()
     {
         if ($this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase) {

@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection;
+namespace PHPStan\BetterReflection;
 
 use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator as AstLocator;
-use Roave\BetterReflection\SourceLocator\SourceStubber\AggregateSourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\PhpStormStubsSourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
-use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\EvaledCodeSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SourceLocator;
-use Roave\BetterReflection\Util\FindReflectionOnLine;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator as AstLocator;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\AggregateSourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\PhpStormStubsSourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
+use PHPStan\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\EvaledCodeSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\SourceLocator;
+use PHPStan\BetterReflection\Util\FindReflectionOnLine;
 
 use const PHP_VERSION_ID;
 
@@ -32,22 +32,22 @@ final class BetterReflection
     public static $phpVersion = PHP_VERSION_ID;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator|null
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\SourceLocator|null
      */
     private static $sharedSourceLocator = null;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator|null
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\SourceLocator|null
      */
     private $sourceLocator = null;
 
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector|null
+     * @var \PHPStan\BetterReflection\Reflector\Reflector|null
      */
     private static $sharedReflector = null;
 
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector|null
+     * @var \PHPStan\BetterReflection\Reflector\Reflector|null
      */
     private $reflector = null;
 
@@ -67,17 +67,17 @@ final class BetterReflection
     private $astLocator = null;
 
     /**
-     * @var \Roave\BetterReflection\Util\FindReflectionOnLine|null
+     * @var \PHPStan\BetterReflection\Util\FindReflectionOnLine|null
      */
     private $findReflectionOnLine = null;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber|null
+     * @var \PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber|null
      */
     private $sourceStubber = null;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber|null
+     * @var \PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber|null
      */
     private static $sharedSourceStubber = null;
 
