@@ -26,9 +26,9 @@ use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
 use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
-
 use Roave\BetterReflectionTest\Fixture\PHP83ClassForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\PHP85ClassForSourceStubber;
+use Roave\BetterReflectionTest\Fixture\SomeEnum;
 use Traversable;
 
 use function array_filter;
@@ -491,5 +491,15 @@ class ReflectionSourceStubberTest extends TestCase
     public function testUnknownConstant(): void
     {
         self::assertNull($this->stubber->generateConstantStub('SOME_CONSTANT'));
+    }
+
+    public function testClosureWithEnumParameterDefaultValue(): void
+    {
+        require_once __DIR__ . '/../../Fixture/Attributes.php';
+        $closure = function ($test = SomeEnum::ONE): void {
+
+        };
+        $stub = $this->stubber->generateFunctionStubFromReflection(new CoreReflectionFunction($closure));
+        self::assertStringContainsString('$test = \Roave\BetterReflectionTest\Fixture\SomeEnum::ONE', $stub->getStub());
     }
 }
