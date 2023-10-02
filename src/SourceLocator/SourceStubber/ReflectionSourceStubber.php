@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflection\SourceLocator\SourceStubber;
 
-use BackedEnum;
 use LogicException;
 use PhpParser\Builder\Class_;
 use PhpParser\Builder\ClassConst;
@@ -46,11 +45,14 @@ use function array_diff;
 use function array_key_exists;
 use function array_map;
 use function assert;
+use function enum_exists;
 use function explode;
 use function function_exists;
+use function get_class;
 use function get_defined_constants;
 use function implode;
 use function in_array;
+use function is_object;
 use function is_resource;
 use function is_string;
 use function method_exists;
@@ -603,7 +605,21 @@ final class ReflectionSourceStubber implements SourceStubber
             return;
         }
 
-        $parameterNode->setDefault($parameterReflection->getDefaultValue());
+        $defaultValue = $parameterReflection->getDefaultValue();
+        if (is_object($defaultValue)) {
+            $className = get_class($defaultValue);
+            $isEnum    = function_exists('enum_exists') && enum_exists($className, false);
+            if ($isEnum) {
+                $parameterNode->setDefault(new Node\Expr\ClassConstFetch(
+                    new FullyQualified($className),
+                    new Node\Identifier($defaultValue->name),
+                ));
+
+                return;
+            }
+        }
+
+        $parameterNode->setDefault($defaultValue);
     }
 
     private function formatType(CoreReflectionType $type): Name|NullableType|UnionType|IntersectionType

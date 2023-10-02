@@ -253,6 +253,12 @@ parameters:
 			path: src/Reflection/StringCast/ReflectionConstantStringCast.php
 
 		-
+			message: '#^Access to an undefined property object\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
 			message: '#^Call to function method_exists\(\) with ReflectionProperty and ''getType'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -265,8 +271,20 @@ parameters:
 			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
 
 		-
+			message: '#^Class Roave\\BetterReflection\\SourceLocator\\SourceStubber\\BackedEnum not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
 			message: '#^Method Roave\\BetterReflection\\SourceLocator\\SourceStubber\\ReflectionSourceStubber\:\:generateFunctionStubFromReflection\(\) never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Parameter \#1 \$name of class PhpParser\\Node\\Identifier constructor expects string, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
 
