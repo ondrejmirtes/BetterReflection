@@ -31,8 +31,13 @@ use function sprintf;
 #[IgnoreMethodForCodeCoverage(ReflectionMethod::class, 'setAccessible')]
 final class ReflectionMethod extends CoreReflectionMethod
 {
-    public function __construct(private BetterReflectionMethod $betterReflectionMethod)
+    /**
+     * @var BetterReflectionMethod
+     */
+    private $betterReflectionMethod;
+    public function __construct(BetterReflectionMethod $betterReflectionMethod)
     {
+        $this->betterReflectionMethod = $betterReflectionMethod;
         unset($this->name);
         unset($this->class);
     }
@@ -103,7 +108,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     {
         try {
             return $this->betterReflectionMethod->getStartLine();
-        } catch (CodeLocationMissing) {
+        } catch (CodeLocationMissing $exception) {
             return false;
         }
     }
@@ -116,7 +121,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     {
         try {
             return $this->betterReflectionMethod->getEndLine();
-        } catch (CodeLocationMissing) {
+        } catch (CodeLocationMissing $exception) {
             return false;
         }
     }
@@ -170,10 +175,9 @@ final class ReflectionMethod extends CoreReflectionMethod
     /** @return list<ReflectionParameter> */
     public function getParameters(): array
     {
-        return array_map(
-            static fn (BetterReflectionParameter $parameter): ReflectionParameter => new ReflectionParameter($parameter),
-            $this->betterReflectionMethod->getParameters(),
-        );
+        return array_map(static function (BetterReflectionParameter $parameter) : ReflectionParameter {
+            return new ReflectionParameter($parameter);
+        }, $this->betterReflectionMethod->getParameters());
     }
 
     public function hasReturnType(): bool
@@ -286,7 +290,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     {
         try {
             return $this->betterReflectionMethod->invoke($object, $arg, ...$args);
-        } catch (NoObjectProvided) {
+        } catch (NoObjectProvided $exception) {
             return null;
         } catch (Throwable $e) {
             throw new CoreReflectionException($e->getMessage(), 0, $e);
@@ -306,7 +310,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     {
         try {
             return $this->betterReflectionMethod->invokeArgs($object, $args);
-        } catch (NoObjectProvided) {
+        } catch (NoObjectProvided $exception) {
             return null;
         } catch (Throwable $e) {
             throw new CoreReflectionException($e->getMessage(), 0, $e);
@@ -329,7 +333,7 @@ final class ReflectionMethod extends CoreReflectionMethod
             $this->betterReflectionMethod->getPrototype();
 
             return true;
-        } catch (MethodPrototypeNotFound) {
+        } catch (MethodPrototypeNotFound $exception) {
             return false;
         }
     }
@@ -348,7 +352,7 @@ final class ReflectionMethod extends CoreReflectionMethod
      *
      * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
-    public function getAttributes(string|null $name = null, int $flags = 0): array
+    public function getAttributes(?string $name = null, int $flags = 0): array
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
@@ -362,7 +366,9 @@ final class ReflectionMethod extends CoreReflectionMethod
             $attributes = $this->betterReflectionMethod->getAttributes();
         }
 
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
+        return array_map(static function (BetterReflectionAttribute $betterReflectionAttribute) {
+            return ReflectionAttributeFactory::create($betterReflectionAttribute);
+        }, $attributes);
     }
 
     public function hasTentativeReturnType(): bool
@@ -382,7 +388,10 @@ final class ReflectionMethod extends CoreReflectionMethod
         throw new Exception\NotImplemented('Not implemented');
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterReflectionMethod->getName();

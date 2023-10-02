@@ -38,14 +38,7 @@ final class ReflectionConstantStringCast
             $valueAsString = (string) $value;
         }
 
-        return sprintf(
-            'Constant [ <%s> %s %s ] {%s %s }',
-            self::sourceToString($constantReflection),
-            gettype($value),
-            $constantReflection->getName(),
-            self::fileAndLinesToString($constantReflection),
-            $valueAsString,
-        );
+        return sprintf('Constant [ <%s> %s %s ] {%s %s }', self::sourceToString($constantReflection), gettype($value), $constantReflection->getName(), self::fileAndLinesToString($constantReflection), $valueAsString);
     }
 
     /** @psalm-pure */
