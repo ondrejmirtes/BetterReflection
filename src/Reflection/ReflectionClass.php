@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use BackedEnum;
 use PhpParser\Node;
@@ -15,27 +15,27 @@ use PhpParser\Node\Stmt\TraitUse;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionException;
 use ReflectionMethod as CoreReflectionMethod;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
-use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
-use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
-use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
-use Roave\BetterReflection\Reflection\Exception\NotAnObject;
-use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
-use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionClassStringCast;
-use Roave\BetterReflection\Reflection\Support\AlreadyVisitedClasses;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\Util\CalculateReflectionColumn;
-use Roave\BetterReflection\Util\GetLastDocComment;
+use PHPStan\BetterReflection\BetterReflection;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
+use PHPStan\BetterReflection\Reflection\Annotation\AnnotationHelper;
+use PHPStan\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use PHPStan\BetterReflection\Reflection\Exception\CircularReference;
+use PHPStan\BetterReflection\Reflection\Exception\ClassDoesNotExist;
+use PHPStan\BetterReflection\Reflection\Exception\NoObjectProvided;
+use PHPStan\BetterReflection\Reflection\Exception\NotAnObject;
+use PHPStan\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
+use PHPStan\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionClassStringCast;
+use PHPStan\BetterReflection\Reflection\Support\AlreadyVisitedClasses;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Util\CalculateReflectionColumn;
+use PHPStan\BetterReflection\Util\GetLastDocComment;
 use Stringable;
 use Traversable;
 use UnitEnum;
@@ -152,7 +152,7 @@ class ReflectionClass implements Reflection
     private $cachedTraits = null;
 
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionMethod|null
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionMethod|null
      */
     private $cachedConstructor = null;
 
@@ -173,11 +173,11 @@ class ReflectionClass implements Reflection
      */
     private $cachedParentClasses = null;
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector
+     * @var \PHPStan\BetterReflection\Reflector\Reflector
      */
     private $reflector;
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Located\LocatedSource
+     * @var \PHPStan\BetterReflection\SourceLocator\Located\LocatedSource
      */
     private $locatedSource;
     /**
@@ -643,7 +643,7 @@ class ReflectionClass implements Reflection
      *
      * @param non-empty-string $methodName
      */
-    public function getMethod(string $methodName): ?\Roave\BetterReflection\Reflection\ReflectionMethod
+    public function getMethod(string $methodName): ?\PHPStan\BetterReflection\Reflection\ReflectionMethod
     {
         $lowercaseMethodName = strtolower($methodName);
         $methods             = $this->getMethodsIndexedByLowercasedName(AlreadyVisitedClasses::createEmpty());
@@ -697,7 +697,7 @@ class ReflectionClass implements Reflection
      *
      * @param non-empty-string $name
      */
-    public function getConstant(string $name): ?\Roave\BetterReflection\Reflection\ReflectionClassConstant
+    public function getConstant(string $name): ?\PHPStan\BetterReflection\Reflection\ReflectionClassConstant
     {
         return $this->getConstants()[$name] ?? null;
     }
@@ -799,7 +799,7 @@ class ReflectionClass implements Reflection
     /**
      * Get the constructor method for this class.
      */
-    public function getConstructor(): ?\Roave\BetterReflection\Reflection\ReflectionMethod
+    public function getConstructor(): ?\PHPStan\BetterReflection\Reflection\ReflectionMethod
     {
         if ($this->cachedConstructor !== null) {
             return $this->cachedConstructor;
@@ -989,7 +989,7 @@ class ReflectionClass implements Reflection
      *
      * @param non-empty-string $name
      */
-    public function getProperty(string $name): ?\Roave\BetterReflection\Reflection\ReflectionProperty
+    public function getProperty(string $name): ?\PHPStan\BetterReflection\Reflection\ReflectionProperty
     {
         $properties = $this->getProperties();
 
@@ -1064,7 +1064,7 @@ class ReflectionClass implements Reflection
     /**
      * Get the parent class, if it is defined.
      */
-    public function getParentClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
+    public function getParentClass(): ?\PHPStan\BetterReflection\Reflection\ReflectionClass
     {
         $parentClass = $this->getParentClasses()[0] ?? null;
 

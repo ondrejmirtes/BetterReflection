@@ -6,10 +6,10 @@ namespace Roave\BetterReflectionBenchmark;
 
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionParameter;
-use Roave\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\BetterReflection;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter;
+use PHPStan\BetterReflection\Reflector\Reflector;
 
 use function array_map;
 use function array_merge;
@@ -19,7 +19,7 @@ use function array_values;
 class PhpUnitTestCaseBench
 {
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector
+     * @var \PHPStan\BetterReflection\Reflector\Reflector
      */
     private $reflector;
 
