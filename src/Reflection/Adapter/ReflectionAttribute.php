@@ -11,8 +11,13 @@ use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAtt
 /** @template-extends CoreReflectionAttribute<object> */
 final class ReflectionAttribute extends CoreReflectionAttribute
 {
-    public function __construct(private BetterReflectionAttribute $betterReflectionAttribute)
+    /**
+     * @var BetterReflectionAttribute
+     */
+    private $betterReflectionAttribute;
+    public function __construct(BetterReflectionAttribute $betterReflectionAttribute)
     {
+        $this->betterReflectionAttribute = $betterReflectionAttribute;
     }
 
     /** @psalm-mutation-free */
