@@ -52,7 +52,6 @@ use const PHP_VERSION_ID;
 /** @internal */
 final class PhpStormStubsSourceStubber implements SourceStubber
 {
-    private const BUILDER_OPTIONS    = ['shortArraySyntax' => true];
     private const SEARCH_DIRECTORIES = [
         __DIR__ . '/../../../../../jetbrains/phpstorm-stubs',
         __DIR__ . '/../../../vendor/jetbrains/phpstorm-stubs',
@@ -178,10 +177,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     /** @var array<lowercase-string, string> */
     private static array $constantMap;
 
-    public function __construct(private Parser $phpParser, private int $phpVersion = PHP_VERSION_ID)
+    public function __construct(private Parser $phpParser, Standard $prettyPrinter, private int $phpVersion = PHP_VERSION_ID)
     {
         $this->builderFactory = new BuilderFactory();
-        $this->prettyPrinter  = new Standard(self::BUILDER_OPTIONS);
+        $this->prettyPrinter  = $prettyPrinter;
 
         $this->cachingVisitor = new CachingVisitor($this->builderFactory);
 
