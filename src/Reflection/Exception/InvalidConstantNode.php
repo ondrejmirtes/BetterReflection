@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection\Exception;
 
 use PhpParser\Node;
-use PhpParser\PrettyPrinter\Standard;
+use Roave\BetterReflection\BetterReflection;
 use RuntimeException;
 
 use function sprintf;
@@ -15,9 +15,10 @@ class InvalidConstantNode extends RuntimeException
 {
     public static function create(Node $node): self
     {
+        $printer = (new BetterReflection())->printer();
         return new self(sprintf(
             'Invalid constant node (first 50 characters: %s)',
-            substr((new Standard())->prettyPrint([$node]), 0, 50),
+            substr($printer->prettyPrint([$node]), 0, 50),
         ));
     }
 }
