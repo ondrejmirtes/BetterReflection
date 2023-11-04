@@ -7,6 +7,7 @@ namespace Roave\BetterReflection;
 use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use Roave\BetterReflection\Reflector\DefaultReflector;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Ast\Locator as AstLocator;
@@ -48,18 +49,30 @@ final class BetterReflection
 
     private static SourceStubber|null $sharedSourceStubber = null;
 
+    /**
+     * @var Standard|null
+     */
+    private static $sharedPrinter = null;
+
+    /**
+     * @var Standard|null
+     */
+    private $printer = null;
+
     public static function populate(
         int $phpVersion,
         SourceLocator $sourceLocator,
         Reflector $classReflector,
         Parser $phpParser,
         SourceStubber $sourceStubber,
+        Standard $printer,
     ): void {
         self::$phpVersion          = $phpVersion;
         self::$sharedSourceLocator = $sourceLocator;
         self::$sharedReflector     = $classReflector;
         self::$sharedPhpParser     = $phpParser;
         self::$sharedSourceStubber = $sourceStubber;
+        self::$sharedPrinter       = $printer;
     }
 
     public function __construct()
@@ -68,6 +81,7 @@ final class BetterReflection
         $this->reflector     = self::$sharedReflector;
         $this->phpParser     = self::$sharedPhpParser;
         $this->sourceStubber = self::$sharedSourceStubber;
+        $this->printer       = self::$sharedPrinter;
     }
 
     public function sourceLocator(): SourceLocator
@@ -113,8 +127,13 @@ final class BetterReflection
     {
         return $this->sourceStubber
             ?? $this->sourceStubber = new AggregateSourceStubber(
-                new PhpStormStubsSourceStubber($this->phpParser(), self::$phpVersion),
-                new ReflectionSourceStubber(),
+                new PhpStormStubsSourceStubber($this->phpParser(), $this->printer(), self::$phpVersion),
+                new ReflectionSourceStubber($this->printer()),
             );
+    }
+
+    public function printer(): Standard
+    {
+        return $this->printer ?? $this->printer = new Standard(['shortArraySyntax' => true]);
     }
 }

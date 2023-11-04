@@ -64,16 +64,14 @@ use function sprintf;
  */
 final class ReflectionSourceStubber implements SourceStubber
 {
-    private const BUILDER_OPTIONS = ['shortArraySyntax' => true];
-
     private BuilderFactory $builderFactory;
 
     private Standard $prettyPrinter;
 
-    public function __construct()
+    public function __construct(Standard $prettyPrinter)
     {
         $this->builderFactory = new BuilderFactory();
-        $this->prettyPrinter  = new Standard(self::BUILDER_OPTIONS);
+        $this->prettyPrinter  = $prettyPrinter;
     }
 
     /** @param class-string|trait-string $className */

@@ -67,7 +67,7 @@ class ReflectionSourceStubberTest extends TestCase
     {
         parent::setUp();
 
-        $this->stubber                  = new ReflectionSourceStubber();
+        $this->stubber                  = new ReflectionSourceStubber(BetterReflectionSingleton::instance()->printer());
         $this->phpInternalSourceLocator = new PhpInternalSourceLocator(
             BetterReflectionSingleton::instance()->astLocator(),
             $this->stubber,
