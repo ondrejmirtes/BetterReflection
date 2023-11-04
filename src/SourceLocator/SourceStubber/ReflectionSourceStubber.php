@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\SourceStubber;
+namespace PHPStan\BetterReflection\SourceLocator\SourceStubber;
 
 use LogicException;
 use PhpParser\Builder\Class_;
@@ -37,8 +37,8 @@ use ReflectionParameter;
 use ReflectionProperty as CoreReflectionProperty;
 use ReflectionType as CoreReflectionType;
 use ReflectionUnionType as CoreReflectionUnionType;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
-use Roave\BetterReflection\Util\ClassExistenceChecker;
+use PHPStan\BetterReflection\Reflection\Annotation\AnnotationHelper;
+use PHPStan\BetterReflection\Util\ClassExistenceChecker;
 
 use function array_diff;
 use function array_key_exists;
@@ -81,7 +81,7 @@ final class ReflectionSourceStubber implements SourceStubber
     }
 
     /** @param class-string|trait-string $className */
-    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
+    public function generateClassStub(string $className): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         if (! ClassExistenceChecker::exists($className, false)) {
             return null;
@@ -136,7 +136,7 @@ final class ReflectionSourceStubber implements SourceStubber
         return $this->createStubData($stub, $extensionName, $classReflection->getFileName() !== false ? $classReflection->getFileName() : null);
     }
 
-    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
+    public function generateFunctionStub(string $functionName): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         if (! function_exists($functionName)) {
             return null;
@@ -171,7 +171,7 @@ final class ReflectionSourceStubber implements SourceStubber
         return $this->createStubData($this->generateStubInNamespace($functionNode->getNode(), $functionReflection->getNamespaceName()), $extensionName, $functionReflection->getFileName() !== false ? $functionReflection->getFileName() : null);
     }
 
-    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
+    public function generateConstantStub(string $constantName): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $constantData = $this->findConstantData($constantName);
 
