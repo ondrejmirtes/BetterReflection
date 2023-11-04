@@ -6,6 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection;
 
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Parser;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -38,13 +39,16 @@ class ReflectionFunctionAbstractTest extends TestCase
 
     private Locator $astLocator;
 
+    private Standard $prettyPrinter;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $configuration    = BetterReflectionSingleton::instance();
-        $this->parser     = $configuration->phpParser();
-        $this->astLocator = $configuration->astLocator();
+        $configuration       = BetterReflectionSingleton::instance();
+        $this->parser        = $configuration->phpParser();
+        $this->astLocator    = $configuration->astLocator();
+        $this->prettyPrinter = $configuration->printer();
     }
 
     public function testNameMethodsWithNamespace(): void
@@ -505,7 +509,7 @@ class ReflectionFunctionAbstractTest extends TestCase
 
     public function testHasTentativeReturnType(): void
     {
-        $classInfo  = (new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, new ReflectionSourceStubber())))->reflectClass(CoreReflectionClass::class);
+        $classInfo  = (new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, new ReflectionSourceStubber($this->prettyPrinter))))->reflectClass(CoreReflectionClass::class);
         $methodInfo = $classInfo->getMethod('getName');
 
         self::assertTrue($methodInfo->hasTentativeReturnType());
@@ -524,7 +528,7 @@ class ReflectionFunctionAbstractTest extends TestCase
 
     public function testGetTentativeReturnType(): void
     {
-        $classInfo  = (new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, new ReflectionSourceStubber())))->reflectClass(CoreReflectionClass::class);
+        $classInfo  = (new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, new ReflectionSourceStubber($this->prettyPrinter))))->reflectClass(CoreReflectionClass::class);
         $methodInfo = $classInfo->getMethod('getName');
 
         $returnType = $methodInfo->getTentativeReturnType();
