@@ -16,6 +16,7 @@ use ParseError;
 use PDO;
 use PDOException;
 use PhpParser\Parser;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
@@ -83,6 +84,8 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
     private PhpStormStubsSourceStubber $sourceStubber;
 
+    private Standard $prettyPrinter;
+
     private PhpInternalSourceLocator $phpInternalSourceLocator;
 
     private Reflector $reflector;
@@ -108,7 +111,8 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         $this->phpParser                = $betterReflection->phpParser();
         $this->astLocator               = $betterReflection->astLocator();
-        $this->sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, PHP_VERSION_ID);
+        $this->prettyPrinter            = $betterReflection->printer();
+        $this->sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, PHP_VERSION_ID);
         $this->phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $this->sourceStubber);
         $this->reflector                = new DefaultReflector($this->phpInternalSourceLocator);
     }
@@ -767,7 +771,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
             self::fail('Parsing php-src constant should not trigger userland autoloading');
         });
 
-        $sourceStubber     = new PhpStormStubsSourceStubber(BetterReflectionSingleton::instance()->phpParser());
+        $sourceStubber     = new PhpStormStubsSourceStubber(BetterReflectionSingleton::instance()->phpParser(), BetterReflectionSingleton::instance()->printer());
         $constConstantStub = $sourceStubber->generateConstantStub('JSON_PRETTY_PRINT');
         self::assertNotNull($constConstantStub);
         self::assertStringContainsString("define('JSON_PRETTY_PRINT',", $constConstantStub->getStub());
@@ -778,7 +782,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     {
         require __DIR__ . '/../../Fixture/FakeConstants.php';
 
-        $sourceStubber = new PhpStormStubsSourceStubber(BetterReflectionSingleton::instance()->phpParser());
+        $sourceStubber = new PhpStormStubsSourceStubber(BetterReflectionSingleton::instance()->phpParser(), BetterReflectionSingleton::instance()->printer());
 
         $stubberReflection = new CoreReflectionClass($sourceStubber);
 
@@ -835,7 +839,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataClassInPhpVersion')]
     public function testClassInPhpVersion(string $className, int $phpVersion, bool $isSupported): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
 
         $stub = $sourceStubber->generateClassStub($className);
 
@@ -865,7 +869,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataClassConstantInPhpVersion')]
     public function testClassConstantInPhpVersion(string $className, string $constantName, int $phpVersion, bool $isSupported): void
     {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
 
@@ -910,7 +914,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string|null $returnType = null,
         string|null $tentativeReturnType = null,
     ): void {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $sourceLocator = new AggregateSourceLocator([
             // We need to hack Stringable to make the test work
             new StringSourceLocator('<?php interface Stringable {}', $this->astLocator),
@@ -961,7 +965,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string|null $type = null,
         bool|null $allowsNull = null,
     ): void {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
 
@@ -1000,7 +1004,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataPropertyInPhpVersion')]
     public function testPropertyInPhpVersion(string $className, string $propertyName, int $phpVersion, bool $isSupported, string|null $type = null): void
     {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
 
@@ -1052,7 +1056,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataFunctionInPhpVersion')]
     public function testFunctionInPhpVersion(string $functionName, int $phpVersion, bool $isSupported, string|null $returnType = null): void
     {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
 
@@ -1097,7 +1101,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string|null $type = null,
         bool|null $allowsNull = null,
     ): void {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
 
@@ -1117,7 +1121,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
     public function testLanguageLevelTypeAwareDefaultResourceDoesNotBecomeNativeResourceReturnType(): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, 70400);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, 70400);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
 
         $function = $reflector->reflectFunction('finfo_open');
@@ -1128,7 +1132,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
     public function testLanguageLevelTypeAwareDefaultResourceDoesNotBecomeNativeResourceParameterType(): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, 70400);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, 70400);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
 
         $function  = $reflector->reflectFunction('dba_exists');
@@ -1160,7 +1164,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataConstantInPhpVersion')]
     public function testConstantInPhpVersion(string $constantName, int $phpVersion, bool $isSupported): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
 
         $stub = $sourceStubber->generateConstantStub($constantName);
 
@@ -1185,7 +1189,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataClassIsDeprecatedInPhpVersion')]
     public function testClassIsDeprecatedInPhpVersion(string $className, int $phpVersion, bool $isDeprecated): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
 
         $classReflection = $reflector->reflectClass($className);
@@ -1208,7 +1212,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataClassConstantIsDeprecatedInPhpVersion')]
     public function testClassConstantIsDeprecatedInPhpVersion(string $className, string $constantName, int $phpVersion, bool $isDeprecated): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
 
         $classReflection    = $reflector->reflectClass($className);
@@ -1232,7 +1236,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataMethodIsDeprecatedInPhpVersion')]
     public function testMethodIsDeprecatedInPhpVersion(string $className, string $methodName, int $phpVersion, bool $isDeprecated): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $sourceLocator = new AggregateSourceLocator([
             // We need to hack Stringable to make the test work
             new StringSourceLocator('<?php interface Stringable {}', $this->astLocator),
@@ -1260,7 +1264,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataPropertyIsDeprecatedInPhpVersion')]
     public function testPropertyIsDeprecatedInPhpVersion(string $className, string $propertyName, int $phpVersion, bool $isDeprecated): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
 
         $classReflection    = $reflector->reflectClass($className);
@@ -1287,7 +1291,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     #[DataProvider('dataFunctionIsDeprecatedInPhpVersion')]
     public function testFunctionIsDeprecatedInPhpVersion(string $functionName, int $phpVersion, bool $isDeprecated): void
     {
-        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
 
         $functionReflection = $reflector->reflectFunction($functionName);
@@ -1384,7 +1388,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
         array $interfaceNames,
         int $phpVersion,
     ): void {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
         $class                    = $reflector->reflectClass($className);
@@ -1420,7 +1424,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string $subclassName,
         int $phpVersion,
     ): void {
-        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $phpVersion);
+        $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter, $phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
         $reflector                = new DefaultReflector($phpInternalSourceLocator);
         $class                    = $reflector->reflectClass($className);
