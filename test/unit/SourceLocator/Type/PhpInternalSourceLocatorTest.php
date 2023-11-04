@@ -10,16 +10,16 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionException;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource;
-use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData;
+use PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 
 use function array_filter;
@@ -40,7 +40,7 @@ use const ARRAY_FILTER_USE_KEY;
 class PhpInternalSourceLocatorTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator
      */
     private $phpInternalSourceLocator;
 
@@ -54,7 +54,7 @@ class PhpInternalSourceLocatorTest extends TestCase
     }
 
     /**
-     * @return \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     * @return \PHPStan\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMockReflector()
     {
