@@ -12,9 +12,6 @@ final class MissingComposerJson extends UnexpectedValueException implements Exce
 {
     public static function inProjectPath(string $path): self
     {
-        return new self(sprintf(
-            'Could not locate a "composer.json" file in "%s"',
-            $path,
-        ));
+        return new self(sprintf('Could not locate a "composer.json" file in "%s"', $path));
     }
 }
