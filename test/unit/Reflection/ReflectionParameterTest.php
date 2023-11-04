@@ -44,9 +44,15 @@ use const SORT_ASC as SORT_ASC_TEST;
 #[CoversClass(ReflectionParameter::class)]
 class ReflectionParameterTest extends TestCase
 {
-    private Reflector $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
 
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     public function setUp(): void
     {
@@ -189,8 +195,11 @@ class ReflectionParameterTest extends TestCase
         ];
     }
 
+    /**
+     * @param mixed $expectedValue
+     */
     #[DataProvider('defaultParameterProvider')]
-    public function testDefaultParametersTypes(string $defaultExpression, mixed $expectedValue): void
+    public function testDefaultParametersTypes(string $defaultExpression, $expectedValue): void
     {
         $content = sprintf('<?php class Foo { public function myMethod($var = %s) {} }', $defaultExpression);
 
@@ -259,16 +268,11 @@ class ReflectionParameterTest extends TestCase
 
     /** @param non-empty-string $parameterToTest */
     #[DataProvider('typeProvider')]
-    public function testGetType(
-        string $parameterToTest,
-        string $expectedType,
-    ): void {
+    public function testGetType(string $parameterToTest, string $expectedType) : void
+    {
         $classInfo = $this->reflector->reflectClass(Methods::class);
-
         $method = $classInfo->getMethod('methodWithExplicitTypedParameters');
-
         $type = $method->getParameter($parameterToTest)->getType();
-
         self::assertSame($expectedType, (string) $type);
     }
 
@@ -430,10 +434,7 @@ class ReflectionParameterTest extends TestCase
 
     public function testIsDefaultValueConstantAndGetDefaultValueConstantName(): void
     {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/Methods.php',
-            $this->astLocator,
-        ));
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Methods.php', $this->astLocator));
 
         $classInfo = $reflector->reflectClass(Methods::class);
         $method    = $classInfo->getMethod('methodWithUpperCasedDefaults');
@@ -466,10 +467,7 @@ class ReflectionParameterTest extends TestCase
 
     public function testGetDefaultValueConstantNameClassConstants(): void
     {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassWithConstantsAsDefaultValues.php',
-            $this->astLocator,
-        ));
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/ClassWithConstantsAsDefaultValues.php', $this->astLocator));
         $classInfo = $reflector->reflectClass(ClassWithConstantsAsDefaultValues::class);
         $method    = $classInfo->getMethod('method');
 
@@ -493,10 +491,7 @@ class ReflectionParameterTest extends TestCase
 
     public function testGetDefaultValueConstantNameNamespacedConstants(): void
     {
-        $reflector = new DefaultReflector(new SingleFileSourceLocator(
-            __DIR__ . '/../Fixture/ClassWithConstantsAsDefaultValues.php',
-            $this->astLocator,
-        ));
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/ClassWithConstantsAsDefaultValues.php', $this->astLocator));
         $classInfo = $reflector->reflectClass(ClassWithConstantsAsDefaultValues::class);
         $method    = $classInfo->getMethod('method');
 
@@ -581,13 +576,7 @@ class ReflectionParameterTest extends TestCase
         $parameterNode      = new Node\Param(new Node\Expr\Variable('foo'));
         $functionReflection = $this->createMock(ReflectionFunction::class);
 
-        $parameterReflection = ReflectionParameter::createFromNode(
-            $reflector,
-            $parameterNode,
-            $functionReflection,
-            0,
-            false,
-        );
+        $parameterReflection = ReflectionParameter::createFromNode($reflector, $parameterNode, $functionReflection, 0, false);
 
         $this->expectException(CodeLocationMissing::class);
         $parameterReflection->getStartLine();
@@ -599,13 +588,7 @@ class ReflectionParameterTest extends TestCase
         $parameterNode      = new Node\Param(new Node\Expr\Variable('foo'));
         $functionReflection = $this->createMock(ReflectionFunction::class);
 
-        $parameterReflection = ReflectionParameter::createFromNode(
-            $reflector,
-            $parameterNode,
-            $functionReflection,
-            0,
-            false,
-        );
+        $parameterReflection = ReflectionParameter::createFromNode($reflector, $parameterNode, $functionReflection, 0, false);
 
         $this->expectException(CodeLocationMissing::class);
         $parameterReflection->getEndLine();

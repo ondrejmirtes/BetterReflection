@@ -19,27 +19,26 @@ use function sprintf;
 class ReflectionUnionType extends ReflectionType
 {
     /** @var non-empty-list<ReflectionNamedType|ReflectionIntersectionType> */
-    private array $types;
+    private $types;
 
-    /** @internal */
-    public function __construct(
-        Reflector $reflector,
-        ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        UnionType $type,
-    ) {
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner */
+    public function __construct(Reflector $reflector, $owner, UnionType $type)
+    {
         /** @var non-empty-list<ReflectionNamedType|ReflectionIntersectionType> $types */
-        $types = array_map(static function (Identifier|Name|IntersectionType $type) use ($reflector, $owner): ReflectionNamedType|ReflectionIntersectionType {
+        $types = array_map(static function ($type) use ($reflector, $owner) {
             $type = ReflectionType::createFromNode($reflector, $owner, $type);
             assert($type instanceof ReflectionNamedType || $type instanceof ReflectionIntersectionType);
 
             return $type;
         }, $type->types);
-
         $this->types = $types;
     }
 
-    /** @internal */
-    public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @return $this */
+    public function withOwner($owner)
     {
         $clone = clone $this;
 

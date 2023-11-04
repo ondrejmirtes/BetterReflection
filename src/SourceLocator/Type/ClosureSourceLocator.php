@@ -34,10 +34,18 @@ use function strpos;
 /** @internal */
 final class ClosureSourceLocator implements SourceLocator
 {
-    private CoreFunctionReflection $coreFunctionReflection;
+    /**
+     * @var CoreFunctionReflection
+     */
+    private $coreFunctionReflection;
+    /**
+     * @var \PhpParser\Parser
+     */
+    private $parser;
 
-    public function __construct(Closure $closure, private Parser $parser)
+    public function __construct(Closure $closure, Parser $parser)
     {
+        $this->parser = $parser;
         $this->coreFunctionReflection = new CoreFunctionReflection($closure);
     }
 
@@ -46,7 +54,7 @@ final class ClosureSourceLocator implements SourceLocator
      *
      * @throws ParseToAstFailure
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         return $this->getReflectionFunction($reflector, $identifier->getType());
     }
@@ -61,7 +69,7 @@ final class ClosureSourceLocator implements SourceLocator
         return array_filter([$this->getReflectionFunction($reflector, $identifierType)]);
     }
 
-    private function getReflectionFunction(Reflector $reflector, IdentifierType $identifierType): ReflectionFunction|null
+    private function getReflectionFunction(Reflector $reflector, IdentifierType $identifierType): ?\Roave\BetterReflection\Reflection\ReflectionFunction
     {
         if (! $identifierType->isFunction()) {
             return null;
@@ -81,12 +89,25 @@ final class ClosureSourceLocator implements SourceLocator
         $nodeVisitor = new class ($fileName, $this->coreFunctionReflection->getStartLine()) extends NodeVisitorAbstract
         {
             /** @var list<array{node: Node\Expr\Closure|Node\Expr\ArrowFunction, namespace: Namespace_|null}> */
-            private array $closureNodes = [];
+            private $closureNodes = [];
 
-            private Namespace_|null $currentNamespace = null;
+            /**
+             * @var \PhpParser\Node\Stmt\Namespace_|null
+             */
+            private $currentNamespace = null;
+            /**
+             * @var string
+             */
+            private $fileName;
+            /**
+             * @var int
+             */
+            private $startLine;
 
-            public function __construct(private string $fileName, private int $startLine)
+            public function __construct(string $fileName, int $startLine)
             {
+                $this->fileName = $fileName;
+                $this->startLine = $startLine;
             }
 
             /**
@@ -155,12 +176,7 @@ final class ClosureSourceLocator implements SourceLocator
 
         $closureNodes = $nodeVisitor->getClosureNodes();
 
-        $reflectionFunction = (new NodeToReflection())->__invoke(
-            $reflector,
-            $closureNodes['node'],
-            new AnonymousLocatedSource($fileContents, $fileName),
-            $closureNodes['namespace'],
-        );
+        $reflectionFunction = (new NodeToReflection())->__invoke($reflector, $closureNodes['node'], new AnonymousLocatedSource($fileContents, $fileName), $closureNodes['namespace']);
         assert($reflectionFunction instanceof ReflectionFunction);
 
         return $reflectionFunction;

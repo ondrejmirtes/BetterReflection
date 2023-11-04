@@ -18,7 +18,10 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(ReflectionFunctionStringCast::class)]
 class ReflectionFunctionStringCastTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     protected function setUp(): void
     {

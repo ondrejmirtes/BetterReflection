@@ -22,7 +22,10 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(Locator::class)]
 class LocatorTest extends TestCase
 {
-    private Locator $locator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $locator;
 
     protected function setUp(): void
     {
@@ -45,11 +48,7 @@ class LocatorTest extends TestCase
         class Bar {}
         ';
 
-        $classInfo = $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'Foo\Bar'),
-            $this->getIdentifier('Foo\Bar', IdentifierType::IDENTIFIER_CLASS),
-        );
+        $classInfo = $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'Foo\Bar'), $this->getIdentifier('Foo\Bar', IdentifierType::IDENTIFIER_CLASS));
 
         self::assertInstanceOf(ReflectionClass::class, $classInfo);
     }
@@ -61,11 +60,7 @@ class LocatorTest extends TestCase
         class Bar {}
         ';
 
-        $classInfo = $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'Foo\Bar'),
-            $this->getIdentifier('Foo\BAR', IdentifierType::IDENTIFIER_CLASS),
-        );
+        $classInfo = $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'Foo\Bar'), $this->getIdentifier('Foo\BAR', IdentifierType::IDENTIFIER_CLASS));
 
         self::assertInstanceOf(ReflectionClass::class, $classInfo);
     }
@@ -76,11 +71,7 @@ class LocatorTest extends TestCase
         class Foo {}
         ';
 
-        $classInfo = $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'Foo'),
-            $this->getIdentifier('Foo', IdentifierType::IDENTIFIER_CLASS),
-        );
+        $classInfo = $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'Foo'), $this->getIdentifier('Foo', IdentifierType::IDENTIFIER_CLASS));
 
         self::assertInstanceOf(ReflectionClass::class, $classInfo);
     }
@@ -91,11 +82,7 @@ class LocatorTest extends TestCase
         function foo() {}
         ';
 
-        $functionInfo = $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'foo'),
-            $this->getIdentifier('foo', IdentifierType::IDENTIFIER_FUNCTION),
-        );
+        $functionInfo = $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'foo'), $this->getIdentifier('foo', IdentifierType::IDENTIFIER_FUNCTION));
 
         self::assertInstanceOf(ReflectionFunction::class, $functionInfo);
     }
@@ -106,11 +93,7 @@ class LocatorTest extends TestCase
         const FOO = 1;
         ';
 
-        $constantInfo = $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'FOO'),
-            $this->getIdentifier('FOO', IdentifierType::IDENTIFIER_CONSTANT),
-        );
+        $constantInfo = $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'FOO'), $this->getIdentifier('FOO', IdentifierType::IDENTIFIER_CONSTANT));
 
         self::assertInstanceOf(ReflectionConstant::class, $constantInfo);
     }
@@ -121,11 +104,7 @@ class LocatorTest extends TestCase
         define("FOO", 1);
         ';
 
-        $constantInfo = $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'FOO'),
-            $this->getIdentifier('FOO', IdentifierType::IDENTIFIER_CONSTANT),
-        );
+        $constantInfo = $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'FOO'), $this->getIdentifier('FOO', IdentifierType::IDENTIFIER_CONSTANT));
 
         self::assertInstanceOf(ReflectionConstant::class, $constantInfo);
     }
@@ -135,11 +114,7 @@ class LocatorTest extends TestCase
         $php = '<?php';
 
         $this->expectException(IdentifierNotFound::class);
-        $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'Foo'),
-            $this->getIdentifier('Foo', IdentifierType::IDENTIFIER_CLASS),
-        );
+        $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'Foo'), $this->getIdentifier('Foo', IdentifierType::IDENTIFIER_CLASS));
     }
 
     public function testReflectThrowsExceptionWhenClassNotFoundButNodesExist(): void
@@ -150,11 +125,7 @@ class LocatorTest extends TestCase
         ";
 
         $this->expectException(IdentifierNotFound::class);
-        $this->locator->findReflection(
-            new DefaultReflector(new StringSourceLocator($php, $this->locator)),
-            new LocatedSource($php, 'Foo'),
-            $this->getIdentifier('Foo', IdentifierType::IDENTIFIER_CLASS),
-        );
+        $this->locator->findReflection(new DefaultReflector(new StringSourceLocator($php, $this->locator)), new LocatedSource($php, 'Foo'), $this->getIdentifier('Foo', IdentifierType::IDENTIFIER_CLASS));
     }
 
     public function testFindReflectionsOfTypeThrowsParseToAstFailureExceptionWithInvalidCode(): void
