@@ -5,9 +5,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 ini_set('memory_limit', '512M');
 
-use PhpParser\Lexer;
 use PhpParser\Node\Name;
-use PhpParser\Parser;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PhpParser\NodeVisitorAbstract;
@@ -38,7 +36,7 @@ class PhpPatcher extends NodeVisitorAbstract
             return null;
         }
 
-        $parts = $node->parts;
+        $parts = $node->getParts();
         if (count($parts) < 2) {
             return null;
         }
@@ -57,19 +55,7 @@ class PhpPatcher extends NodeVisitorAbstract
 }
 
 (function () {
-    $lexer = new Lexer\Emulative([
-        'usedAttributes' => [
-            'comments',
-            'startLine', 'endLine',
-            'startTokenPos', 'endTokenPos',
-        ],
-    ]);
-    $parser = new Parser\Php7($lexer, [
-        'useIdentifierNodes' => true,
-        'useConsistentVariableNodes' => true,
-        'useExpressionStatements' => true,
-        'useNopStatements' => false,
-    ]);
+    $parser = (new \PhpParser\ParserFactory())->createForNewestSupportedVersion();
     $nameResolver = new NodeVisitor\NameResolver(null, [
         'replaceNodes' => false
     ]);
@@ -117,11 +103,14 @@ class PhpPatcher extends NodeVisitorAbstract
         }
 
         $code = file_get_contents($fileName);
+        if ($code === '') {
+            continue;
+        }
         $origStmts = $parser->parse($code);
         $newCode = $printer->printFormatPreserving(
             $traverser->traverse($origStmts),
             $origStmts,
-            $lexer->getTokens()
+            $parser->getTokens()
         );
 
         file_put_contents($fileName, $newCode);
