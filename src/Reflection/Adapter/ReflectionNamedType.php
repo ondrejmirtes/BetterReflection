@@ -7,6 +7,7 @@ namespace Roave\BetterReflection\Reflection\Adapter;
 use ReflectionNamedType as CoreReflectionNamedType;
 use Roave\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
 
+use function is_string;
 use function strtolower;
 
 /** @psalm-immutable */
@@ -21,7 +22,7 @@ final class ReflectionNamedType extends CoreReflectionNamedType
     private string $toString;
 
     /** @param BetterReflectionNamedType|non-empty-string $type */
-    public function __construct(BetterReflectionNamedType|string $type, private bool $allowsNull = false)
+    public function __construct(private BetterReflectionNamedType|string $type, private bool $allowsNull = false)
     {
         if ($type instanceof BetterReflectionNamedType) {
             $nameType        = $type->getName();
@@ -75,5 +76,14 @@ final class ReflectionNamedType extends CoreReflectionNamedType
         }
 
         return $isBuiltin;
+    }
+
+    public function isIdentifier(): bool
+    {
+        if (is_string($this->type)) {
+            return true;
+        }
+
+        return $this->type->isIdentifier();
     }
 }
