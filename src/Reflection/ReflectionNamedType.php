@@ -44,7 +44,7 @@ class ReflectionNamedType extends ReflectionType
     public function __construct(
         private Reflector $reflector,
         private ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        Identifier|Name $type,
+        private Identifier|Name $type,
     ) {
         $this->name = $type->toString();
     }
@@ -123,6 +123,11 @@ class ReflectionNamedType extends ReflectionType
             'null' => true,
             default => false,
         };
+    }
+
+    public function isIdentifier(): bool
+    {
+        return $this->type instanceof Identifier;
     }
 
     /** @return non-empty-string */
