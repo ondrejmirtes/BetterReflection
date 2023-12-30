@@ -52,4 +52,9 @@ final class ReflectionNamedType extends CoreReflectionNamedType
 
         return $this->betterReflectionType->isBuiltin();
     }
+
+    public function isIdentifier(): bool
+    {
+        return $this->betterReflectionType->isIdentifier();
+    }
 }
