@@ -401,6 +401,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                     && $className !== 'ReturnTypeWillChange'
                     && $className !== 'AllowDynamicProperties'
                     && $className !== 'SensitiveParameter'
+                    && $className !== 'Override'
                     && ! $this->isSupportedInPhpVersion($classNode)
                 ) {
                     continue;
