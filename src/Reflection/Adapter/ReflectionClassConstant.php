@@ -31,9 +31,17 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
     public const IS_PRIVATE = 4;
 
     public const IS_FINAL = 32;
+    /**
+     * @var BetterReflectionClassConstant|BetterReflectionEnumCase
+     */
+    private $betterClassConstantOrEnumCase;
 
-    public function __construct(private BetterReflectionClassConstant|BetterReflectionEnumCase $betterClassConstantOrEnumCase)
+    /**
+     * @param BetterReflectionClassConstant|BetterReflectionEnumCase $betterClassConstantOrEnumCase
+     */
+    public function __construct($betterClassConstantOrEnumCase)
     {
+        $this->betterClassConstantOrEnumCase = $betterClassConstantOrEnumCase;
         unset($this->name);
         unset($this->class);
     }
@@ -165,7 +173,7 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
      *
      * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
-    public function getAttributes(string|null $name = null, int $flags = 0): array
+    public function getAttributes(?string $name = null, int $flags = 0): array
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
@@ -180,7 +188,9 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         }
 
         /** @psalm-suppress ImpureFunctionCall */
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
+        return array_map(static function (BetterReflectionAttribute $betterReflectionAttribute) {
+            return ReflectionAttributeFactory::create($betterReflectionAttribute);
+        }, $attributes);
     }
 
     public function isFinal(): bool
@@ -197,7 +207,10 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return $this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase;
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterClassConstantOrEnumCase->getName();
