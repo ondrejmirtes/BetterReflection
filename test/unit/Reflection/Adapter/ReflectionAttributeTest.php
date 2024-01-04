@@ -19,8 +19,12 @@ use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\AttributeThatAcceptsArgument;
 use Roave\BetterReflectionTest\Fixture\AttributeThatHasNestedClassUsingNamedArguments;
+use Roave\BetterReflectionTest\Fixture\Bar;
+use Roave\BetterReflectionTest\Fixture\Baz;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatAcceptsArgument;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatHasNestedClassUsingNamedArguments;
+use Roave\BetterReflectionTest\Fixture\Foo;
+use Roave\BetterReflectionTest\Fixture\MyAttr;
 use Roave\BetterReflectionTest\Fixture\SomeEnum;
 use Throwable;
 
@@ -158,5 +162,37 @@ class ReflectionAttributeTest extends TestCase
         $this->assertInstanceOf(AttributeThatHasNestedClassUsingNamedArguments::class, $instance);
         $this->assertNull($instance->nested->e);
         $this->assertSame('string', $instance->nested->s);
+    }
+
+    public function testNewInstanceWithEnumConstantAsArgument(): void
+    {
+        $path = __DIR__ . '/../../Fixture/EnumAttributeConstantFixtures.php';
+        require_once $path;
+        $configuration = BetterReflectionSingleton::instance();
+        $reflector     = new DefaultReflector(new AggregateSourceLocator([
+            new SingleFileSourceLocator($path, $configuration->astLocator()),
+            new PhpInternalSourceLocator($configuration->astLocator(), $configuration->sourceStubber()),
+        ]));
+        $classInfo     = $reflector->reflectClass(Bar::class);
+        $attribute     = $classInfo->getAttributes()[0];
+        $adapter       = new ReflectionAttributeAdapter($attribute);
+
+        self::assertEquals(new MyAttr([1 => 'one']), $adapter->newInstance());
+    }
+
+    public function testNewInstanceWithEnumCaseAsArgument(): void
+    {
+        $path = __DIR__ . '/../../Fixture/EnumAttributeConstantFixtures.php';
+        require_once $path;
+        $configuration = BetterReflectionSingleton::instance();
+        $reflector     = new DefaultReflector(new AggregateSourceLocator([
+            new SingleFileSourceLocator($path, $configuration->astLocator()),
+            new PhpInternalSourceLocator($configuration->astLocator(), $configuration->sourceStubber()),
+        ]));
+        $classInfo     = $reflector->reflectClass(Baz::class);
+        $attribute     = $classInfo->getAttributes()[0];
+        $adapter       = new ReflectionAttributeAdapter($attribute);
+
+        self::assertEquals(new MyAttr([Foo::ONE]), $adapter->newInstance());
     }
 }
