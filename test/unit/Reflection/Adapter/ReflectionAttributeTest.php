@@ -13,8 +13,6 @@ use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionA
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 
 use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
 use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
@@ -25,6 +23,7 @@ use Roave\BetterReflectionTest\Fixture\AttributeThatNeedsNamedArguments;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatAcceptsArgument;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatHasNestedClassUsingNamedArguments;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributeThatNeedsNamedArguments;
+use Roave\BetterReflectionTest\Fixture\MyAttr;
 use Roave\BetterReflectionTest\Fixture\SomeEnum;
 use function array_combine;
 use function array_map;
@@ -119,5 +118,37 @@ class ReflectionAttributeTest extends TestCase
         $this->assertInstanceOf(AttributeThatHasNestedClassUsingNamedArguments::class, $instance);
         $this->assertNull($instance->nested->e);
         $this->assertSame('string', $instance->nested->s);
+    }
+
+    public function testNewInstanceWithEnumConstantAsArgument(): void
+    {
+        $path = __DIR__ . '/../../Fixture/EnumAttributeConstantFixtures.php';
+        require_once $path;
+        $configuration       = BetterReflectionSingleton::instance();
+        $reflector = new DefaultReflector(new AggregateSourceLocator([
+            new SingleFileSourceLocator($path, $configuration->astLocator()),
+            new PhpInternalSourceLocator($configuration->astLocator(), $configuration->sourceStubber()),
+        ]));
+        $classInfo = $reflector->reflectClass(\Roave\BetterReflectionTest\Fixture\Bar::class);
+        $attribute = $classInfo->getAttributes()[0];
+        $adapter = new ReflectionAttributeAdapter($attribute);
+
+        self::assertEquals(new MyAttr([1 => 'one']), $adapter->newInstance());
+    }
+
+    public function testNewInstanceWithEnumCaseAsArgument(): void
+    {
+        $path = __DIR__ . '/../../Fixture/EnumAttributeConstantFixtures.php';
+        require_once $path;
+        $configuration       = BetterReflectionSingleton::instance();
+        $reflector = new DefaultReflector(new AggregateSourceLocator([
+            new SingleFileSourceLocator($path, $configuration->astLocator()),
+            new PhpInternalSourceLocator($configuration->astLocator(), $configuration->sourceStubber()),
+        ]));
+        $classInfo = $reflector->reflectClass(\Roave\BetterReflectionTest\Fixture\Baz::class);
+        $attribute = $classInfo->getAttributes()[0];
+        $adapter = new ReflectionAttributeAdapter($attribute);
+
+        self::assertEquals(new MyAttr([\Roave\BetterReflectionTest\Fixture\Foo::ONE]), $adapter->newInstance());
     }
 }
