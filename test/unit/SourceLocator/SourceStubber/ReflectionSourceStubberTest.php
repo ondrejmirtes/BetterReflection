@@ -26,9 +26,15 @@ use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
 use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
+use Roave\BetterReflectionTest\Fixture\ClassWithAttributesForSourceStubber;
+use Roave\BetterReflectionTest\Fixture\ClassWithAttributesWithArgumentsForSourceStubber;
+use Roave\BetterReflectionTest\Fixture\ClassWithRepeatedAttributesForSourceStubber;
+use Roave\BetterReflectionTest\Fixture\EnumWithAttributesForSourceStubber;
+use Roave\BetterReflectionTest\Fixture\InterfaceWithAttributesForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\PHP83ClassForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\PHP85ClassForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\SomeEnum;
+use Roave\BetterReflectionTest\Fixture\TraitWithAttributesForSourceStubber;
 use Traversable;
 
 use function array_filter;
@@ -105,6 +111,16 @@ class ReflectionSourceStubberTest extends TestCase
         self::assertSame('Core', $stubData->getExtensionName());
     }
 
+    public function testEnumWithAttributesStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/EnumWithAttributesForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(EnumWithAttributesForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/EnumWithAttributesForSourceStubberExpected.php', $stubData->getStub());
+    }
+
     public function testUnknownClass(): void
     {
         /** @phpstan-var class-string $someClassName */
@@ -132,6 +148,66 @@ class ReflectionSourceStubberTest extends TestCase
 
         self::assertNotNull($stubData);
         self::assertStringEqualsFile(__DIR__ . '/../../Fixture/PHP85ClassForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    public function testClassWithAttributesStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/ClassWithAttributesForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(ClassWithAttributesForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/ClassWithAttributesForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    public function testClassWithRepeatedAttributesStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/ClassWithRepeatedAttributesForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(ClassWithRepeatedAttributesForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/ClassWithRepeatedAttributesForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    public function testClassWithAttributesWithArgumentsStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/ClassWithAttributesWithArgumentsForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(ClassWithAttributesWithArgumentsForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/ClassWithAttributesWithArgumentsForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    public function testInterfaceWithAttributesStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/InterfaceWithAttributesForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(InterfaceWithAttributesForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/InterfaceWithAttributesForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    public function testTraitWithAttributesStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/TraitWithAttributesForSourceStubber.php';
+
+        $stubData = $this->stubber->generateClassStub(TraitWithAttributesForSourceStubber::class);
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/TraitWithAttributesForSourceStubberExpected.php', $stubData->getStub());
+    }
+
+    public function testFunctionWithAttributesStub(): void
+    {
+        require_once __DIR__ . '/../../Fixture/FunctionWithAttributesForSourceStubber.php';
+
+        $stubData = $this->stubber->generateFunctionStub('Roave\BetterReflectionTest\Fixture\functionWithAttributesForSourceStubber');
+
+        self::assertNotNull($stubData);
+        self::assertStringEqualsFile(__DIR__ . '/../../Fixture/FunctionWithAttributesForSourceStubberExpected.php', $stubData->getStub());
     }
 
     /** @return list<array{0: string}> */
