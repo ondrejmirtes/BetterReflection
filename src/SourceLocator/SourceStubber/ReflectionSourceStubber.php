@@ -10,6 +10,7 @@ use LogicException;
 use PhpParser\Builder\Class_;
 use PhpParser\Builder\ClassConst;
 use PhpParser\Builder\Enum_;
+use PhpParser\Builder\EnumCase;
 use PhpParser\Builder\Function_;
 use PhpParser\Builder\FunctionLike;
 use PhpParser\Builder\Interface_;
@@ -30,12 +31,13 @@ use ReflectionClass as CoreReflectionClass;
 use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReflectionEnum as CoreReflectionEnum;
 use ReflectionEnumBackedCase as CoreReflectionEnumBackedCase;
+use ReflectionEnumUnitCase as CoreReflectionEnumUnitCase;
 use ReflectionFunction as CoreReflectionFunction;
 use ReflectionFunctionAbstract as CoreReflectionFunctionAbstract;
 use ReflectionIntersectionType as CoreReflectionIntersectionType;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionNamedType as CoreReflectionNamedType;
-use ReflectionParameter;
+use ReflectionParameter as CoreReflectionParameter;
 use ReflectionProperty as CoreReflectionProperty;
 use ReflectionType as CoreReflectionType;
 use ReflectionUnionType as CoreReflectionUnionType;
@@ -110,6 +112,7 @@ final class ReflectionSourceStubber implements SourceStubber
             $this->addTraitUse($classNode, $classReflection);
         }
 
+        $this->addAttributes($classNode, $classReflection);
         $this->addDocComment($classNode, $classReflection);
 
         if ($classNode instanceof Enum_ && $classReflection instanceof CoreReflectionEnum) {
@@ -148,6 +151,7 @@ final class ReflectionSourceStubber implements SourceStubber
         }
         $functionNode = $this->builderFactory->function($shortName);
 
+        $this->addAttributes($functionNode, $functionReflection);
         $this->addDocComment($functionNode, $functionReflection);
         $this->addParameters($functionNode, $functionReflection);
 
@@ -223,6 +227,25 @@ final class ReflectionSourceStubber implements SourceStubber
         }
 
         return $this->builderFactory->class($classReflection->getShortName());
+    }
+
+    private function addAttributes(
+        Class_|Interface_|Trait_|Enum_|ClassConst|EnumCase|Method|Property|Function_|Param $node,
+        CoreReflectionClass|CoreReflectionClassConstant|CoreReflectionEnumUnitCase|CoreReflectionMethod|CoreReflectionProperty|CoreReflectionFunction|CoreReflectionParameter $reflection,
+    ): void {
+        if (!method_exists($reflection, 'getAttributes')) {
+            return;
+        }
+
+        $attributeReflections = $reflection->getAttributes();
+
+        if ($attributeReflections === []) {
+            return;
+        }
+
+        foreach ($attributeReflections as $attributeReflection) {
+            $node->addAttribute($this->builderFactory->attribute(new FullyQualified($attributeReflection->getName()), $attributeReflection->getArguments()));
+        }
     }
 
     private function addDocComment(
@@ -358,6 +381,7 @@ final class ReflectionSourceStubber implements SourceStubber
             $propertyNode = $this->builderFactory->property($propertyReflection->getName());
 
             $this->addPropertyModifiers($propertyNode, $propertyReflection);
+            $this->addAttributes($propertyNode, $propertyReflection);
             $this->addDocComment($propertyNode, $propertyReflection);
 
             if (method_exists($propertyReflection, 'hasDefaultValue') && $propertyReflection->hasDefaultValue()) {
@@ -422,6 +446,8 @@ final class ReflectionSourceStubber implements SourceStubber
         foreach ($enumReflection->getCases() as $enumCaseReflection) {
             $enumCaseNode = $this->builderFactory->enumCase($enumCaseReflection->getName());
 
+            $this->addAttributes($enumCaseNode, $enumCaseReflection);
+
             if ($enumCaseReflection instanceof CoreReflectionEnumBackedCase) {
                 $enumCaseNode->setValue($enumCaseReflection->getBackingValue());
             }
@@ -451,6 +477,8 @@ final class ReflectionSourceStubber implements SourceStubber
                     $classConstantNode->setType($this->formatType($constantType));
                 }
             }
+
+            $this->addAttributes($classConstantNode, $constantReflection);
 
             if ($constantReflection->getDocComment() !== false) {
                 $classConstantNode->setDocComment(new Doc($constantReflection->getDocComment()));
@@ -487,6 +515,7 @@ final class ReflectionSourceStubber implements SourceStubber
             $methodNode = $this->builderFactory->method($methodReflection->getName());
 
             $this->addMethodFlags($methodNode, $methodReflection);
+            $this->addAttributes($methodNode, $methodReflection);
             $this->addDocComment($methodNode, $methodReflection);
             $this->addParameters($methodNode, $methodReflection);
 
@@ -575,12 +604,13 @@ final class ReflectionSourceStubber implements SourceStubber
 
             $this->addParameterModifiers($parameterReflection, $parameterNode);
             $this->setParameterDefaultValue($parameterReflection, $parameterNode);
+            $this->addAttributes($parameterNode, $parameterReflection);
 
             $functionNode->addParam($parameterNode);
         }
     }
 
-    private function addParameterModifiers(ReflectionParameter $parameterReflection, Param $parameterNode): void
+    private function addParameterModifiers(CoreReflectionParameter $parameterReflection, Param $parameterNode): void
     {
         if ($parameterReflection->isVariadic()) {
             $parameterNode->makeVariadic();
@@ -600,7 +630,7 @@ final class ReflectionSourceStubber implements SourceStubber
         $parameterNode->setType($this->formatType($parameterType));
     }
 
-    private function setParameterDefaultValue(ReflectionParameter $parameterReflection, Param $parameterNode): void
+    private function setParameterDefaultValue(CoreReflectionParameter $parameterReflection, Param $parameterNode): void
     {
         if (! $parameterReflection->isOptional()) {
             return;
