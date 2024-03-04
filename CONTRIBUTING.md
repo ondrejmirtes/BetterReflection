@@ -26,6 +26,14 @@ $ curl -s https://getcomposer.org/installer | php
 $ php composer.phar update
 ```
 
+## Create a feature branch
+
+Base your new branch on the default branch without the last two `[GENERATED]` commits:
+
+```sh
+git checkout -b <your branch name> HEAD~2
+```
+
 ## Testing
 
 The PHPUnit version to be used is the one installed as a dev- dependency via composer:
