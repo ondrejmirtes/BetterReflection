@@ -665,6 +665,9 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     private function addDeprecatedDocComment(Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Stmt\Const_ $node): void
     {
         if ($node instanceof Node\Stmt\Const_) {
+            if (!$this->isDeprecatedByPhpDocInPhpVersion($node)) {
+                $this->removeAnnotationFromDocComment($node, 'deprecated');
+            }
             return;
         }
 
@@ -710,6 +713,23 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return in_array($extension, self::CORE_EXTENSIONS, true);
     }
 
+    private function isDeprecatedByPhpDocInPhpVersion(Node\Stmt\Const_ $node): bool
+    {
+        $docComment = $node->getDocComment();
+        if ($docComment === null) {
+            return false;
+        }
+
+        if (preg_match('#@deprecated (\d+\.\d+(?:\.\d+)?)$#m', $docComment, $matches) === 1) {
+            $version = $matches[1];
+
+            if (version_compare($this->phpVersion, $version, '>=')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     private function isDeprecatedInPhpVersion(Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_ $node): bool
     {
         $deprecatedAttribute = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Deprecated');
