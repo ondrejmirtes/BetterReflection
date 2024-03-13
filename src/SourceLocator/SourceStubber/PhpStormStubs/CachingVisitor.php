@@ -26,22 +26,30 @@ class CachingVisitor extends NodeVisitorAbstract
 {
     private const TRUE_FALSE_NULL = ['true', 'false', 'null'];
 
-    private Node\Stmt\Namespace_|null $currentNamespace = null;
+    /**
+     * @var \PhpParser\Node\Stmt\Namespace_|null
+     */
+    private $currentNamespace = null;
 
     /** @var array<string, array{0: Node\Stmt\ClassLike, 1: Node\Stmt\Namespace_|null}> */
-    private array $classNodes = [];
+    private $classNodes = [];
 
     /** @var array<string, list<array{0: Node\Stmt\Function_, 1: Node\Stmt\Namespace_|null}>> */
-    private array $functionNodes = [];
+    private $functionNodes = [];
 
     /** @var array<string, array{0: Node\Stmt\Const_|Node\Expr\FuncCall, 1: Node\Stmt\Namespace_|null}> */
-    private array $constantNodes = [];
+    private $constantNodes = [];
+    /**
+     * @var \PhpParser\BuilderFactory
+     */
+    private $builderFactory;
 
-    public function __construct(private BuilderFactory $builderFactory)
+    public function __construct(BuilderFactory $builderFactory)
     {
+        $this->builderFactory = $builderFactory;
     }
 
-    public function enterNode(Node $node): int|null
+    public function enterNode(Node $node): ?int
     {
         if ($node instanceof Node\Stmt\Namespace_) {
             $this->currentNamespace = $node;
@@ -116,7 +124,7 @@ class CachingVisitor extends NodeVisitorAbstract
             // No invalid definition in PhpStorm stubs
             try {
                 ConstantNodeChecker::assertValidDefineFunctionCall($node);
-            } catch (InvalidConstantNode) {
+            } catch (InvalidConstantNode $exception) {
                 return null;
             }
 
@@ -185,8 +193,9 @@ class CachingVisitor extends NodeVisitorAbstract
 
     /**
      * Some constants have different values on different systems, some are not actual in stubs.
+     * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Const_ $node
      */
-    private function updateConstantValue(Node\Expr\FuncCall|Node\Const_ $node, string $constantName): void
+    private function updateConstantValue($node, string $constantName): void
     {
         if (! defined($constantName)) {
             return;

@@ -12,9 +12,6 @@ final class MissingInstalledJson extends UnexpectedValueException implements Exc
 {
     public static function inProjectPath(string $path): self
     {
-        return new self(sprintf(
-            'Could not locate a "composer/installed.json" file in "%s"',
-            $path,
-        ));
+        return new self(sprintf('Could not locate a "composer/installed.json" file in "%s"', $path));
     }
 }

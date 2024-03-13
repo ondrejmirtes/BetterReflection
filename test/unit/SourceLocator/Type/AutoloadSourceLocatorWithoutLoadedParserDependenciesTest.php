@@ -25,26 +25,17 @@ class AutoloadSourceLocatorWithoutLoadedParserDependenciesTest extends TestCase
      */
     public function testCanFindClassEvenWhenParserIsNotLoadedInMemory(): void
     {
-        self::assertFalse(
-            class_exists(MemoizingParser::class, false),
-            MemoizingParser::class . ' was not loaded into memory',
-        );
+        self::assertFalse(class_exists(MemoizingParser::class, false), MemoizingParser::class . ' was not loaded into memory');
 
         $parser        = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, new Emulative([
             'usedAttributes' => ['comments', 'startLine', 'endLine', 'startFilePos', 'endFilePos'],
         ]));
-        $sourceLocator = new AutoloadSourceLocator(
-            new Locator($parser),
-            $parser,
-        );
+        $sourceLocator = new AutoloadSourceLocator(new Locator($parser), $parser);
 
         $reflector  = new DefaultReflector($sourceLocator);
         $reflection = $reflector->reflectClass(ExampleClass::class);
 
         self::assertSame(ExampleClass::class, $reflection->getName());
-        self::assertFalse(
-            class_exists(MemoizingParser::class, false),
-            MemoizingParser::class . ' was not implicitly loaded',
-        );
+        self::assertFalse(class_exists(MemoizingParser::class, false), MemoizingParser::class . ' was not implicitly loaded');
     }
 }
