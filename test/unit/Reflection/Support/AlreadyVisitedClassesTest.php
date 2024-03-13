@@ -6,8 +6,8 @@ namespace Roave\BetterReflectionTest\Reflection\Support;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
-use Roave\BetterReflection\Reflection\Support\AlreadyVisitedClasses;
+use PHPStan\BetterReflection\Reflection\Exception\CircularReference;
+use PHPStan\BetterReflection\Reflection\Support\AlreadyVisitedClasses;
 
 #[CoversClass(AlreadyVisitedClasses::class)]
 class AlreadyVisitedClassesTest extends TestCase
