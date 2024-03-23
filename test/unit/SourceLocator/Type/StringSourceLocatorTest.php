@@ -17,7 +17,10 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(StringSourceLocator::class)]
 class StringSourceLocatorTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     protected function setUp(): void
     {
@@ -26,7 +29,10 @@ class StringSourceLocatorTest extends TestCase
         $this->astLocator = BetterReflectionSingleton::instance()->astLocator();
     }
 
-    private function getMockReflector(): Reflector|MockObject
+    /**
+     * @return \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getMockReflector()
     {
         return $this->createMock(Reflector::class);
     }
@@ -37,13 +43,7 @@ class StringSourceLocatorTest extends TestCase
 
         $locator = new StringSourceLocator($sourceCode, $this->astLocator);
 
-        self::assertNull($locator->locateIdentifier(
-            $this->getMockReflector(),
-            new Identifier(
-                'does not matter what the class name is',
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ),
-        ));
+        self::assertNull($locator->locateIdentifier($this->getMockReflector(), new Identifier('does not matter what the class name is', new IdentifierType(IdentifierType::IDENTIFIER_CLASS))));
     }
 
     public function testReturnsReflectionWhenSourceHasClass(): void
@@ -52,13 +52,7 @@ class StringSourceLocatorTest extends TestCase
 
         $locator = new StringSourceLocator($sourceCode, $this->astLocator);
 
-        $reflectionClass = $locator->locateIdentifier(
-            $this->getMockReflector(),
-            new Identifier(
-                'Foo',
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ),
-        );
+        $reflectionClass = $locator->locateIdentifier($this->getMockReflector(), new Identifier('Foo', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertSame('Foo', $reflectionClass->getName());
     }

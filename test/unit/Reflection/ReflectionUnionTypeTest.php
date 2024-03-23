@@ -16,8 +16,14 @@ use Roave\BetterReflection\Reflector\Reflector;
 #[CoversClass(ReflectionUnionType::class)]
 class ReflectionUnionTypeTest extends TestCase
 {
-    private Reflector $reflector;
-    private ReflectionParameter $owner;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionParameter
+     */
+    private $owner;
 
     protected function setUp(): void
     {
