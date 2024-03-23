@@ -32,63 +32,68 @@ trait ReflectionFunctionAbstract
      * @var non-empty-string
      * @psalm-allow-private-mutation
      */
-    private string $name;
+    private $name;
 
     /**
      * @var array<non-empty-string, ReflectionParameter>
      * @psalm-allow-private-mutation
      */
-    private array $parameters;
+    private $parameters;
 
-    /** @psalm-allow-private-mutation */
-    private bool $returnsReference;
+    /** @psalm-allow-private-mutation
+     * @var bool */
+    private $returnsReference;
 
-    /** @psalm-allow-private-mutation */
-    private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $returnType;
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null */
+    private $returnType;
 
     /**
      * @var list<ReflectionAttribute>
      * @psalm-allow-private-mutation
      */
-    private array $attributes;
+    private $attributes;
 
     /**
      * @var non-empty-string|null
      * @psalm-allow-private-mutation
      */
-    private string|null $docComment;
+    private $docComment;
 
     /**
      * @var positive-int|null
      * @psalm-allow-private-mutation
      */
-    private int|null $startLine;
+    private $startLine;
 
     /**
      * @var positive-int|null
      * @psalm-allow-private-mutation
      */
-    private int|null $endLine;
+    private $endLine;
 
     /**
      * @var positive-int|null
      * @psalm-allow-private-mutation
      */
-    private int|null $startColumn;
+    private $startColumn;
 
     /**
      * @var positive-int|null
      * @psalm-allow-private-mutation
      */
-    private int|null $endColumn;
+    private $endColumn;
 
-    /** @psalm-allow-private-mutation */
-    private bool $couldThrow = false;
+    /** @psalm-allow-private-mutation
+     * @var bool */
+    private $couldThrow = false;
 
-    /** @psalm-allow-private-mutation */
-    private bool $isClosure = false;
-    /** @psalm-allow-private-mutation */
-    private bool $isGenerator = false;
+    /** @psalm-allow-private-mutation
+     * @var bool */
+    private $isClosure = false;
+    /** @psalm-allow-private-mutation
+     * @var bool */
+    private $isGenerator = false;
 
     /** @return non-empty-string */
     abstract public function __toString(): string;
@@ -96,8 +101,9 @@ trait ReflectionFunctionAbstract
     /** @return non-empty-string */
     abstract public function getShortName(): string;
 
-    /** @psalm-external-mutation-free */
-    private function fillFromNode(MethodNode|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node): void
+    /** @psalm-external-mutation-free
+     * @param MethodNode|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node */
+    private function fillFromNode($node): void
     {
         $this->parameters       = $this->createParameters($node);
         $this->returnsReference = $node->returnsByRef();
@@ -123,32 +129,27 @@ trait ReflectionFunctionAbstract
 
         try {
             $this->startColumn = CalculateReflectionColumn::getStartColumn($this->getLocatedSource()->getSource(), $node);
-        } catch (NoNodePosition) {
+        } catch (NoNodePosition $exception) {
             $this->startColumn = null;
         }
 
         try {
             $this->endColumn = CalculateReflectionColumn::getEndColumn($this->getLocatedSource()->getSource(), $node);
-        } catch (NoNodePosition) {
+        } catch (NoNodePosition $exception) {
             $this->endColumn = null;
         }
     }
 
-    /** @return array<non-empty-string, ReflectionParameter> */
-    private function createParameters(Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node): array
+    /** @return array<non-empty-string, ReflectionParameter>
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node */
+    private function createParameters($node): array
     {
         $parameters = [];
 
         /** @var list<Node\Param> $nodeParams */
         $nodeParams = $node->params;
         foreach ($nodeParams as $paramIndex => $paramNode) {
-            $parameter = ReflectionParameter::createFromNode(
-                $this->reflector,
-                $paramNode,
-                $this,
-                $paramIndex,
-                $this->isParameterOptional($nodeParams, $paramIndex),
-            );
+            $parameter = ReflectionParameter::createFromNode($this->reflector, $paramNode, $this, $paramIndex, $this->isParameterOptional($nodeParams, $paramIndex));
 
             $parameters[$parameter->getName()] = $parameter;
         }
@@ -177,7 +178,7 @@ trait ReflectionFunctionAbstract
      * Get the "namespace" name of the function (e.g. for A\B\foo, this will
      * return "A\B").
      */
-    public function getNamespaceName(): string|null
+    public function getNamespaceName(): ?string
     {
         return $this->namespace;
     }
@@ -208,10 +209,9 @@ trait ReflectionFunctionAbstract
      */
     public function getNumberOfRequiredParameters(): int
     {
-        return count(array_filter(
-            $this->parameters,
-            static fn (ReflectionParameter $p): bool => ! $p->isOptional(),
-        ));
+        return count(array_filter($this->parameters, static function (ReflectionParameter $p) : bool {
+            return ! $p->isOptional();
+        }));
     }
 
     /**
@@ -249,19 +249,19 @@ trait ReflectionFunctionAbstract
      *
      * @param non-empty-string $parameterName
      */
-    public function getParameter(string $parameterName): ReflectionParameter|null
+    public function getParameter(string $parameterName): ?\Roave\BetterReflection\Reflection\ReflectionParameter
     {
         return $this->parameters[$parameterName] ?? null;
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->docComment;
     }
 
     /** @return non-empty-string|null */
-    public function getFileName(): string|null
+    public function getFileName(): ?string
     {
         return $this->locatedSource->getFileName();
     }
@@ -299,7 +299,7 @@ trait ReflectionFunctionAbstract
     }
 
     /** @return non-empty-string|null */
-    public function getExtensionName(): string|null
+    public function getExtensionName(): ?string
     {
         return $this->locatedSource->getExtensionName();
     }
@@ -324,7 +324,10 @@ trait ReflectionFunctionAbstract
         return $this->couldThrow;
     }
 
-    private function computeCouldThrow(MethodNode|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node): bool
+    /**
+     * @param MethodNode|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
+     */
+    private function computeCouldThrow($node): bool
     {
         $statements = $node->getStmts();
 
@@ -332,7 +335,9 @@ trait ReflectionFunctionAbstract
             return false;
         }
 
-        $visitor   = new FindingVisitor(static fn (Node $node): bool => $node instanceof NodeThrow);
+        $visitor   = new FindingVisitor(static function (Node $node) : bool {
+            return $node instanceof NodeThrow;
+        });
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor);
         $traverser->traverse($statements);
@@ -456,8 +461,9 @@ trait ReflectionFunctionAbstract
 
     /**
      * Get the return type declaration
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
-    public function getReturnType(): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    public function getReturnType()
     {
         if ($this->hasTentativeReturnType()) {
             return null;
@@ -487,7 +493,10 @@ trait ReflectionFunctionAbstract
         return AnnotationHelper::hasTentativeReturnType($this->docComment);
     }
 
-    public function getTentativeReturnType(): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    public function getTentativeReturnType()
     {
         if (! $this->hasTentativeReturnType()) {
             return null;
@@ -496,7 +505,11 @@ trait ReflectionFunctionAbstract
         return $this->returnType;
     }
 
-    private function createReturnType(MethodNode|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    /**
+     * @param MethodNode|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private function createReturnType($node)
     {
         $returnType = $node->getReturnType();
 

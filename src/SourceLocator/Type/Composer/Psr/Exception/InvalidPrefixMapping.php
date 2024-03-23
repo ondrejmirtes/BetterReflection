@@ -17,18 +17,11 @@ class InvalidPrefixMapping extends InvalidArgumentException implements Exception
 
     public static function emptyPrefixMappingGiven(string $prefix): self
     {
-        return new self(sprintf(
-            'An invalid empty list of paths was provided for PSR mapping prefix "%s"',
-            $prefix,
-        ));
+        return new self(sprintf('An invalid empty list of paths was provided for PSR mapping prefix "%s"', $prefix));
     }
 
     public static function prefixMappingIsNotADirectory(string $prefix, string $path): self
     {
-        return new self(sprintf(
-            'Provided path "%s" for prefix "%s" is not a directory',
-            $prefix,
-            $path,
-        ));
+        return new self(sprintf('Provided path "%s" for prefix "%s" is not a directory', $prefix, $path));
     }
 }
