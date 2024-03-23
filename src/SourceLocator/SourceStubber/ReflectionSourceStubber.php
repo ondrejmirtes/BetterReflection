@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflection\SourceLocator\SourceStubber;
 
+use BackedEnum;
 use LogicException;
 use PhpParser\Builder\Class_;
 use PhpParser\Builder\ClassConst;
@@ -297,7 +298,11 @@ final class ReflectionSourceStubber implements SourceStubber
         }
 
         foreach ($interfaces as $interfaceName) {
-            if ($classReflection->isEnum() && in_array($interfaceName, [BackedEnum::class, UnitEnum::class], true)) {
+            if (
+                method_exists($classReflection, 'isEnum')
+                && $classReflection->isEnum()
+                && in_array($interfaceName, [BackedEnum::class, UnitEnum::class], true)
+            ) {
                 continue;
             }
 
