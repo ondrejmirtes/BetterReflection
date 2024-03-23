@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflectionTest;
 
-use Roave\BetterReflection\BetterReflection;
+use PHPStan\BetterReflection\BetterReflection;
 
 abstract class BetterReflectionSingleton
 {
     /**
-     * @var \Roave\BetterReflection\BetterReflection|null
+     * @var \PHPStan\BetterReflection\BetterReflection|null
      */
     private static $betterReflection;
 

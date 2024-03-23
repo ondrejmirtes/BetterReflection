@@ -9,12 +9,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
-use Roave\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
+use PHPStan\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator;
 use Roave\BetterReflectionTest\Assets\DirectoryScannerAssets;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use stdClass;
@@ -26,7 +26,7 @@ use function sort;
 class FileIteratorSourceLocatorTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator
      */
     private $sourceLocator;
 

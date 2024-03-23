@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use Attribute;
 use PhpParser\Node\Expr;
 use ReflectionAttribute as CoreReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 
 /** @template-extends CoreReflectionAttribute<object> */
 final class ReflectionAttribute extends CoreReflectionAttribute
