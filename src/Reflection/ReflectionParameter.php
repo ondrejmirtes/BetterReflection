@@ -34,49 +34,80 @@ use function sprintf;
 class ReflectionParameter
 {
     /** @var non-empty-string */
-    private string $name;
+    private $name;
 
-    private Node\Expr|null $default;
+    /**
+     * @var \PhpParser\Node\Expr|null
+     */
+    private $default;
 
-    private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private $type;
 
-    private bool $isVariadic;
+    /**
+     * @var bool
+     */
+    private $isVariadic;
 
-    private bool $byRef;
+    /**
+     * @var bool
+     */
+    private $byRef;
 
-    private bool $isPromoted;
+    /**
+     * @var bool
+     */
+    private $isPromoted;
 
     /** @var list<ReflectionAttribute> */
-    private array $attributes;
+    private $attributes;
 
     /** @var positive-int|null */
-    private int|null $startLine;
+    private $startLine;
 
     /** @var positive-int|null */
-    private int|null $endLine;
+    private $endLine;
 
     /** @var positive-int|null */
-    private int|null $startColumn;
+    private $startColumn;
 
     /** @var positive-int|null */
-    private int|null $endColumn;
+    private $endColumn;
 
-    /** @psalm-allow-private-mutation */
-    private CompiledValue|null $compiledDefaultValue = null;
-
-    private function __construct(
-        private Reflector $reflector,
-        ParamNode $node,
-        private ReflectionMethod|ReflectionFunction $function,
-        private int $parameterIndex,
-        private bool $isOptional,
-    ) {
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+    private $compiledDefaultValue = null;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction
+     */
+    private $function;
+    /**
+     * @var int
+     */
+    private $parameterIndex;
+    /**
+     * @var bool
+     */
+    private $isOptional;
+    /**
+     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function
+     */
+    private function __construct(Reflector $reflector, ParamNode $node, $function, int $parameterIndex, bool $isOptional)
+    {
+        $this->reflector = $reflector;
+        $this->function = $function;
+        $this->parameterIndex = $parameterIndex;
+        $this->isOptional = $isOptional;
         assert($node->var instanceof Node\Expr\Variable);
         assert(is_string($node->var->name));
-
         $name = $node->var->name;
         assert($name !== '');
-
         $this->name       = $name;
         $this->default    = $node->default;
         $this->type       = $this->createType($node);
@@ -84,37 +115,31 @@ class ReflectionParameter
         $this->byRef      = $node->byRef;
         $this->isPromoted = $node->flags !== 0;
         $this->attributes = ReflectionAttributeHelper::createAttributes($reflector, $this, $node->attrGroups);
-
         if ($node->hasAttribute('startLine')) {
             $startLine = $node->getStartLine();
             assert($startLine > 0);
         } else {
             $startLine = null;
         }
-
         if ($node->hasAttribute('endLine')) {
             $endLine = $node->getEndLine();
             assert($endLine > 0);
         } else {
             $endLine = null;
         }
-
         $this->startLine = $startLine;
         $this->endLine   = $endLine;
-
         try {
             $this->startColumn = CalculateReflectionColumn::getStartColumn($function->getLocatedSource()->getSource(), $node);
-        } catch (NoNodePosition) {
+        } catch (NoNodePosition $exception) {
             $this->startColumn = null;
         }
-
         try {
             $this->endColumn = CalculateReflectionColumn::getEndColumn($function->getLocatedSource()->getSource(), $node);
-        } catch (NoNodePosition) {
+        } catch (NoNodePosition $exception) {
             $this->endColumn = null;
         }
     }
-
     /**
      * Create a reflection of a parameter using a class name
      *
@@ -123,22 +148,15 @@ class ReflectionParameter
      *
      * @throws OutOfBoundsException
      */
-    public static function createFromClassNameAndMethod(
-        string $className,
-        string $methodName,
-        string $parameterName,
-    ): self {
-        $parameter = ReflectionClass::createFromName($className)
-            ->getMethod($methodName)
-            ?->getParameter($parameterName);
-
+    public static function createFromClassNameAndMethod(string $className, string $methodName, string $parameterName): self
+    {
+        $parameter = ($getMethod = ReflectionClass::createFromName($className)
+            ->getMethod($methodName)) ? $getMethod->getParameter($parameterName) : null;
         if ($parameter === null) {
             throw new OutOfBoundsException(sprintf('Could not find parameter: %s', $parameterName));
         }
-
         return $parameter;
     }
-
     /**
      * Create a reflection of a parameter using an instance
      *
@@ -147,19 +165,13 @@ class ReflectionParameter
      *
      * @throws OutOfBoundsException
      */
-    public static function createFromClassInstanceAndMethod(
-        object $instance,
-        string $methodName,
-        string $parameterName,
-    ): self {
-        $parameter = ReflectionClass::createFromInstance($instance)
-            ->getMethod($methodName)
-            ?->getParameter($parameterName);
-
+    public static function createFromClassInstanceAndMethod(object $instance, string $methodName, string $parameterName): self
+    {
+        $parameter = ($getMethod = ReflectionClass::createFromInstance($instance)
+            ->getMethod($methodName)) ? $getMethod->getParameter($parameterName) : null;
         if ($parameter === null) {
             throw new OutOfBoundsException(sprintf('Could not find parameter: %s', $parameterName));
         }
-
         return $parameter;
     }
 
@@ -196,7 +208,7 @@ class ReflectionParameter
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public static function createFromSpec(array|string|Closure $spec, string $parameterName): self
+    public static function createFromSpec($spec, string $parameterName): self
     {
         try {
             if (is_array($spec) && count($spec) === 2 && is_string($spec[1])) {
@@ -238,25 +250,16 @@ class ReflectionParameter
      * @internal
      *
      * @param ParamNode $node Node has to be processed by the PhpParser\NodeVisitor\NameResolver
+     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function
      */
-    public static function createFromNode(
-        Reflector $reflector,
-        ParamNode $node,
-        ReflectionMethod|ReflectionFunction $function,
-        int $parameterIndex,
-        bool $isOptional,
-    ): self {
-        return new self(
-            $reflector,
-            $node,
-            $function,
-            $parameterIndex,
-            $isOptional,
-        );
+    public static function createFromNode(Reflector $reflector, ParamNode $node, $function, int $parameterIndex, bool $isOptional): self
+    {
+        return new self($reflector, $node, $function, $parameterIndex, $isOptional);
     }
 
-    /** @internal */
-    public function withFunction(ReflectionMethod|ReflectionFunction $function): self
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function */
+    public function withFunction($function): self
     {
         $clone           = clone $this;
         $clone->function = $function;
@@ -265,7 +268,9 @@ class ReflectionParameter
             $clone->type = $clone->type->withOwner($clone);
         }
 
-        $clone->attributes = array_map(static fn (ReflectionAttribute $attribute): ReflectionAttribute => $attribute->withOwner($clone), $this->attributes);
+        $clone->attributes = array_map(static function (ReflectionAttribute $attribute) use ($clone) : ReflectionAttribute {
+            return $attribute->withOwner($clone);
+        }, $this->attributes);
 
         $this->compiledDefaultValue = null;
 
@@ -280,10 +285,7 @@ class ReflectionParameter
         }
 
         if ($this->compiledDefaultValue === null) {
-            $this->compiledDefaultValue = (new CompileNodeToValue())->__invoke(
-                $this->default,
-                new CompilerContext($this->reflector, $this),
-            );
+            $this->compiledDefaultValue = (new CompileNodeToValue())->__invoke($this->default, new CompilerContext($this->reflector, $this));
         }
 
         return $this->compiledDefaultValue;
@@ -301,8 +303,9 @@ class ReflectionParameter
 
     /**
      * Get the function (or method) that declared this parameter.
+     * @return \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction
      */
-    public function getDeclaringFunction(): ReflectionMethod|ReflectionFunction
+    public function getDeclaringFunction()
     {
         return $this->function;
     }
@@ -313,7 +316,7 @@ class ReflectionParameter
      *
      * This will return null if the declaring function is not a method.
      */
-    public function getDeclaringClass(): ReflectionClass|null
+    public function getDeclaringClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         if ($this->function instanceof ReflectionMethod) {
             return $this->function->getDeclaringClass();
@@ -322,7 +325,7 @@ class ReflectionParameter
         return null;
     }
 
-    public function getImplementingClass(): ReflectionClass|null
+    public function getImplementingClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         if ($this->function instanceof ReflectionMethod) {
             return $this->function->getImplementingClass();
@@ -363,12 +366,12 @@ class ReflectionParameter
     /**
      * @deprecated Use getDefaultValueExpression()
      */
-    public function getDefaultValueExpr(): Node\Expr|null
+    public function getDefaultValueExpr(): ?\PhpParser\Node\Expr
     {
         return $this->getDefaultValueExpression();
     }
 
-    public function getDefaultValueExpression(): Node\Expr|null
+    public function getDefaultValueExpression(): ?\PhpParser\Node\Expr
     {
         return $this->default;
     }
@@ -380,8 +383,9 @@ class ReflectionParameter
      *
      * @throws LogicException
      * @throws UnableToCompileNode
+     * @return mixed
      */
-    public function getDefaultValue(): mixed
+    public function getDefaultValue()
     {
         /** @psalm-var scalar|array<scalar>|null $value */
         $value = $this->getCompiledDefaultValue()->value;
@@ -416,13 +420,17 @@ class ReflectionParameter
      * this parameter
      *
      * (note: this has nothing to do with DocBlocks).
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
-    public function getType(): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    public function getType()
     {
         return $this->type;
     }
 
-    private function createType(ParamNode $node): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private function createType(ParamNode $node)
     {
         $type = $node->type;
 
