@@ -7,16 +7,16 @@ namespace Roave\BetterReflectionTest\Reflection\StringCast;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\ReflectionObject;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionClassStringCast;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
-use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use PHPStan\BetterReflection\Reflection\ReflectionObject;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionClassStringCast;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
+use PHPStan\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\SourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\StringCastBackedEnum;
 use Roave\BetterReflectionTest\Fixture\StringCastClass;
@@ -29,17 +29,17 @@ use function file_get_contents;
 class ReflectionClassStringCastTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     * @var \PHPStan\BetterReflection\SourceLocator\Ast\Locator
      */
     private $astLocator;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber
+     * @var \PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber
      */
     private $sourceStubber;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\SourceLocator
      */
     private $sourceLocator;
 
