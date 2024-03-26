@@ -7,12 +7,12 @@ namespace Roave\BetterReflectionTest\SourceLocator\Type;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\Reflection;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SourceLocator;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\Reflection;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\SourceLocator;
 
 use function array_filter;
 use function array_map;
@@ -29,22 +29,22 @@ use function uniqid;
 class MemoizingSourceLocatorTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPStan\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
      */
     private $reflector1;
 
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPStan\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
      */
     private $reflector2;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator|\PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\SourceLocator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $wrappedLocator;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\MemoizingSourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\MemoizingSourceLocator
      */
     private $memoizingLocator;
 
@@ -146,7 +146,7 @@ class MemoizingSourceLocatorTest extends TestCase
             ->method('locateIdentifier')->with(self::logicalOr(...$reflectors), self::callback(static function (Identifier $identifier) use ($identifiers) : bool {
             return in_array($identifier, $identifiers, true);
         }))
-            ->willReturnCallback(function (Reflector $reflector, Identifier $identifier) use (&$fetchedSymbolsCount) : ?\Roave\BetterReflection\Reflection\Reflection {
+            ->willReturnCallback(function (Reflector $reflector, Identifier $identifier) use (&$fetchedSymbolsCount) : ?\PHPStan\BetterReflection\Reflection\Reflection {
                 $identifierId = spl_object_id($identifier);
                 $reflectorId  = spl_object_id($reflector);
                 $hash         = $reflectorId . $identifierId;
