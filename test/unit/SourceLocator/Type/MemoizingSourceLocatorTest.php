@@ -28,18 +28,33 @@ use function uniqid;
 #[CoversClass(MemoizingSourceLocator::class)]
 class MemoizingSourceLocatorTest extends TestCase
 {
-    private Reflector|MockObject $reflector1;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $reflector1;
 
-    private Reflector|MockObject $reflector2;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $reflector2;
 
-    private SourceLocator|MockObject $wrappedLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $wrappedLocator;
 
-    private MemoizingSourceLocator $memoizingLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\MemoizingSourceLocator
+     */
+    private $memoizingLocator;
 
     /** @var list<string> */
-    private array $identifierNames;
+    private $identifierNames;
 
-    private int $identifierCount;
+    /**
+     * @var int
+     */
+    private $identifierCount;
 
     protected function setUp(): void
     {
@@ -49,63 +64,36 @@ class MemoizingSourceLocatorTest extends TestCase
         $this->reflector2       = $this->createMock(Reflector::class);
         $this->wrappedLocator   = $this->createMock(SourceLocator::class);
         $this->memoizingLocator = new MemoizingSourceLocator($this->wrappedLocator);
-        $this->identifierNames  = array_unique(array_map(
-            static fn (): string => uniqid('identifier', true),
-            range(1, 20),
-        ));
+        $this->identifierNames  = array_unique(array_map(static function () : string {
+            return uniqid('identifier', true);
+        }, range(1, 20)));
         $this->identifierCount  = count($this->identifierNames);
     }
 
     public function testLocateIdentifierIsMemoized(): void
     {
-        $this->assertMemoization(
-            array_map(
-                static fn (string $identifier): Identifier => new Identifier(
-                    $identifier,
-                    new IdentifierType(
-                        [IdentifierType::IDENTIFIER_CLASS, IdentifierType::IDENTIFIER_FUNCTION][random_int(0, 1)],
-                    ),
-                ),
-                $this->identifierNames,
-            ),
-            $this->identifierCount,
-            [$this->reflector1],
-        );
+        $this->assertMemoization(array_map(static function (string $identifier) : Identifier {
+            return new Identifier($identifier, new IdentifierType([IdentifierType::IDENTIFIER_CLASS, IdentifierType::IDENTIFIER_FUNCTION][random_int(0, 1)]));
+        }, $this->identifierNames), $this->identifierCount, [$this->reflector1]);
     }
 
     public function testLocateIdentifiersDistinguishesBetweenIdentifierTypes(): void
     {
-        $classIdentifiers    = array_map(
-            static fn (string $identifier): Identifier => new Identifier($identifier, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
-            $this->identifierNames,
-        );
-        $functionIdentifiers = array_map(
-            static fn (string $identifier): Identifier => new Identifier($identifier, new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION)),
-            $this->identifierNames,
-        );
+        $classIdentifiers    = array_map(static function (string $identifier) : Identifier {
+            return new Identifier($identifier, new IdentifierType(IdentifierType::IDENTIFIER_CLASS));
+        }, $this->identifierNames);
+        $functionIdentifiers = array_map(static function (string $identifier) : Identifier {
+            return new Identifier($identifier, new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION));
+        }, $this->identifierNames);
 
-        $this->assertMemoization(
-            array_merge($classIdentifiers, $functionIdentifiers),
-            $this->identifierCount * 2,
-            [$this->reflector1],
-        );
+        $this->assertMemoization(array_merge($classIdentifiers, $functionIdentifiers), $this->identifierCount * 2, [$this->reflector1]);
     }
 
     public function testLocateIdentifiersDistinguishesBetweenReflectorInstances(): void
     {
-        $this->assertMemoization(
-            array_map(
-                static fn (string $identifier): Identifier => new Identifier(
-                    $identifier,
-                    new IdentifierType(
-                        [IdentifierType::IDENTIFIER_CLASS, IdentifierType::IDENTIFIER_FUNCTION][random_int(0, 1)],
-                    ),
-                ),
-                $this->identifierNames,
-            ),
-            $this->identifierCount * 2,
-            [$this->reflector1, $this->reflector2],
-        );
+        $this->assertMemoization(array_map(static function (string $identifier) : Identifier {
+            return new Identifier($identifier, new IdentifierType([IdentifierType::IDENTIFIER_CLASS, IdentifierType::IDENTIFIER_FUNCTION][random_int(0, 1)]));
+        }, $this->identifierNames), $this->identifierCount * 2, [$this->reflector1, $this->reflector2]);
     }
 
     public function testMemoizationByTypeDistinguishesBetweenSourceLocatorsAndType(): void
@@ -128,39 +116,20 @@ class MemoizingSourceLocatorTest extends TestCase
             ->expects(self::exactly(4))
             ->method('locateIdentifiersByType')
             ->with(self::logicalOr($this->reflector1, $this->reflector2))
-            ->willReturnCallback(function (
-                Reflector $reflector,
-                IdentifierType $identifierType,
-            ) use (
-                $symbols1,
-                $symbols2,
-            ): array {
+            ->willReturnCallback(function (Reflector $reflector, IdentifierType $identifierType) use ($symbols1, $symbols2) : array {
                 if ($reflector === $this->reflector1) {
                     return $symbols1[$identifierType->getName()];
                 }
-
                 return $symbols2[$identifierType->getName()];
             });
 
         foreach ($types as $type) {
-            self::assertSame(
-                $symbols1[$type->getName()],
-                $this->memoizingLocator->locateIdentifiersByType($this->reflector1, $type),
-            );
-            self::assertSame(
-                $symbols2[$type->getName()],
-                $this->memoizingLocator->locateIdentifiersByType($this->reflector2, $type),
-            );
+            self::assertSame($symbols1[$type->getName()], $this->memoizingLocator->locateIdentifiersByType($this->reflector1, $type));
+            self::assertSame($symbols2[$type->getName()], $this->memoizingLocator->locateIdentifiersByType($this->reflector2, $type));
 
             // second execution - ensures that memoization is in place
-            self::assertSame(
-                $symbols1[$type->getName()],
-                $this->memoizingLocator->locateIdentifiersByType($this->reflector1, $type),
-            );
-            self::assertSame(
-                $symbols2[$type->getName()],
-                $this->memoizingLocator->locateIdentifiersByType($this->reflector2, $type),
-            );
+            self::assertSame($symbols1[$type->getName()], $this->memoizingLocator->locateIdentifiersByType($this->reflector1, $type));
+            self::assertSame($symbols2[$type->getName()], $this->memoizingLocator->locateIdentifiersByType($this->reflector2, $type));
         }
     }
 
@@ -168,50 +137,32 @@ class MemoizingSourceLocatorTest extends TestCase
      * @param list<Identifier> $identifiers
      * @param list<Reflector>  $reflectors
      */
-    private function assertMemoization(
-        array $identifiers,
-        int $expectedFetchOperationsCount,
-        array $reflectors,
-    ): void {
+    private function assertMemoization(array $identifiers, int $expectedFetchOperationsCount, array $reflectors): void
+    {
         $fetchedSymbolsCount = [];
-
         $this
             ->wrappedLocator
             ->expects(self::exactly($expectedFetchOperationsCount))
-            ->method('locateIdentifier')
-            ->with(
-                self::logicalOr(...$reflectors),
-                self::callback(static fn (Identifier $identifier): bool => in_array($identifier, $identifiers, true)),
-            )
-            ->willReturnCallback(function (
-                Reflector $reflector,
-                Identifier $identifier,
-            ) use (
-                &$fetchedSymbolsCount,
-            ): Reflection|null {
+            ->method('locateIdentifier')->with(self::logicalOr(...$reflectors), self::callback(static function (Identifier $identifier) use ($identifiers) : bool {
+            return in_array($identifier, $identifiers, true);
+        }))
+            ->willReturnCallback(function (Reflector $reflector, Identifier $identifier) use (&$fetchedSymbolsCount) : ?\Roave\BetterReflection\Reflection\Reflection {
                 $identifierId = spl_object_id($identifier);
                 $reflectorId  = spl_object_id($reflector);
                 $hash         = $reflectorId . $identifierId;
-
                 $fetchedSymbolsCount[$hash] = ($fetchedSymbolsCount[$hash] ?? 0) + 1;
-
                 return [
                     $this->createMock(Reflection::class),
                     null,
                 ][random_int(0, 1)];
             });
-
         $memoizedSymbols = $this->locateIdentifiers($reflectors, $identifiers);
         $cachedSymbols   = $this->locateIdentifiers($reflectors, $identifiers);
-
         self::assertCount($expectedFetchOperationsCount, $memoizedSymbols);
-
         foreach ($fetchedSymbolsCount as $fetchedSymbolCount) {
             self::assertSame(1, $fetchedSymbolCount, 'Each fetch is unique');
         }
-
         self::assertSame($memoizedSymbols, $cachedSymbols);
-
         $memoizedSymbolsIds = array_map('spl_object_id', array_filter($memoizedSymbols));
         self::assertCount(count($memoizedSymbolsIds), array_unique($memoizedSymbolsIds), 'No duplicate symbols');
     }

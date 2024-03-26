@@ -13,10 +13,7 @@ class InvalidProjectDirectoryTest extends TestCase
 {
     public function testAtPath(): void
     {
-        self::assertSame(
-            'Could not locate project directory "foo/bar"',
-            InvalidProjectDirectory::atPath('foo/bar')
-                ->getMessage(),
-        );
+        self::assertSame('Could not locate project directory "foo/bar"', InvalidProjectDirectory::atPath('foo/bar')
+            ->getMessage());
     }
 }
