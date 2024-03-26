@@ -18,18 +18,16 @@ abstract class ReflectionType
      * @internal
      *
      * @psalm-pure
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name|\PhpParser\Node\NullableType|\PhpParser\Node\UnionType|\PhpParser\Node\IntersectionType $type
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType
      */
-    public static function createFromNode(
-        Reflector $reflector,
-        ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        Identifier|Name|NullableType|UnionType|IntersectionType $type,
-        bool $allowsNull = false,
-    ): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType {
+    public static function createFromNode(Reflector $reflector, $owner, $type, bool $allowsNull = false)
+    {
         if ($type instanceof NullableType) {
             $type       = $type->type;
             $allowsNull = true;
         }
-
         if ($type instanceof Identifier || $type instanceof Name) {
             if (
                 $type->toLowerString() === 'null'
@@ -39,21 +37,14 @@ abstract class ReflectionType
                 return new ReflectionNamedType($reflector, $owner, $type);
             }
 
-            return new ReflectionUnionType(
-                $reflector,
-                $owner,
-                new UnionType([$type, new Identifier('null')]),
-            );
+            return new ReflectionUnionType($reflector, $owner, new UnionType([$type, new Identifier('null')]));
         }
-
         if ($type instanceof IntersectionType) {
             return new ReflectionIntersectionType($reflector, $owner, $type);
         }
-
         if (! $allowsNull) {
             return new ReflectionUnionType($reflector, $owner, $type);
         }
-
         foreach ($type->types as $innerUnionType) {
             if (
                 ($innerUnionType instanceof Identifier || $innerUnionType instanceof Name)
@@ -62,10 +53,8 @@ abstract class ReflectionType
                 return new ReflectionUnionType($reflector, $owner, $type);
             }
         }
-
         $types   = $type->types;
         $types[] = new Identifier('null');
-
         return new ReflectionUnionType($reflector, $owner, new UnionType($types));
     }
 

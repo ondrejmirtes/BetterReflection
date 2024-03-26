@@ -27,8 +27,23 @@ use function preg_match;
 /** @psalm-immutable */
 class ReflectionObject extends ReflectionClass
 {
-    protected function __construct(private Reflector $reflector, private ReflectionClass $reflectionClass, private object $object)
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionClass
+     */
+    private $reflectionClass;
+    /**
+     * @var object
+     */
+    private $object;
+    protected function __construct(Reflector $reflector, ReflectionClass $reflectionClass, object $object)
     {
+        $this->reflector = $reflector;
+        $this->reflectionClass = $reflectionClass;
+        $this->object = $object;
     }
 
     /**
@@ -39,17 +54,14 @@ class ReflectionObject extends ReflectionClass
      */
     public static function createFromInstance(object $instance): ReflectionClass
     {
-        $className = $instance::class;
+        $className = get_class($instance);
 
         $betterReflection = new BetterReflection();
 
         if (preg_match(ReflectionClass::ANONYMOUS_CLASS_NAME_PREFIX_REGEXP, $className) === 1) {
             $reflector = new DefaultReflector(new AggregateSourceLocator([
                 $betterReflection->sourceLocator(),
-                new AnonymousClassObjectSourceLocator(
-                    $instance,
-                    $betterReflection->phpParser(),
-                ),
+                new AnonymousClassObjectSourceLocator($instance, $betterReflection->phpParser()),
             ]));
         } else {
             $reflector = $betterReflection->reflector();
@@ -94,14 +106,7 @@ class ReflectionObject extends ReflectionClass
 
             $propertyNode = $this->createPropertyNodeFromRuntimePropertyReflection($property, $this->object);
 
-            $runtimeProperties[$propertyName] = ReflectionProperty::createFromNode(
-                $this->reflector,
-                $propertyNode,
-                $propertyNode->props[0],
-                $this,
-                $this,
-                declaredAtCompileTime: false,
-            );
+            $runtimeProperties[$propertyName] = ReflectionProperty::createFromNode($this->reflector, $propertyNode, $propertyNode->props[0], $this, $this, false, false);
         }
 
         return $runtimeProperties;
@@ -132,7 +137,7 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getName();
     }
 
-    public function getNamespaceName(): string|null
+    public function getNamespaceName(): ?string
     {
         return $this->reflectionClass->getNamespaceName();
     }
@@ -143,7 +148,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @return non-empty-string|null */
-    public function getExtensionName(): string|null
+    public function getExtensionName(): ?string
     {
         return $this->reflectionClass->getExtensionName();
     }
@@ -165,7 +170,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @param non-empty-string $methodName */
-    public function getMethod(string $methodName): ReflectionMethod|null
+    public function getMethod(string $methodName): ?\Roave\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->reflectionClass->getMethod($methodName);
     }
@@ -197,12 +202,12 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->hasConstant($name);
     }
 
-    public function getConstant(string $name): ReflectionClassConstant|null
+    public function getConstant(string $name): ?\Roave\BetterReflection\Reflection\ReflectionClassConstant
     {
         return $this->reflectionClass->getConstant($name);
     }
 
-    public function getConstructor(): ReflectionMethod|null
+    public function getConstructor(): ?\Roave\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->reflectionClass->getConstructor();
     }
@@ -212,10 +217,7 @@ class ReflectionObject extends ReflectionClass
      */
     public function getProperties(int $filter = 0): array
     {
-        return array_merge(
-            $this->reflectionClass->getProperties($filter),
-            $this->getRuntimeProperties($filter),
-        );
+        return array_merge($this->reflectionClass->getProperties($filter), $this->getRuntimeProperties($filter));
     }
 
     /**
@@ -223,13 +225,10 @@ class ReflectionObject extends ReflectionClass
      */
     public function getImmediateProperties(int $filter = 0): array
     {
-        return array_merge(
-            $this->reflectionClass->getImmediateProperties($filter),
-            $this->getRuntimeProperties($filter),
-        );
+        return array_merge($this->reflectionClass->getImmediateProperties($filter), $this->getRuntimeProperties($filter));
     }
 
-    public function getProperty(string $name): ReflectionProperty|null
+    public function getProperty(string $name): ?\Roave\BetterReflection\Reflection\ReflectionProperty
     {
         $runtimeProperties = $this->getRuntimeProperties();
 
@@ -252,14 +251,15 @@ class ReflectionObject extends ReflectionClass
      */
     public function getDefaultProperties(): array
     {
-        return array_map(
-            static fn (ReflectionProperty $property) => $property->getDefaultValue(),
-            array_filter($this->getProperties(), static fn (ReflectionProperty $property): bool => $property->isDefault()),
-        );
+        return array_map(static function (ReflectionProperty $property) {
+            return $property->getDefaultValue();
+        }, array_filter($this->getProperties(), static function (ReflectionProperty $property) : bool {
+            return $property->isDefault();
+        }));
     }
 
     /** @return non-empty-string|null */
-    public function getFileName(): string|null
+    public function getFileName(): ?string
     {
         return $this->reflectionClass->getFileName();
     }
@@ -289,13 +289,13 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getEndColumn();
     }
 
-    public function getParentClass(): ReflectionClass|null
+    public function getParentClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         return $this->reflectionClass->getParentClass();
     }
 
     /** @return class-string|null */
-    public function getParentClassName(): string|null
+    public function getParentClassName(): ?string
     {
         return $this->reflectionClass->getParentClassName();
     }
@@ -309,7 +309,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->reflectionClass->getDocComment();
     }
@@ -471,12 +471,18 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getStaticProperties();
     }
 
-    public function setStaticPropertyValue(string $propertyName, mixed $value): void
+    /**
+     * @param mixed $value
+     */
+    public function setStaticPropertyValue(string $propertyName, $value): void
     {
         $this->reflectionClass->setStaticPropertyValue($propertyName, $value);
     }
 
-    public function getStaticPropertyValue(string $propertyName): mixed
+    /**
+     * @return mixed
+     */
+    public function getStaticPropertyValue(string $propertyName)
     {
         return $this->reflectionClass->getStaticPropertyValue($propertyName);
     }

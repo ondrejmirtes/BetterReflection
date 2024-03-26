@@ -18,19 +18,29 @@ use Roave\BetterReflection\Util\FileHelper;
 /** @internal */
 class CompilerContext
 {
-    public function __construct(
-        private Reflector $reflector,
-        private ReflectionClass|ReflectionProperty|ReflectionClassConstant|ReflectionEnumCase|ReflectionMethod|ReflectionFunction|ReflectionParameter|ReflectionConstant $contextReflection,
-    ) {
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionConstant
+     */
+    private $contextReflection;
+    /**
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionConstant $contextReflection
+     */
+    public function __construct(Reflector $reflector, $contextReflection)
+    {
+        $this->reflector = $reflector;
+        $this->contextReflection = $contextReflection;
     }
-
     public function getReflector(): Reflector
     {
         return $this->reflector;
     }
 
     /** @return non-empty-string|null */
-    public function getFileName(): string|null
+    public function getFileName(): ?string
     {
         if ($this->contextReflection instanceof ReflectionConstant) {
             $fileName = $this->contextReflection->getFileName();
@@ -41,7 +51,7 @@ class CompilerContext
             return $this->realPath($fileName);
         }
 
-        $fileName = $this->getClass()?->getFileName() ?? $this->getFunction()?->getFileName();
+        $fileName = (($getClass = $this->getClass()) ? $getClass->getFileName() : null) ?? (($getFunction = $this->getFunction()) ? $getFunction->getFileName() : null);
         if ($fileName === null) {
             return null;
         }
@@ -54,17 +64,17 @@ class CompilerContext
         return FileHelper::normalizePath($fileName, '/');
     }
 
-    public function getNamespace(): string|null
+    public function getNamespace(): ?string
     {
         if ($this->contextReflection instanceof ReflectionConstant) {
             return $this->contextReflection->getNamespaceName();
         }
 
         // @infection-ignore-all Coalesce: There's no difference
-        return $this->getClass()?->getNamespaceName() ?? $this->getFunction()?->getNamespaceName();
+        return (($getClass = $this->getClass()) ? $getClass->getNamespaceName() : null) ?? (($getFunction = $this->getFunction()) ? $getFunction->getNamespaceName() : null);
     }
 
-    public function getClass(): ReflectionClass|null
+    public function getClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         if ($this->contextReflection instanceof ReflectionClass) {
             return $this->contextReflection;
@@ -89,7 +99,10 @@ class CompilerContext
         return $this->contextReflection->getImplementingClass();
     }
 
-    public function getFunction(): ReflectionMethod|ReflectionFunction|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|null
+     */
+    public function getFunction()
     {
         if ($this->contextReflection instanceof ReflectionMethod) {
             return $this->contextReflection;
