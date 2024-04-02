@@ -7,12 +7,12 @@ namespace Roave\BetterReflectionTest\Reflection\StringCast;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\ReflectionIntersectionType;
-use Roave\BetterReflection\Reflection\ReflectionNamedType;
-use Roave\BetterReflection\Reflection\ReflectionUnionType;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionTypeStringCast;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use PHPStan\BetterReflection\Reflection\ReflectionIntersectionType;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType;
+use PHPStan\BetterReflection\Reflection\ReflectionUnionType;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionTypeStringCast;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 
 use function assert;
@@ -67,7 +67,7 @@ PHP, BetterReflectionSingleton::instance()
     }
 
     /**
-     * @param \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType $type
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType $type
      */
     #[DataProvider('toStringProvider')]
     public function testToString($type, string $expectedString) : void
