@@ -20,48 +20,25 @@ class NodeToReflection implements AstConversionStrategy
     /**
      * Take an AST node in some located source (potentially in a namespace) and
      * convert it to a Reflection
+     * @param \PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\Interface_|\PhpParser\Node\Stmt\Trait_|\PhpParser\Node\Stmt\Enum_|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall $node
+     * @return \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\ReflectionFunction
      */
-    public function __invoke(
-        Reflector $reflector,
-        Node\Stmt\Class_|Node\Stmt\Interface_|Node\Stmt\Trait_|Node\Stmt\Enum_|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction|Node\Stmt\Const_|Node\Expr\FuncCall $node,
-        LocatedSource $locatedSource,
-        Node\Stmt\Namespace_|null $namespace,
-        int|null $positionInNode = null,
-    ): ReflectionClass|ReflectionConstant|ReflectionFunction {
+    public function __invoke(Reflector $reflector, $node, LocatedSource $locatedSource, ?\PhpParser\Node\Stmt\Namespace_ $namespace, ?int $positionInNode = null)
+    {
         /** @psalm-suppress PossiblyNullPropertyFetch, PossiblyNullReference */
-        $namespaceName = $namespace?->name !== null ? implode('\\', $namespace->name->getParts()) : null;
-
+        $namespaceName = (($namespace2 = $namespace) ? $namespace2->name : null) !== null ? implode('\\', $namespace->name->getParts()) : null;
         if ($node instanceof Node\Stmt\Enum_) {
-            return ReflectionEnum::createFromNode(
-                $reflector,
-                $node,
-                $locatedSource,
-                $namespaceName,
-            );
+            return ReflectionEnum::createFromNode($reflector, $node, $locatedSource, $namespaceName);
         }
-
         if ($node instanceof Node\Stmt\ClassLike) {
-            return ReflectionClass::createFromNode(
-                $reflector,
-                $node,
-                $locatedSource,
-                $namespaceName,
-            );
+            return ReflectionClass::createFromNode($reflector, $node, $locatedSource, $namespaceName);
         }
-
         if ($node instanceof Node\Stmt\Const_) {
             return ReflectionConstant::createFromNode($reflector, $node, $locatedSource, $namespaceName, $positionInNode);
         }
-
         if ($node instanceof Node\Expr\FuncCall) {
             return ReflectionConstant::createFromNode($reflector, $node, $locatedSource);
         }
-
-        return ReflectionFunction::createFromNode(
-            $reflector,
-            $node,
-            $locatedSource,
-            $namespaceName,
-        );
+        return ReflectionFunction::createFromNode($reflector, $node, $locatedSource, $namespaceName);
     }
 }

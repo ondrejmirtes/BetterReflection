@@ -12,9 +12,6 @@ final class InvalidProjectDirectory extends InvalidArgumentException implements 
 {
     public static function atPath(string $path): self
     {
-        return new self(sprintf(
-            'Could not locate project directory "%s"',
-            $path,
-        ));
+        return new self(sprintf('Could not locate project directory "%s"', $path));
     }
 }
