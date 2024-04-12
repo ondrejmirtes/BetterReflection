@@ -44,7 +44,6 @@ final class FakeReflectionAttribute
         return $this->betterReflectionAttribute->getArgumentsExpressions();
     }
 
-    /** @deprecated */
     public function newInstance(): object
     {
         $class = $this->getName();
