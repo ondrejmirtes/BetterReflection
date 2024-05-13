@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\SourceLocator\SourceStubber;
 
 use BackedEnum;
+use c;
 use LogicException;
 use PhpParser\Builder\Class_;
 use PhpParser\Builder\ClassConst;
@@ -59,6 +60,7 @@ use function is_string;
 use function method_exists;
 use function preg_replace;
 use function sprintf;
+use const PHP_VERSION_ID;
 
 /**
  * It generates a stub source from internal reflection for given class or function name.
@@ -71,7 +73,7 @@ final class ReflectionSourceStubber implements SourceStubber
 
     private Standard $prettyPrinter;
 
-    public function __construct(Standard $prettyPrinter)
+    public function __construct(Standard $prettyPrinter, private int $phpVersion = PHP_VERSION_ID)
     {
         $this->builderFactory = new BuilderFactory();
         $this->prettyPrinter  = $prettyPrinter;
@@ -622,9 +624,14 @@ final class ReflectionSourceStubber implements SourceStubber
                 return;
             }
 
-            $parameterNode->setDefault(new Node\Expr\New_(
-                new FullyQualified($className)
-            ));
+            if ($this->phpVersion >= 80100) {
+                $parameterNode->setDefault(new Node\Expr\New_(
+                    new FullyQualified($className)
+                ));
+            } else {
+                $parameterNode->setDefault(new Node\Expr\ConstFetch(new Name('null')));
+            }
+
             return;
         }
 
@@ -639,8 +646,11 @@ final class ReflectionSourceStubber implements SourceStubber
 
             /** @var list<Name> $types */
             $types = $this->formatTypes($intersectionTypes);
+            if ($this->phpVersion >= 80100) {
+                return new IntersectionType($types);
+            }
 
-            return new IntersectionType($types);
+            return $types[0];
         }
 
         if ($type instanceof CoreReflectionUnionType) {
@@ -650,7 +660,40 @@ final class ReflectionSourceStubber implements SourceStubber
             /** @var list<Name|IntersectionType> $types */
             $types = $this->formatTypes($unionTypes);
 
-            return new UnionType($types);
+            if ($this->phpVersion >= 80200) {
+                return new UnionType($types);
+            }
+
+            if ($this->phpVersion < 80000) {
+                return $types[0];
+            }
+
+            $intersectionTypes = [];
+            $otherNames = [];
+            foreach ($types as $type) {
+                if ($type instanceof IntersectionType) {
+                    $intersectionTypes[] = $type;
+                    continue;
+                }
+
+                $otherNames[] = $type;
+            }
+
+            if ($this->phpVersion >= 80100) {
+                if (count($intersectionTypes) > 0) {
+                    return $intersectionTypes[0];
+                }
+            }
+
+            if (count($otherNames) > 1) {
+                return new UnionType($otherNames);
+            }
+
+            if (count($otherNames) > 0) {
+                return $otherNames[0];
+            }
+
+            return new Name('null');
         }
 
         assert($type instanceof CoreReflectionNamedType);
