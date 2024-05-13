@@ -29,6 +29,7 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\ClassWithSelfAndParentParametersForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\PHP83ClassForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\SomeEnum;
+use stdClass;
 use Traversable;
 
 use function array_filter;
@@ -509,5 +510,13 @@ class ReflectionSourceStubberTest extends TestCase
         };
         $stub    = $this->stubber->generateFunctionStubFromReflection(new CoreReflectionFunction($closure));
         self::assertStringContainsString('$test = \Roave\BetterReflectionTest\Fixture\SomeEnum::ONE', $stub->getStub());
+    }
+
+    public function testClosureWithNewInInitializer(): void
+    {
+        $closure = static function ($test = new stdClass()): void {
+        };
+        $stub    = $this->stubber->generateFunctionStubFromReflection(new CoreReflectionFunction($closure));
+        self::assertStringContainsString('$test = new \stdClass()', $stub->getStub());
     }
 }
