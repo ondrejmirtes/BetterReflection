@@ -364,11 +364,13 @@ final class ReflectionSourceStubber implements SourceStubber
                 }
             }
 
-            $propertyType = method_exists($propertyReflection, 'getType') ? $propertyReflection->getType() : null;
+            if ($this->phpVersion >= 70400) {
+                $propertyType = method_exists($propertyReflection, 'getType') ? $propertyReflection->getType() : null;
 
-            if ($propertyType !== null) {
-                assert($propertyType instanceof CoreReflectionNamedType || $propertyType instanceof CoreReflectionUnionType || $propertyType instanceof CoreReflectionIntersectionType);
-                $propertyNode->setType($this->formatType($propertyType));
+                if ($propertyType !== null) {
+                    assert($propertyType instanceof CoreReflectionNamedType || $propertyType instanceof CoreReflectionUnionType || $propertyType instanceof CoreReflectionIntersectionType);
+                    $propertyNode->setType($this->formatType($propertyType));
+                }
             }
 
             $classNode->addStmt($propertyNode);
@@ -392,8 +394,10 @@ final class ReflectionSourceStubber implements SourceStubber
 
     private function addPropertyModifiers(Property $propertyNode, CoreReflectionProperty $propertyReflection): void
     {
-        if ($propertyReflection->isReadOnly()) {
-            $propertyNode->makeReadonly();
+        if ($this->phpVersion >= 80100) {
+            if (method_exists($propertyReflection, 'isReadOnly') && $propertyReflection->isReadOnly()) {
+                $propertyNode->makeReadonly();
+            }
         }
 
         if ($propertyReflection->isStatic()) {
