@@ -24,9 +24,15 @@ use function reset;
 #[CoversClass(NodeToReflection::class)]
 class NodeToReflectionTest extends TestCase
 {
-    private Parser $phpParser;
+    /**
+     * @var \PhpParser\Parser
+     */
+    private $phpParser;
 
-    private NodeTraverser $nodeTraverser;
+    /**
+     * @var \PhpParser\NodeTraverser
+     */
+    private $nodeTraverser;
 
     protected function setUp(): void
     {
@@ -56,12 +62,7 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($locatedSource->getSource());
         self::assertInstanceOf(Node\Stmt\Class_::class, $node);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionClass::class, $reflection);
         self::assertSame('Foo', $reflection->getName());
@@ -76,12 +77,7 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($locatedSource->getSource());
         self::assertInstanceOf(Node\Stmt\Trait_::class, $node);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionClass::class, $reflection);
         self::assertSame('Foo', $reflection->getName());
@@ -97,12 +93,7 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($locatedSource->getSource());
         self::assertInstanceOf(Node\Stmt\Interface_::class, $node);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionClass::class, $reflection);
         self::assertSame('Foo', $reflection->getName());
@@ -118,12 +109,7 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($locatedSource->getSource());
         self::assertInstanceOf(Node\Stmt\Enum_::class, $node);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionEnum::class, $reflection);
         self::assertSame('Foo', $reflection->getName());
@@ -138,12 +124,7 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($locatedSource->getSource());
         self::assertInstanceOf(Node\Stmt\Function_::class, $node);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionFunction::class, $reflection);
         self::assertSame('foo', $reflection->getName());
@@ -159,12 +140,7 @@ class NodeToReflectionTest extends TestCase
         self::assertInstanceOf(Node\Stmt\Expression::class, $node);
         self::assertInstanceOf(Node\Expr\Closure::class, $node->expr);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node->expr,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node->expr, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionFunction::class, $reflection);
         self::assertSame(ReflectionFunction::CLOSURE_NAME, $reflection->getName());
@@ -180,12 +156,7 @@ class NodeToReflectionTest extends TestCase
         self::assertInstanceOf(Node\Stmt\Expression::class, $node);
         self::assertInstanceOf(Node\Expr\ArrowFunction::class, $node->expr);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node->expr,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node->expr, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionFunction::class, $reflection);
         self::assertSame(ReflectionFunction::CLOSURE_NAME, $reflection->getName());
@@ -200,13 +171,7 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($locatedSource->getSource());
         self::assertInstanceOf(Node\Stmt\Const_::class, $node);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node,
-            $locatedSource,
-            null,
-            0,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node, $locatedSource, null, 0);
 
         self::assertInstanceOf(ReflectionConstant::class, $reflection);
         self::assertSame('FOO', $reflection->getName());
@@ -222,20 +187,8 @@ class NodeToReflectionTest extends TestCase
         $node = $this->getFirstAstNodeInString($source);
         self::assertInstanceOf(Node\Stmt\Const_::class, $node);
 
-        $reflection1 = $nodeToReflection->__invoke(
-            $reflector,
-            $node,
-            new LocatedSource($source, 'FOO', null),
-            null,
-            0,
-        );
-        $reflection2 = $nodeToReflection->__invoke(
-            $reflector,
-            $node,
-            new LocatedSource($source, 'BOO', null),
-            null,
-            1,
-        );
+        $reflection1 = $nodeToReflection->__invoke($reflector, $node, new LocatedSource($source, 'FOO', null), null, 0);
+        $reflection2 = $nodeToReflection->__invoke($reflector, $node, new LocatedSource($source, 'BOO', null), null, 1);
 
         self::assertInstanceOf(ReflectionConstant::class, $reflection1);
         self::assertSame('FOO', $reflection1->getName());
@@ -253,12 +206,7 @@ class NodeToReflectionTest extends TestCase
         self::assertInstanceOf(Node\Stmt\Expression::class, $node);
         self::assertInstanceOf(Node\Expr\FuncCall::class, $node->expr);
 
-        $reflection = (new NodeToReflection())->__invoke(
-            $reflector,
-            $node->expr,
-            $locatedSource,
-            null,
-        );
+        $reflection = (new NodeToReflection())->__invoke($reflector, $node->expr, $locatedSource, null);
 
         self::assertInstanceOf(ReflectionConstant::class, $reflection);
         self::assertSame('FOO', $reflection->getName());
