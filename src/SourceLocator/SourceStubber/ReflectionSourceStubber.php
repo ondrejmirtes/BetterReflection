@@ -618,6 +618,11 @@ final class ReflectionSourceStubber implements SourceStubber
                 ));
                 return;
             }
+
+            $parameterNode->setDefault(new Node\Expr\New_(
+                new FullyQualified($className)
+            ));
+            return;
         }
 
         $parameterNode->setDefault($defaultValue);

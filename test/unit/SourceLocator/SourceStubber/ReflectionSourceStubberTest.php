@@ -494,4 +494,13 @@ class ReflectionSourceStubberTest extends TestCase
         $stub = $this->stubber->generateFunctionStubFromReflection(new CoreReflectionFunction($closure));
         self::assertStringContainsString('$test = \Roave\BetterReflectionTest\Fixture\SomeEnum::ONE', $stub->getStub());
     }
+
+    public function testClosureWithNewInInitializer(): void
+    {
+        $closure = function ($test = new \stdClass()): void {
+
+        };
+        $stub = $this->stubber->generateFunctionStubFromReflection(new CoreReflectionFunction($closure));
+        self::assertStringContainsString('$test = new \stdClass()', $stub->getStub());
+    }
 }
