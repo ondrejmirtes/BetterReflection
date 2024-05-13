@@ -20,7 +20,10 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(AggregateSourceLocator::class)]
 class AggregateSourceLocatorTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     protected function setUp(): void
     {
@@ -29,7 +32,10 @@ class AggregateSourceLocatorTest extends TestCase
         $this->astLocator = BetterReflectionSingleton::instance()->astLocator();
     }
 
-    private function getMockReflector(): Reflector|MockObject
+    /**
+     * @return \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getMockReflector()
     {
         return $this->createMock(Reflector::class);
     }
@@ -62,25 +68,17 @@ class AggregateSourceLocatorTest extends TestCase
         $locator3->expects($this->once())->method('locateIdentifier')->willReturn($source3);
         $locator4->expects($this->never())->method('locateIdentifier');
 
-        self::assertSame(
-            $source3,
-            (new AggregateSourceLocator([
-                $locator1,
-                $locator2,
-                $locator3,
-                $locator4,
-            ]))->locateIdentifier($this->getMockReflector(), $identifier),
-        );
+        self::assertSame($source3, (new AggregateSourceLocator([
+            $locator1,
+            $locator2,
+            $locator3,
+            $locator4,
+        ]))->locateIdentifier($this->getMockReflector(), $identifier));
     }
 
     public function testWillNotResolveWithEmptyLocatorsList(): void
     {
-        self::assertNull(
-            (new AggregateSourceLocator([]))->locateIdentifier(
-                $this->getMockReflector(),
-                new Identifier('Foo', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
-            ),
-        );
+        self::assertNull((new AggregateSourceLocator([]))->locateIdentifier($this->getMockReflector(), new Identifier('Foo', new IdentifierType(IdentifierType::IDENTIFIER_CLASS))));
     }
 
     public function testTwoStringSourceLocatorsResolveCorrectly(): void
@@ -115,14 +113,11 @@ class AggregateSourceLocatorTest extends TestCase
         $locator3->expects($this->once())->method('locateIdentifiersByType')->willReturn([$source3]);
         $locator4->expects($this->once())->method('locateIdentifiersByType')->willReturn([]);
 
-        self::assertSame(
-            [$source2, $source3],
-            (new AggregateSourceLocator([
-                $locator1,
-                $locator2,
-                $locator3,
-                $locator4,
-            ]))->locateIdentifiersByType($this->getMockReflector(), $identifierType),
-        );
+        self::assertSame([$source2, $source3], (new AggregateSourceLocator([
+            $locator1,
+            $locator2,
+            $locator3,
+            $locator4,
+        ]))->locateIdentifiersByType($this->getMockReflector(), $identifierType));
     }
 }

@@ -19,7 +19,10 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(ComposerSourceLocator::class)]
 class ComposerSourceLocatorTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     protected function setUp(): void
     {
@@ -28,7 +31,10 @@ class ComposerSourceLocatorTest extends TestCase
         $this->astLocator = BetterReflectionSingleton::instance()->astLocator();
     }
 
-    private function getMockReflector(): Reflector|MockObject
+    /**
+     * @return \Roave\BetterReflection\Reflector\Reflector|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getMockReflector()
     {
         return $this->createMock(Reflector::class);
     }
@@ -48,10 +54,7 @@ class ComposerSourceLocatorTest extends TestCase
 
         $locator = new ComposerSourceLocator($loader, $this->astLocator);
 
-        $reflectionClass = $locator->locateIdentifier($this->getMockReflector(), new Identifier(
-            $className,
-            new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-        ));
+        $reflectionClass = $locator->locateIdentifier($this->getMockReflector(), new Identifier($className, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertSame('ClassWithNoNamespace', $reflectionClass->getName());
     }
@@ -70,10 +73,7 @@ class ComposerSourceLocatorTest extends TestCase
 
         $locator = new ComposerSourceLocator($loader, $this->astLocator);
 
-        self::assertNull($locator->locateIdentifier($this->getMockReflector(), new Identifier(
-            $className,
-            new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-        )));
+        self::assertNull($locator->locateIdentifier($this->getMockReflector(), new Identifier($className, new IdentifierType(IdentifierType::IDENTIFIER_CLASS))));
     }
 
     public function testInvokeThrowsExceptionWhenTryingToLocateFunction(): void
@@ -82,9 +82,6 @@ class ComposerSourceLocatorTest extends TestCase
 
         $locator = new ComposerSourceLocator($loader, $this->astLocator);
 
-        self::assertNull($locator->locateIdentifier($this->getMockReflector(), new Identifier(
-            'foo',
-            new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION),
-        )));
+        self::assertNull($locator->locateIdentifier($this->getMockReflector(), new Identifier('foo', new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION))));
     }
 }

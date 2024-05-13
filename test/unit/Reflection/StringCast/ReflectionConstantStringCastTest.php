@@ -20,9 +20,15 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(ReflectionConstantStringCast::class)]
 class ReflectionConstantStringCastTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
-    private SourceStubber $sourceStubber;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber
+     */
+    private $sourceStubber;
 
     protected function setUp(): void
     {
