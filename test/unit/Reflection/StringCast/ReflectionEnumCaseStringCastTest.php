@@ -6,11 +6,11 @@ namespace Roave\BetterReflectionTest\Reflection\StringCast;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\ReflectionEnum;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionEnumCaseStringCast;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use PHPStan\BetterReflection\Reflection\ReflectionEnum;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionEnumCaseStringCast;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\StringCastBackedEnum;
 use Roave\BetterReflectionTest\Fixture\StringCastPureEnum;
@@ -19,7 +19,7 @@ use Roave\BetterReflectionTest\Fixture\StringCastPureEnum;
 class ReflectionEnumCaseStringCastTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     * @var \PHPStan\BetterReflection\SourceLocator\Ast\Locator
      */
     private $astLocator;
 
