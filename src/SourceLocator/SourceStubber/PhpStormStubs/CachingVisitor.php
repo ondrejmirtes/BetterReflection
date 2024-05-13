@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\SourceStubber\PhpStormStubs;
+namespace PHPStan\BetterReflection\SourceLocator\SourceStubber\PhpStormStubs;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
-use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
-use Roave\BetterReflection\Util\ConstantNodeChecker;
+use PHPStan\BetterReflection\Reflection\Exception\InvalidConstantNode;
+use PHPStan\BetterReflection\Util\ConstantNodeChecker;
 
 use function array_key_exists;
 use function assert;
