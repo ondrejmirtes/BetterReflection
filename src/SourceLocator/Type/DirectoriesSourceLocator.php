@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type;
+namespace PHPStan\BetterReflection\SourceLocator\Type;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\Reflection;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidDirectory;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\Reflection;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidDirectory;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
 
 use function array_map;
 use function is_dir;
@@ -23,7 +23,7 @@ use function is_dir;
 class DirectoriesSourceLocator implements SourceLocator
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\AggregateSourceLocator
      */
     private $aggregateSourceLocator;
 
@@ -44,7 +44,7 @@ class DirectoriesSourceLocator implements SourceLocator
         }, $directories));
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\PHPStan\BetterReflection\Reflection\Reflection
     {
         return $this->aggregateSourceLocator->locateIdentifier($reflector, $identifier);
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\SourceStubber;
+namespace PHPStan\BetterReflection\SourceLocator\SourceStubber;
 
 use CompileError;
 use DatePeriod;
@@ -23,12 +23,12 @@ use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use RecursiveIterator;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
-use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
-use Roave\BetterReflection\SourceLocator\FileChecker;
-use Roave\BetterReflection\SourceLocator\SourceStubber\Exception\CouldNotFindPhpStormStubs;
-use Roave\BetterReflection\SourceLocator\SourceStubber\PhpStormStubs\CachingVisitor;
-use Roave\BetterReflection\Util\ConstantNodeChecker;
+use PHPStan\BetterReflection\Reflection\Annotation\AnnotationHelper;
+use PHPStan\BetterReflection\Reflection\Exception\InvalidConstantNode;
+use PHPStan\BetterReflection\SourceLocator\FileChecker;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\Exception\CouldNotFindPhpStormStubs;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\PhpStormStubs\CachingVisitor;
+use PHPStan\BetterReflection\Util\ConstantNodeChecker;
 use SimpleXMLElement;
 use SplFixedArray;
 use Traversable;
@@ -158,7 +158,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     private $stubsDirectory = null;
 
     /**
-     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\PhpStormStubs\CachingVisitor
+     * @var \PHPStan\BetterReflection\SourceLocator\SourceStubber\PhpStormStubs\CachingVisitor
      */
     private $cachingVisitor;
 
@@ -264,7 +264,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     }
 
     /** @param class-string|trait-string $className */
-    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
+    public function generateClassStub(string $className): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         if (strtolower($className) === 'iterable') {
             return null;
@@ -353,7 +353,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->functionNodes[$lowercaseFunctionName];
     }
 
-    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
+    public function generateFunctionStub(string $functionName): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $functionNodeData = $this->getFunctionNodeData($functionName);
 
@@ -367,7 +367,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return new StubData($this->createStub($functionNodeData[0], $functionNodeData[1]), $extension, $this->getAbsoluteFilePath($filePath));
     }
 
-    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
+    public function generateConstantStub(string $constantName): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $lowercaseConstantName = strtolower($constantName);
 
