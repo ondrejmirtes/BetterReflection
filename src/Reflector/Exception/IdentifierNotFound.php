@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflector\Exception;
+namespace PHPStan\BetterReflection\Reflector\Exception;
 
-use Roave\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\Identifier;
 use RuntimeException;
 
 use function sprintf;
@@ -12,7 +12,7 @@ use function sprintf;
 class IdentifierNotFound extends RuntimeException
 {
     /**
-     * @var \Roave\BetterReflection\Identifier\Identifier
+     * @var \PHPStan\BetterReflection\Identifier\Identifier
      */
     private $identifier;
     public function __construct(string $message, Identifier $identifier)
