@@ -11,8 +11,13 @@ use function sprintf;
 
 class IdentifierNotFound extends RuntimeException
 {
-    public function __construct(string $message, private Identifier $identifier)
+    /**
+     * @var \Roave\BetterReflection\Identifier\Identifier
+     */
+    private $identifier;
+    public function __construct(string $message, Identifier $identifier)
     {
+        $this->identifier = $identifier;
         parent::__construct($message);
     }
 
@@ -23,10 +28,6 @@ class IdentifierNotFound extends RuntimeException
 
     public static function fromIdentifier(Identifier $identifier): self
     {
-        return new self(sprintf(
-            '%s "%s" could not be found in the located source',
-            $identifier->getType()->getName(),
-            $identifier->getName(),
-        ), $identifier);
+        return new self(sprintf('%s "%s" could not be found in the located source', $identifier->getType()->getName(), $identifier->getName()), $identifier);
     }
 }

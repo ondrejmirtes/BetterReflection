@@ -34,11 +34,19 @@ use function strpos;
 /** @internal */
 final class AnonymousClassObjectSourceLocator implements SourceLocator
 {
-    private CoreReflectionClass $coreClassReflection;
+    /**
+     * @var CoreReflectionClass
+     */
+    private $coreClassReflection;
+    /**
+     * @var \PhpParser\Parser
+     */
+    private $parser;
 
     /** @throws ReflectionException */
-    public function __construct(object $anonymousClassObject, private Parser $parser)
+    public function __construct(object $anonymousClassObject, Parser $parser)
     {
+        $this->parser = $parser;
         $this->coreClassReflection = new CoreReflectionClass($anonymousClassObject);
     }
 
@@ -47,7 +55,7 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
      *
      * @throws ParseToAstFailure
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         return $this->getReflectionClass($reflector, $identifier->getType());
     }
@@ -62,7 +70,7 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
         return array_filter([$this->getReflectionClass($reflector, $identifierType)]);
     }
 
-    private function getReflectionClass(Reflector $reflector, IdentifierType $identifierType): ReflectionClass|null
+    private function getReflectionClass(Reflector $reflector, IdentifierType $identifierType): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         if (! $identifierType->isClass()) {
             return null;
@@ -86,10 +94,20 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
         $nodeVisitor = new class ($fileName, $this->coreClassReflection->getStartLine()) extends NodeVisitorAbstract
         {
             /** @var list<Class_> */
-            private array $anonymousClassNodes = [];
+            private $anonymousClassNodes = [];
+            /**
+             * @var string
+             */
+            private $fileName;
+            /**
+             * @var int
+             */
+            private $startLine;
 
-            public function __construct(private string $fileName, private int $startLine)
+            public function __construct(string $fileName, int $startLine)
             {
+                $this->fileName = $fileName;
+                $this->startLine = $startLine;
             }
 
             /**
@@ -129,12 +147,7 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
         $nodeTraverser->addVisitor($nodeVisitor);
         $nodeTraverser->traverse($ast);
 
-        $reflectionClass = (new NodeToReflection())->__invoke(
-            $reflector,
-            $nodeVisitor->getAnonymousClassNode(),
-            new AnonymousLocatedSource($fileContents, $fileName),
-            null,
-        );
+        $reflectionClass = (new NodeToReflection())->__invoke($reflector, $nodeVisitor->getAnonymousClassNode(), new AnonymousLocatedSource($fileContents, $fileName), null);
         assert($reflectionClass instanceof ReflectionClass);
 
         return $reflectionClass;

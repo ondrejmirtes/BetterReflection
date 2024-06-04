@@ -31,7 +31,10 @@ use function sprintf;
 
 class ReflectionClassConstantTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     public function setUp(): void
     {
@@ -42,14 +45,11 @@ class ReflectionClassConstantTest extends TestCase
 
     private function getComposerLocator(): ComposerSourceLocator
     {
-        return new ComposerSourceLocator(
-            require __DIR__ . '/../../../vendor/autoload.php',
-            $this->astLocator,
-        );
+        return new ComposerSourceLocator(require __DIR__ . '/../../../vendor/autoload.php', $this->astLocator);
     }
 
     /** @param non-empty-string $name */
-    private function getExampleConstant(string $name): ReflectionClassConstant|null
+    private function getExampleConstant(string $name): ?\Roave\BetterReflection\Reflection\ReflectionClassConstant
     {
         $reflector = new DefaultReflector($this->getComposerLocator());
         $classInfo = $reflector->reflectClass(ExampleClass::class);

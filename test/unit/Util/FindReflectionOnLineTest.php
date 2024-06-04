@@ -16,7 +16,10 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 #[CoversClass(FindReflectionOnLine::class)]
 class FindReflectionOnLineTest extends TestCase
 {
-    private FindReflectionOnLine $finder;
+    /**
+     * @var \Roave\BetterReflection\Util\FindReflectionOnLine
+     */
+    private $finder;
 
     protected function setUp(): void
     {
