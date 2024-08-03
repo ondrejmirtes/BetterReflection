@@ -36,7 +36,8 @@ use function strtolower;
  */
 final class ReflectionClass extends CoreReflectionClass
 {
-    public const IS_READONLY = 65536;
+    /** @internal */
+    public const IS_READONLY_COMPATIBILITY = 65536;
 
     public function __construct(private BetterReflectionClass|BetterReflectionEnum $betterReflectionClass)
     {
@@ -356,7 +357,7 @@ final class ReflectionClass extends CoreReflectionClass
             $this->betterReflectionClass instanceof BetterReflectionEnum
             && (
                 $filter === null
-                || $filter & ReflectionClassConstant::IS_PUBLIC
+                || $filter & ReflectionClassConstant::IS_PUBLIC_COMPATIBILITY
             )
         ) {
             $reflectionConstants += $this->betterReflectionClass->getCases();
