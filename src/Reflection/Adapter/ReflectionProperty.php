@@ -29,6 +29,7 @@ use function sprintf;
 /** @psalm-suppress PropertyNotSetInConstructor */
 final class ReflectionProperty extends CoreReflectionProperty
 {
+
     /** @internal */
     public const IS_FINAL_COMPATIBILITY = 32;
 
@@ -43,6 +44,9 @@ final class ReflectionProperty extends CoreReflectionProperty
 
     /** @internal */
     public const IS_PRIVATE_SET_COMPATIBILITY = 4096;
+
+    /** @internal */
+    public const IS_READONLY_COMPATIBILITY = 128;
 
     public function __construct(private BetterReflectionProperty $betterReflectionProperty)
     {
