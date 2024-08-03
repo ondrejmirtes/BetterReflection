@@ -64,6 +64,9 @@ final class ReflectionProperty extends CoreReflectionProperty
      */
     public const IS_PRIVATE_SET_COMPATIBILITY = 4096;
 
+    /** @internal */
+    public const IS_READONLY_COMPATIBILITY = 128;
+
     public function __construct(private BetterReflectionProperty $betterReflectionProperty)
     {
         unset($this->name);
