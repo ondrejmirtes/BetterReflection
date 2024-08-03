@@ -26,6 +26,7 @@ use ReflectionClass as CoreReflectionClass;
 use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
 use Roave\BetterReflection\Reflection\Exception\CircularReference;
 use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
@@ -1209,7 +1210,7 @@ PHP;
             ['ExampleClass', 0],
             ['AbstractClass', CoreReflectionClass::IS_EXPLICIT_ABSTRACT],
             ['FinalClass', CoreReflectionClass::IS_FINAL],
-            ['ReadOnlyClass', CoreReflectionClass::IS_READONLY],
+            ['ReadOnlyClass', ReflectionClassAdapter::IS_READONLY_COMPATIBILITY],
             ['ExampleTrait', 0],
         ];
     }
