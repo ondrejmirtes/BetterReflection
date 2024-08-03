@@ -42,6 +42,9 @@ final class ReflectionClass extends CoreReflectionClass
     /** @internal */
     public const SKIP_DESTRUCTOR_COMPATIBILITY = 16;
 
+    /** @internal */
+    public const IS_READONLY_COMPATIBILITY = 65536;
+
     public function __construct(private BetterReflectionClass|BetterReflectionEnum $betterReflectionClass)
     {
         unset($this->name);
@@ -363,7 +366,7 @@ final class ReflectionClass extends CoreReflectionClass
             $this->betterReflectionClass instanceof BetterReflectionEnum
             && (
                 $filter === null
-                || $filter & ReflectionClassConstant::IS_PUBLIC
+                || $filter & ReflectionClassConstant::IS_PUBLIC_COMPATIBILITY
             )
         ) {
             $reflectionConstants += $this->betterReflectionClass->getCases();
