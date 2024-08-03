@@ -341,7 +341,7 @@ class ReflectionProperty
 
     public function isReadOnly(): bool
     {
-        return (bool) ($this->modifiers & ReflectionPropertyAdapter::IS_READONLY)
+        return ($this->modifiers & ReflectionPropertyAdapter::IS_READONLY_COMPATIBILITY)
             || $this->getDeclaringClass()->isReadOnly();
     }
 
@@ -675,9 +675,9 @@ class ReflectionProperty
     /** @return int-mask-of<ReflectionPropertyAdapter::IS_*> */
     private function computeModifiers(PropertyNode $node): int
     {
-        $modifiers  = $node->isReadonly() ? ReflectionPropertyAdapter::IS_READONLY : 0;
-        $modifiers += $node->isStatic() ? ReflectionPropertyAdapter::IS_STATIC : 0;
-        $modifiers += $node->isPrivate() ? ReflectionPropertyAdapter::IS_PRIVATE : 0;
+        $modifiers  = $node->isReadonly() ? ReflectionPropertyAdapter::IS_READONLY_COMPATIBILITY : 0;
+        $modifiers += $node->isStatic() ? CoreReflectionProperty::IS_STATIC : 0;
+        $modifiers += $node->isPrivate() ? CoreReflectionProperty::IS_PRIVATE : 0;
         $modifiers += ! $node->isPrivate() && $node->isPrivateSet() ? ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY : 0;
         $modifiers += $node->isProtected() ? ReflectionPropertyAdapter::IS_PROTECTED : 0;
         $modifiers += ! $node->isProtected() && $node->isProtectedSet() ? ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY : 0;
