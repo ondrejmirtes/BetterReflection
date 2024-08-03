@@ -185,7 +185,7 @@ class ReflectionClassConstant
      */
     public function isPublic(): bool
     {
-        return (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_PUBLIC);
+        return (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_PUBLIC_COMPATIBILITY);
     }
 
     /**
@@ -194,7 +194,7 @@ class ReflectionClassConstant
     public function isPrivate(): bool
     {
         // Private constant cannot be final
-        return $this->modifiers === ReflectionClassConstantAdapter::IS_PRIVATE;
+        return $this->modifiers === ReflectionClassConstantAdapter::IS_PRIVATE_COMPATIBILITY;
     }
 
     /**
@@ -202,12 +202,12 @@ class ReflectionClassConstant
      */
     public function isProtected(): bool
     {
-        return (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_PROTECTED);
+        return (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_PROTECTED_COMPATIBILITY);
     }
 
     public function isFinal(): bool
     {
-        $final = (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_FINAL);
+        $final = (bool) ($this->modifiers & ReflectionClassConstantAdapter::IS_FINAL_COMPATIBILITY);
         if ($final) {
             return true;
         }
@@ -319,10 +319,10 @@ class ReflectionClassConstant
     /** @return int-mask-of<ReflectionClassConstantAdapter::IS_*> */
     private function computeModifiers(ClassConst $node): int
     {
-        $modifiers  = $node->isFinal() ? ReflectionClassConstantAdapter::IS_FINAL : 0;
-        $modifiers += $node->isPrivate() ? ReflectionClassConstantAdapter::IS_PRIVATE : 0;
-        $modifiers += $node->isProtected() ? ReflectionClassConstantAdapter::IS_PROTECTED : 0;
-        $modifiers += $node->isPublic() ? ReflectionClassConstantAdapter::IS_PUBLIC : 0;
+        $modifiers  = $node->isFinal() ? ReflectionClassConstantAdapter::IS_FINAL_COMPATIBILITY : 0;
+        $modifiers += $node->isPrivate() ? ReflectionClassConstantAdapter::IS_PRIVATE_COMPATIBILITY : 0;
+        $modifiers += $node->isProtected() ? ReflectionClassConstantAdapter::IS_PROTECTED_COMPATIBILITY : 0;
+        $modifiers += $node->isPublic() ? ReflectionClassConstantAdapter::IS_PUBLIC_COMPATIBILITY : 0;
 
         return $modifiers;
     }

@@ -306,7 +306,7 @@ final class ReflectionEnum extends CoreReflectionEnum
 
         if (
             $filter === null
-            || $filter & ReflectionClassConstant::IS_PUBLIC
+            || $filter & ReflectionClassConstant::IS_PUBLIC_COMPATIBILITY
         ) {
             $reflectionConstants += $this->betterReflectionEnum->getCases();
         }
