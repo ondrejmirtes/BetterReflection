@@ -502,7 +502,7 @@ final class ReflectionClass extends CoreReflectionClass
         return $reflection->newInstanceWithoutConstructor();
     }
 
-    public function newInstanceArgs(array $args = null): object
+    public function newInstanceArgs(?array $args = null): object
     {
         ClassExistenceChecker::classExists($this->getName(), true);
         $reflection = new CoreReflectionClass($this->getName());
