@@ -26,17 +26,18 @@ class MemoizingParserTest extends TestCase
     {
         $wrappedParser = $this->createMock(Parser::class);
 
-        $randomCodeStrings = array_unique(array_map(
-            static fn (): string => uniqid('code', true),
-            range(0, 100),
-        ));
+        $randomCodeStrings = array_unique(array_map(static function () : string {
+            return uniqid('code', true);
+        }, range(0, 100)));
 
         $randomCodeStringsCount = count($randomCodeStrings);
 
         $wrappedParser
             ->expects(self::exactly($randomCodeStringsCount))
             ->method('parse')
-            ->willReturnCallback(static fn (): array => [new Name('bool')]);
+            ->willReturnCallback(static function () : array {
+                return [new Name('bool')];
+            });
 
         $parser = new MemoizingParser($wrappedParser);
 
@@ -49,10 +50,9 @@ class MemoizingParserTest extends TestCase
             self::assertInstanceOf(Node::class, $parsed[0]);
         }
 
-        $nodeIdentifiers = array_map(
-            static fn (array $nodes): int => spl_object_id($nodes[0]),
-            $producedNodes,
-        );
+        $nodeIdentifiers = array_map(static function (array $nodes) : int {
+            return spl_object_id($nodes[0]);
+        }, $producedNodes);
 
         self::assertCount(count($nodeIdentifiers), array_unique($nodeIdentifiers), 'No duplicate nodes allowed');
         self::assertEquals($producedNodes, array_map([$parser, 'parse'], $randomCodeStrings));
@@ -65,19 +65,8 @@ class MemoizingParserTest extends TestCase
 
         $parser = new MemoizingParser($wrappedParser);
 
-        self::assertEquals(
-            $wrappedParser->parse($code),
-            $parser->parse($code),
-        );
-        self::assertEquals(
-            $parser->parse($code),
-            $parser->parse($code),
-            'Equal tree is produced at each iteration',
-        );
-        self::assertNotSame(
-            $parser->parse($code),
-            $parser->parse($code),
-            'Each time a tree is requested, a new copy is provided',
-        );
+        self::assertEquals($wrappedParser->parse($code), $parser->parse($code));
+        self::assertEquals($parser->parse($code), $parser->parse($code), 'Equal tree is produced at each iteration');
+        self::assertNotSame($parser->parse($code), $parser->parse($code), 'Each time a tree is requested, a new copy is provided');
     }
 }
