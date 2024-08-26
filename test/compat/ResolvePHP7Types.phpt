@@ -12,12 +12,12 @@ function myFunction(int $a, string $b = null): bool
 }
 EOF;
 
-$sourceLocator = new Roave\BetterReflection\SourceLocator\Type\StringSourceLocator(
+$sourceLocator = new PHPStan\BetterReflection\SourceLocator\Type\StringSourceLocator(
     $source,
-    (new Roave\BetterReflection\BetterReflection())->astLocator()
+    (new PHPStan\BetterReflection\BetterReflection())->astLocator()
 );
 
-$reflector = new \Roave\BetterReflection\Reflector\DefaultReflector($sourceLocator);
+$reflector = new \PHPStan\BetterReflection\Reflector\DefaultReflector($sourceLocator);
 
 $functionInfo = $reflector->reflectFunction('myFunction');
 
@@ -27,7 +27,7 @@ var_dump([
     'type' => $returnType->__toString(),
 ]);
 
-array_map(function (\Roave\BetterReflection\Reflection\ReflectionParameter $param) {
+array_map(function (\PHPStan\BetterReflection\Reflection\ReflectionParameter $param) {
     $type = $param->getType();
 
     var_dump([
