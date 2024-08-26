@@ -43,10 +43,7 @@ class CheckLoadedClassesExtension implements Extension
              */
             private function assertClassNotLoaded(string $className, Finished $event): void
             {
-                TestCase::assertFalse(
-                    class_exists($className, false),
-                    sprintf('Class %s was loaded during test %s', $className, $event->test()->id()),
-                );
+                TestCase::assertFalse(class_exists($className, false), sprintf('Class %s was loaded during test %s', $className, $event->test()->id()));
             }
         });
     }

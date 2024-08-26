@@ -23,14 +23,7 @@ final class ReflectionClassConstantStringCast
         /** @psalm-var scalar|array<scalar> $value */
         $value = $constantReflection->getValue();
 
-        return sprintf(
-            "Constant [ %s%s %s %s ] { %s }\n",
-            $constantReflection->isFinal() ? 'final ' : '',
-            self::visibilityToString($constantReflection),
-            gettype($value),
-            $constantReflection->getName(),
-            is_array($value) ? 'Array' : (string) $value,
-        );
+        return sprintf("Constant [ %s%s %s %s ] { %s }\n", $constantReflection->isFinal() ? 'final ' : '', self::visibilityToString($constantReflection), gettype($value), $constantReflection->getName(), is_array($value) ? 'Array' : (string) $value);
     }
 
     /** @psalm-pure */
