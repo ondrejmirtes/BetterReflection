@@ -143,7 +143,12 @@ final class ReflectionSourceStubber implements SourceStubber
 
     public function generateFunctionStubFromReflection(CoreReflectionFunction $functionReflection): ?StubData
     {
-        $functionNode = $this->builderFactory->function($functionReflection->getShortName());
+        $shortName = $functionReflection->getShortName();
+        if ($functionReflection->isClosure()) {
+            $shortName = '{closure}';
+        }
+
+        $functionNode = $this->builderFactory->function($shortName);
 
         $this->addDocComment($functionNode, $functionReflection);
         $this->addParameters($functionNode, $functionReflection);
@@ -158,7 +163,7 @@ final class ReflectionSourceStubber implements SourceStubber
         $extensionName = $functionReflection->getExtension()?->getName();
         assert((is_string($extensionName) && $extensionName !== '') || $extensionName === null);
 
-        if (! $functionReflection->inNamespace()) {
+        if (! $functionReflection->inNamespace() || $functionReflection->isClosure()) {
             return $this->createStubData($this->generateStub($functionNode->getNode()), $extensionName, $functionReflection->getFileName() !== false ? $functionReflection->getFileName() : null);
         }
 
