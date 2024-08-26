@@ -8,13 +8,13 @@ use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\ReflectionEnum;
-use Roave\BetterReflection\Reflection\ReflectionEnumCase;
-use Roave\BetterReflection\Reflection\ReflectionNamedType;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use PHPStan\BetterReflection\Reflection\ReflectionEnum;
+use PHPStan\BetterReflection\Reflection\ReflectionEnumCase;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\IntEnum;
 use Roave\BetterReflectionTest\Fixture\PureEnum;
@@ -24,12 +24,12 @@ use Roave\BetterReflectionTest\Fixture\StringEnum;
 class ReflectionEnumTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     * @var \PHPStan\BetterReflection\SourceLocator\Ast\Locator
      */
     private $astLocator;
 
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector
+     * @var \PHPStan\BetterReflection\Reflector\Reflector
      */
     private $reflector;
 
