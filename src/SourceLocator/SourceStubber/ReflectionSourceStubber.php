@@ -141,7 +141,11 @@ final class ReflectionSourceStubber implements SourceStubber
 
     public function generateFunctionStubFromReflection(CoreReflectionFunction $functionReflection): ?StubData
     {
-        $functionNode = $this->builderFactory->function($functionReflection->getShortName());
+        $shortName = $functionReflection->getShortName();
+        if ($functionReflection->isClosure()) {
+            $shortName = '{closure}';
+        }
+        $functionNode = $this->builderFactory->function($shortName);
 
         $this->addDocComment($functionNode, $functionReflection);
         $this->addParameters($functionNode, $functionReflection);
