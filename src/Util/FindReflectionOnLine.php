@@ -23,8 +23,18 @@ use function array_merge;
 
 final class FindReflectionOnLine
 {
-    public function __construct(private SourceLocator $sourceLocator, private Locator $astLocator)
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator
+     */
+    private $sourceLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
+    public function __construct(SourceLocator $sourceLocator, Locator $astLocator)
     {
+        $this->sourceLocator = $sourceLocator;
+        $this->astLocator = $astLocator;
     }
 
     /**
@@ -37,8 +47,9 @@ final class FindReflectionOnLine
      * @throws InvalidFileLocation
      * @throws ParseToAstFailure
      * @throws InvalidArgumentException
+     * @return \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\Reflection|null
      */
-    public function __invoke(string $filename, int $lineNumber): ReflectionMethod|ReflectionClass|ReflectionFunction|ReflectionConstant|Reflection|null
+    public function __invoke(string $filename, int $lineNumber)
     {
         $reflections = $this->computeReflections($filename);
 
@@ -80,17 +91,14 @@ final class FindReflectionOnLine
         $singleFileSourceLocator = new SingleFileSourceLocator($filename, $this->astLocator);
         $reflector               = new DefaultReflector(new AggregateSourceLocator([$singleFileSourceLocator, $this->sourceLocator]));
 
-        return array_merge(
-            $singleFileSourceLocator->locateIdentifiersByType($reflector, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
-            $singleFileSourceLocator->locateIdentifiersByType($reflector, new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION)),
-            $singleFileSourceLocator->locateIdentifiersByType($reflector, new IdentifierType(IdentifierType::IDENTIFIER_CONSTANT)),
-        );
+        return array_merge($singleFileSourceLocator->locateIdentifiersByType($reflector, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)), $singleFileSourceLocator->locateIdentifiersByType($reflector, new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION)), $singleFileSourceLocator->locateIdentifiersByType($reflector, new IdentifierType(IdentifierType::IDENTIFIER_CONSTANT)));
     }
 
     /**
      * Check to see if the line is within the boundaries of the reflection specified.
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant $reflection
      */
-    private function containsLine(ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionConstant $reflection, int $lineNumber): bool
+    private function containsLine($reflection, int $lineNumber): bool
     {
         return $lineNumber >= $reflection->getStartLine() && $lineNumber <= $reflection->getEndLine();
     }

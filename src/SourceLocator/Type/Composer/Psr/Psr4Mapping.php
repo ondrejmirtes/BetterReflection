@@ -24,7 +24,7 @@ use const ARRAY_FILTER_USE_KEY;
 final class Psr4Mapping implements PsrAutoloaderMapping
 {
     /** @var array<string, list<string>> */
-    private array $mappings = [];
+    private $mappings = [];
 
     private function __construct()
     {
@@ -35,12 +35,11 @@ final class Psr4Mapping implements PsrAutoloaderMapping
     {
         $instance = new self();
 
-        $instance->mappings = array_map(
-            static function (array $directories): array {
-                return array_map(static fn (string $directory): string => rtrim($directory, '/'), $directories);
-            },
-            $mappings,
-        );
+        $instance->mappings = array_map(static function (array $directories): array {
+            return array_map(static function (string $directory) : string {
+                return rtrim($directory, '/');
+            }, $directories);
+        }, $mappings);
 
         return $instance;
     }
@@ -55,34 +54,29 @@ final class Psr4Mapping implements PsrAutoloaderMapping
         $className        = $identifier->getName();
         $matchingPrefixes = $this->matchingPrefixes($className);
 
-        return array_values(array_filter(array_merge(
-            [],
-            ...array_map(static function (array $paths, string $prefix) use ($className): array {
-                $subPath = ltrim(str_replace('\\', '/', substr($className, strlen($prefix))), '/');
+        return array_values(array_filter(array_merge([], ...array_map(static function (array $paths, string $prefix) use ($className): array {
+            $subPath = ltrim(str_replace('\\', '/', substr($className, strlen($prefix))), '/');
 
-                if ($subPath === '') {
-                    return [];
-                }
+            if ($subPath === '') {
+                return [];
+            }
 
-                return array_map(static fn (string $path): string => $path . '/' . $subPath . '.php', $paths);
-            }, $matchingPrefixes, array_keys($matchingPrefixes)),
-        )));
+            return array_map(static function (string $path) use ($subPath) : string {
+                return $path . '/' . $subPath . '.php';
+            }, $paths);
+        }, $matchingPrefixes, array_keys($matchingPrefixes)))));
     }
 
     /** @return array<string, list<string>> */
     private function matchingPrefixes(string $className): array
     {
-        return array_filter(
-            $this->mappings,
-            static function (string $prefix) use ($className): bool {
-                if ($prefix === '') {
-                    return false;
-                }
+        return array_filter($this->mappings, static function (string $prefix) use ($className): bool {
+            if ($prefix === '') {
+                return false;
+            }
 
-                return strpos($className, $prefix) === 0;
-            },
-            ARRAY_FILTER_USE_KEY,
-        );
+            return strpos($className, $prefix) === 0;
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /** {@inheritDoc} */
