@@ -26,15 +26,7 @@ final class ReflectionPropertyStringCast
 
         $type = $propertyReflection->getType();
 
-        return sprintf(
-            'Property [%s %s%s%s%s $%s ]',
-            $stateModifier,
-            self::visibilityToString($propertyReflection),
-            $propertyReflection->isStatic() ? ' static' : '',
-            $propertyReflection->isReadOnly() ? ' readonly' : '',
-            $type !== null ? sprintf(' %s', ReflectionTypeStringCast::toString($type)) : '',
-            $propertyReflection->getName(),
-        );
+        return sprintf('Property [%s %s%s%s%s $%s ]', $stateModifier, self::visibilityToString($propertyReflection), $propertyReflection->isStatic() ? ' static' : '', $propertyReflection->isReadOnly() ? ' readonly' : '', $type !== null ? sprintf(' %s', ReflectionTypeStringCast::toString($type)) : '', $propertyReflection->getName());
     }
 
     /** @psalm-pure */
