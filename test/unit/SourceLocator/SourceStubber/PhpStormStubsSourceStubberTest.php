@@ -753,7 +753,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
             self::fail('Parsing php-src constant should not trigger userland autoloading');
         });
 
-        $sourceStubber     = new PhpStormStubsSourceStubber(BetterReflectionSingleton::instance()->phpParser());
+        $sourceStubber     = new PhpStormStubsSourceStubber(BetterReflectionSingleton::instance()->phpParser(), BetterReflectionSingleton::instance()->printer());
         $constConstantStub = $sourceStubber->generateConstantStub('JSON_PRETTY_PRINT');
         self::assertNotNull($constConstantStub);
         self::assertStringContainsString("define('JSON_PRETTY_PRINT',", $constConstantStub->getStub());
