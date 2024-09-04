@@ -27,25 +27,35 @@ class ReflectionFunction implements Reflection
 
     public const CLOSURE_NAME = '{closure}';
 
-    private bool $isStatic;
-
-    /** @param non-empty-string|null $namespace */
-    private function __construct(
-        private Reflector $reflector,
-        Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
-        private LocatedSource $locatedSource,
-        private string|null $namespace = null,
-    ) {
+    /**
+     * @var bool
+     */
+    private $isStatic;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Located\LocatedSource
+     */
+    private $locatedSource;
+    /**
+     * @var non-empty-string|null
+     */
+    private $namespace = null;
+    /** @param non-empty-string|null $namespace
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node */
+    private function __construct(Reflector $reflector, $node, LocatedSource $locatedSource, ?string $namespace = null)
+    {
+        $this->reflector = $reflector;
+        $this->locatedSource = $locatedSource;
+        $this->namespace = $namespace;
         assert($node instanceof Node\Stmt\Function_ || $node instanceof Node\Expr\Closure || $node instanceof Node\Expr\ArrowFunction);
-
         $this->name = $node instanceof Node\Expr\Closure || $node instanceof Node\Expr\ArrowFunction
             ? self::CLOSURE_NAME
             : $node->name->name;
-
         $this->fillFromNode($node);
-
         $isClosure = $node instanceof Node\Expr\Closure || $node instanceof Node\Expr\ArrowFunction;
-
         $this->isStatic    = $isClosure && $node->static;
         $this->isClosure   = $isClosure;
         $this->isGenerator = $this->nodeIsOrContainsYield($node);
@@ -82,13 +92,10 @@ class ReflectionFunction implements Reflection
      * @internal
      *
      * @param non-empty-string|null $namespace
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
      */
-    public static function createFromNode(
-        Reflector $reflector,
-        Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
-        LocatedSource $locatedSource,
-        string|null $namespace = null,
-    ): self {
+    public static function createFromNode(Reflector $reflector, $node, LocatedSource $locatedSource, ?string $namespace = null): self
+    {
         return new self($reflector, $node, $locatedSource, $namespace);
     }
 
@@ -137,14 +144,18 @@ class ReflectionFunction implements Reflection
 
         $this->assertFunctionExist($functionName);
 
-        return static fn (mixed ...$args): mixed => $functionName(...$args);
+        return static function (...$args) use ($functionName) {
+            return $functionName(...$args);
+        };
     }
 
     /**
      * @throws NotImplemented
      * @throws FunctionDoesNotExist
+     * @param mixed ...$args
+     * @return mixed
      */
-    public function invoke(mixed ...$args): mixed
+    public function invoke(...$args)
     {
         return $this->invokeArgs($args);
     }
@@ -154,8 +165,9 @@ class ReflectionFunction implements Reflection
      *
      * @throws NotImplemented
      * @throws FunctionDoesNotExist
+     * @return mixed
      */
-    public function invokeArgs(array $args = []): mixed
+    public function invokeArgs(array $args = [])
     {
         $this->assertIsNoClosure();
 

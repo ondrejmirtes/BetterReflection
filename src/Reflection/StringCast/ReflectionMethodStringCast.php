@@ -32,24 +32,7 @@ final class ReflectionMethodStringCast
             ? "\n  - Return [ %s ]"
             : '';
 
-        return sprintf(
-            'Method [ <%s%s%s%s%s%s>%s%s%s %s method %s ] {%s' . $parametersFormat . $returnTypeFormat . "\n}",
-            self::sourceToString($methodReflection),
-            $methodReflection->isConstructor() ? ', ctor' : '',
-            $methodReflection->isDestructor() ? ', dtor' : '',
-            self::overwritesToString($methodReflection),
-            self::inheritsToString($methodReflection),
-            self::prototypeToString($methodReflection),
-            $methodReflection->isFinal() ? ' final' : '',
-            $methodReflection->isStatic() ? ' static' : '',
-            $methodReflection->isAbstract() ? ' abstract' : '',
-            self::visibilityToString($methodReflection),
-            $methodReflection->getName(),
-            self::fileAndLinesToString($methodReflection),
-            count($methodReflection->getParameters()),
-            self::parametersToString($methodReflection),
-            self::returnTypeToString($methodReflection),
-        );
+        return sprintf('Method [ <%s%s%s%s%s%s>%s%s%s %s method %s ] {%s' . $parametersFormat . $returnTypeFormat . "\n}", self::sourceToString($methodReflection), $methodReflection->isConstructor() ? ', ctor' : '', $methodReflection->isDestructor() ? ', dtor' : '', self::overwritesToString($methodReflection), self::inheritsToString($methodReflection), self::prototypeToString($methodReflection), $methodReflection->isFinal() ? ' final' : '', $methodReflection->isStatic() ? ' static' : '', $methodReflection->isAbstract() ? ' abstract' : '', self::visibilityToString($methodReflection), $methodReflection->getName(), self::fileAndLinesToString($methodReflection), count($methodReflection->getParameters()), self::parametersToString($methodReflection), self::returnTypeToString($methodReflection));
     }
 
     /** @psalm-pure */
@@ -96,7 +79,7 @@ final class ReflectionMethodStringCast
     {
         try {
             return sprintf(', prototype %s', $methodReflection->getPrototype()->getDeclaringClass()->getName());
-        } catch (MethodPrototypeNotFound) {
+        } catch (MethodPrototypeNotFound $exception) {
             return '';
         }
     }
@@ -131,7 +114,9 @@ final class ReflectionMethodStringCast
     /** @psalm-pure */
     private static function parametersToString(ReflectionMethod $methodReflection): string
     {
-        return array_reduce($methodReflection->getParameters(), static fn (string $string, ReflectionParameter $parameterReflection): string => $string . "\n    " . ReflectionParameterStringCast::toString($parameterReflection), '');
+        return array_reduce($methodReflection->getParameters(), static function (string $string, ReflectionParameter $parameterReflection) : string {
+            return $string . "\n    " . ReflectionParameterStringCast::toString($parameterReflection);
+        }, '');
     }
 
     /** @psalm-pure */

@@ -11,7 +11,7 @@ use function array_values;
 class AggregateSourceStubber implements SourceStubber
 {
     /** @var list<SourceStubber> */
-    private array $sourceStubbers;
+    private $sourceStubbers;
 
     public function __construct(SourceStubber $sourceStubber, SourceStubber ...$otherSourceStubbers)
     {
@@ -19,7 +19,7 @@ class AggregateSourceStubber implements SourceStubber
     }
 
     /** @param class-string|trait-string $className */
-    public function generateClassStub(string $className): StubData|null
+    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         foreach ($this->sourceStubbers as $sourceStubber) {
             $stubData = $sourceStubber->generateClassStub($className);
@@ -32,7 +32,7 @@ class AggregateSourceStubber implements SourceStubber
         return null;
     }
 
-    public function generateFunctionStub(string $functionName): StubData|null
+    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         foreach ($this->sourceStubbers as $sourceStubber) {
             $stubData = $sourceStubber->generateFunctionStub($functionName);
@@ -45,8 +45,10 @@ class AggregateSourceStubber implements SourceStubber
         return null;
     }
 
-    public function generateConstantStub(string $constantName): StubData|null
+    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
-        return array_reduce($this->sourceStubbers, static fn (StubData|null $stubData, SourceStubber $sourceStubber): StubData|null => $stubData ?? $sourceStubber->generateConstantStub($constantName), null);
+        return array_reduce($this->sourceStubbers, static function (?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData $stubData, SourceStubber $sourceStubber) use ($constantName) : ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData {
+            return $stubData ?? $sourceStubber->generateConstantStub($constantName);
+        }, null);
     }
 }
