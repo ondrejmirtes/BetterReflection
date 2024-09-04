@@ -16,6 +16,7 @@ final class ReflectionNamedType extends CoreReflectionNamedType
     {
     }
 
+    /** @return non-empty-string */
     public function getName(): string
     {
         return $this->betterReflectionType->getName();
