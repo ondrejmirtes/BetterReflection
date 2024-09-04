@@ -23,16 +23,7 @@ final class ReflectionParameterStringCast
      */
     public static function toString(ReflectionParameter $parameterReflection): string
     {
-        return sprintf(
-            'Parameter #%d [ %s %s%s%s$%s%s ]',
-            $parameterReflection->getPosition(),
-            $parameterReflection->isOptional() ? '<optional>' : '<required>',
-            self::typeToString($parameterReflection),
-            $parameterReflection->isVariadic() ? '...' : '',
-            $parameterReflection->isPassedByReference() ? '&' : '',
-            $parameterReflection->getName(),
-            self::valueToString($parameterReflection),
-        );
+        return sprintf('Parameter #%d [ %s %s%s%s$%s%s ]', $parameterReflection->getPosition(), $parameterReflection->isOptional() ? '<optional>' : '<required>', self::typeToString($parameterReflection), $parameterReflection->isVariadic() ? '...' : '', $parameterReflection->isPassedByReference() ? '&' : '', $parameterReflection->getName(), self::valueToString($parameterReflection));
     }
 
     /** @psalm-pure */

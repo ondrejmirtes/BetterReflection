@@ -18,7 +18,10 @@ use Roave\BetterReflectionTest\Fixture\StringCastPureEnum;
 #[CoversClass(ReflectionEnumCaseStringCast::class)]
 class ReflectionEnumCaseStringCastTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     protected function setUp(): void
     {
