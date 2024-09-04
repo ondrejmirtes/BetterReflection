@@ -76,7 +76,8 @@ final class ReflectionEnumBackedCase extends CoreReflectionEnumBackedCase
         return new ReflectionClass($this->betterReflectionEnumCase->getDeclaringClass());
     }
 
-    public function getDocComment(): string|false
+    /** @return string|false */
+    public function getDocComment(): string|bool
     {
         return $this->betterReflectionEnumCase->getDocComment() ?? false;
     }

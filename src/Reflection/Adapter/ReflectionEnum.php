@@ -85,24 +85,27 @@ final class ReflectionEnum extends CoreReflectionEnum
     }
 
     /** @return non-empty-string|false */
-    public function getFileName(): string|false
+    public function getFileName(): string|bool
     {
         $fileName = $this->betterReflectionEnum->getFileName();
 
         return $fileName !== null ? FileHelper::normalizeSystemPath($fileName) : false;
     }
 
-    public function getStartLine(): int|false
+    /** @return int|false */
+    public function getStartLine(): int|bool
     {
         return $this->betterReflectionEnum->getStartLine();
     }
 
-    public function getEndLine(): int|false
+    /** @return int|false */
+    public function getEndLine(): int|bool
     {
         return $this->betterReflectionEnum->getEndLine();
     }
 
-    public function getDocComment(): string|false
+    /** @return string|false */
+    public function getDocComment(): string|bool
     {
         return $this->betterReflectionEnum->getDocComment() ?? false;
     }
@@ -243,7 +246,8 @@ final class ReflectionEnum extends CoreReflectionEnum
         return $betterConstantOrEnumCase->getValue();
     }
 
-    public function getReflectionConstant(string $name): ReflectionClassConstant|false
+    /** @return ReflectionClassConstant|false */
+    public function getReflectionConstant(string $name): ReflectionClassConstant|bool
     {
         if ($name === '') {
             return false;
@@ -383,7 +387,8 @@ final class ReflectionEnum extends CoreReflectionEnum
         throw new Exception\NotImplemented('Not implemented');
     }
 
-    public function getParentClass(): ReflectionClass|false
+    /** @return ReflectionClass|false */
+    public function getParentClass(): ReflectionClass|bool
     {
         return false;
     }
@@ -462,7 +467,7 @@ final class ReflectionEnum extends CoreReflectionEnum
     }
 
     /** @return non-empty-string|false */
-    public function getExtensionName(): string|false
+    public function getExtensionName(): string|bool
     {
         return $this->betterReflectionEnum->getExtensionName() ?? false;
     }
