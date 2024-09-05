@@ -17,8 +17,10 @@ use function count;
 /** @psalm-immutable */
 abstract class ReflectionType extends CoreReflectionType
 {
-    /** @psalm-pure */
-    public static function fromTypeOrNull(BetterReflectionUnionType|BetterReflectionNamedType|BetterReflectionIntersectionType|null $betterReflectionType): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    /** @psalm-pure
+     * @param BetterReflectionUnionType|BetterReflectionNamedType|BetterReflectionIntersectionType|null $betterReflectionType
+     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null */
+    public static function fromTypeOrNull($betterReflectionType)
     {
         return $betterReflectionType !== null ? self::fromType($betterReflectionType) : null;
     }
@@ -27,8 +29,10 @@ abstract class ReflectionType extends CoreReflectionType
      * @internal
      *
      * @psalm-pure
+     * @param BetterReflectionNamedType|BetterReflectionUnionType|BetterReflectionIntersectionType $betterReflectionType
+     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType
      */
-    public static function fromType(BetterReflectionNamedType|BetterReflectionUnionType|BetterReflectionIntersectionType $betterReflectionType): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType
+    public static function fromType($betterReflectionType)
     {
         if ($betterReflectionType instanceof BetterReflectionUnionType) {
             // php-src has this weird behavior where a union type composed of a single type `T`
@@ -36,10 +40,9 @@ abstract class ReflectionType extends CoreReflectionType
             // rather than `T|null`. This is done to keep BC compatibility with PHP 7.1 (which
             // introduced nullable types), but at reflection level, this is mostly a nuisance.
             // In order to keep parity with core, we stashed this weird behavior in here.
-            $nonNullTypes = array_values(array_filter(
-                $betterReflectionType->getTypes(),
-                static fn (BetterReflectionType $type): bool => ! ($type instanceof BetterReflectionNamedType && $type->getName() === 'null'),
-            ));
+            $nonNullTypes = array_values(array_filter($betterReflectionType->getTypes(), static function (BetterReflectionType $type) : bool {
+                return ! ($type instanceof BetterReflectionNamedType && $type->getName() === 'null');
+            }));
 
             if (
                 $betterReflectionType->allowsNull()

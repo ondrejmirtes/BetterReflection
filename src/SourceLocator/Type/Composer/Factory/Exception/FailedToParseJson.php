@@ -12,9 +12,6 @@ final class FailedToParseJson extends UnexpectedValueException implements Except
 {
     public static function inFile(string $file): self
     {
-        return new self(sprintf(
-            'Could not parse JSON file "%s"',
-            $file,
-        ));
+        return new self(sprintf('Could not parse JSON file "%s"', $file));
     }
 }
