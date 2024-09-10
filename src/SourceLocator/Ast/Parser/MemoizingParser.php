@@ -19,13 +19,18 @@ use function unserialize;
 final class MemoizingParser implements Parser
 {
     /** @var array<string, string> indexed by source hash */
-    private array $sourceHashToAst = [];
+    private $sourceHashToAst = [];
+    /**
+     * @var \PhpParser\Parser
+     */
+    private $wrappedParser;
 
-    public function __construct(private Parser $wrappedParser)
+    public function __construct(Parser $wrappedParser)
     {
+        $this->wrappedParser = $wrappedParser;
     }
 
-    public function parse(string $code, ErrorHandler|null $errorHandler = null): array|null
+    public function parse(string $code, ?\PhpParser\ErrorHandler $errorHandler = null): ?array
     {
         // note: this code is mathematically buggy by default, as we are using a hash to identify
         //       cache entries. The string length is added to further reduce likeliness (although

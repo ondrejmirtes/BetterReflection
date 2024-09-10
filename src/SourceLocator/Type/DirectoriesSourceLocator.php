@@ -22,7 +22,10 @@ use function is_dir;
  */
 class DirectoriesSourceLocator implements SourceLocator
 {
-    private AggregateSourceLocator $aggregateSourceLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator
+     */
+    private $aggregateSourceLocator;
 
     /**
      * @param list<string> $directories directories to scan
@@ -32,25 +35,16 @@ class DirectoriesSourceLocator implements SourceLocator
      */
     public function __construct(array $directories, Locator $astLocator)
     {
-        $this->aggregateSourceLocator = new AggregateSourceLocator(array_map(
-            static function (string $directory) use ($astLocator): FileIteratorSourceLocator {
-                if (! is_dir($directory)) {
-                    throw InvalidDirectory::fromNonDirectory($directory);
-                }
+        $this->aggregateSourceLocator = new AggregateSourceLocator(array_map(static function (string $directory) use ($astLocator): FileIteratorSourceLocator {
+            if (! is_dir($directory)) {
+                throw InvalidDirectory::fromNonDirectory($directory);
+            }
 
-                return new FileIteratorSourceLocator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
-                        $directory,
-                        RecursiveDirectoryIterator::SKIP_DOTS,
-                    )),
-                    $astLocator,
-                );
-            },
-            $directories,
-        ));
+            return new FileIteratorSourceLocator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS)), $astLocator);
+        }, $directories));
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         return $this->aggregateSourceLocator->locateIdentifier($reflector, $identifier);
     }

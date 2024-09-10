@@ -16,27 +16,26 @@ use function implode;
 class ReflectionIntersectionType extends ReflectionType
 {
     /** @var non-empty-list<ReflectionNamedType> */
-    private array $types;
+    private $types;
 
-    /** @internal */
-    public function __construct(
-        Reflector $reflector,
-        ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        IntersectionType $type,
-    ) {
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner */
+    public function __construct(Reflector $reflector, $owner, IntersectionType $type)
+    {
         /** @var non-empty-list<ReflectionNamedType> $types */
-        $types = array_map(static function (Node\Identifier|Node\Name $type) use ($reflector, $owner): ReflectionNamedType {
+        $types = array_map(static function ($type) use ($reflector, $owner): ReflectionNamedType {
             $type = ReflectionType::createFromNode($reflector, $owner, $type);
             assert($type instanceof ReflectionNamedType);
 
             return $type;
         }, $type->types);
-
         $this->types = $types;
     }
 
-    /** @internal */
-    public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @return $this */
+    public function withOwner($owner)
     {
         $clone = clone $this;
 
@@ -63,6 +62,8 @@ class ReflectionIntersectionType extends ReflectionType
     public function __toString(): string
     {
         // @infection-ignore-all UnwrapArrayMap: It works without array_map() as well but this is less magical
-        return implode('&', array_map(static fn (ReflectionNamedType $type): string => $type->__toString(), $this->types));
+        return implode('&', array_map(static function (ReflectionNamedType $type) : string {
+            return $type->__toString();
+        }, $this->types));
     }
 }
