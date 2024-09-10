@@ -22,7 +22,10 @@ use function spl_autoload_unregister;
 #[CoversClass(ClassExistenceChecker::class)]
 class ClassExistenceCheckerTest extends TestCase
 {
-    private Closure|null $loader = null;
+    /**
+     * @var \Closure|null
+     */
+    private $loader = null;
 
     protected function setUp(): void
     {
