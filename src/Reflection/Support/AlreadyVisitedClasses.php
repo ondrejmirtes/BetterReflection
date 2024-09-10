@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Support;
+namespace PHPStan\BetterReflection\Reflection\Support;
 
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
+use PHPStan\BetterReflection\Reflection\Exception\CircularReference;
 
 use function array_key_exists;
 
