@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\EnumCase;
-use Roave\BetterReflection\NodeCompiler\CompiledValue;
-use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
-use Roave\BetterReflection\NodeCompiler\CompilerContext;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
-use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionEnumCaseStringCast;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\Util\CalculateReflectionColumn;
-use Roave\BetterReflection\Util\GetLastDocComment;
+use PHPStan\BetterReflection\NodeCompiler\CompiledValue;
+use PHPStan\BetterReflection\NodeCompiler\CompileNodeToValue;
+use PHPStan\BetterReflection\NodeCompiler\CompilerContext;
+use PHPStan\BetterReflection\Reflection\Annotation\AnnotationHelper;
+use PHPStan\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionEnumCaseStringCast;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\Util\CalculateReflectionColumn;
+use PHPStan\BetterReflection\Util\GetLastDocComment;
 
 use function assert;
 use function is_int;
@@ -51,14 +51,14 @@ class ReflectionEnumCase
     private $endColumn;
 
     /** @psalm-allow-private-mutation
-     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+     * @var \PHPStan\BetterReflection\NodeCompiler\CompiledValue|null */
     private $compiledValue = null;
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector
+     * @var \PHPStan\BetterReflection\Reflector\Reflector
      */
     private $reflector;
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionEnum
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionEnum
      */
     private $enum;
     private function __construct(Reflector $reflector, EnumCase $node, ReflectionEnum $enum)

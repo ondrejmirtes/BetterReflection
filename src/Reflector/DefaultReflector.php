@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflector;
+namespace PHPStan\BetterReflection\Reflector;
 
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\SourceLocator\Type\SourceLocator;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\SourceLocator\Type\SourceLocator;
 
 use function assert;
 
 final class DefaultReflector implements Reflector
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\SourceLocator
      */
     private $sourceLocator;
     public function __construct(SourceLocator $sourceLocator)
