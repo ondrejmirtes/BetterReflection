@@ -246,18 +246,6 @@ class ReflectionClass implements Reflection
     }
 
     /**
-     * Create a ReflectionClass by name, using default reflectors etc.
-     *
-     * @deprecated Use Reflector instead.
-     *
-     * @throws IdentifierNotFound
-     */
-    public static function createFromName(string $className): self
-    {
-        return (new BetterReflection())->reflector()->reflectClass($className);
-    }
-
-    /**
      * Create a ReflectionClass from an instance, using default reflectors etc.
      *
      * This is simply a helper method that calls ReflectionObject::createFromInstance().
