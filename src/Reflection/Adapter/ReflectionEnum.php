@@ -221,8 +221,6 @@ final class ReflectionEnum extends CoreReflectionEnum
     }
 
     /**
-     * @deprecated Use getReflectionConstants()
-     *
      * @param int-mask-of<ReflectionClassConstant::IS_*>|null $filter
      *
      * @return array<non-empty-string, mixed>
@@ -236,9 +234,6 @@ final class ReflectionEnum extends CoreReflectionEnum
         );
     }
 
-    /**
-     * @deprecated Use getReflectionConstant()
-     */
     public function getConstant(string $name): mixed
     {
         if ($name === '') {

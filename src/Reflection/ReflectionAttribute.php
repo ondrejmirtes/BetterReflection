@@ -97,7 +97,6 @@ class ReflectionAttribute
     }
 
     /**
-     * @deprecated Use getArgumentsExpressions()
      * @return array<int|string, mixed>
      */
     public function getArguments(): array

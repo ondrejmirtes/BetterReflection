@@ -50,16 +50,6 @@ class ReflectionFunction implements Reflection
         $this->isClosure = $isClosure;
     }
 
-    /**
-     * @deprecated Use Reflector instead.
-     *
-     * @throws IdentifierNotFound
-     */
-    public static function createFromName(string $functionName): self
-    {
-        return (new BetterReflection())->reflector()->reflectFunction($functionName);
-    }
-
     /** @throws IdentifierNotFound */
     public static function createFromClosure(Closure $closure): self
     {
