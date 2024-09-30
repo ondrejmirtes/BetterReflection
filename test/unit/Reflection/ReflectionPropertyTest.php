@@ -69,20 +69,6 @@ class ReflectionPropertyTest extends TestCase
         $this->reflector  = new DefaultReflector(new ComposerSourceLocator($GLOBALS['loader'], $this->astLocator));
     }
 
-    public function testCreateFromName(): void
-    {
-        $property = ReflectionProperty::createFromName(ReflectionProperty::class, 'name');
-
-        self::assertInstanceOf(ReflectionProperty::class, $property);
-        self::assertSame('name', $property->getName());
-    }
-
-    public function testCreateFromNameThrowsExceptionWhenPropertyDoesNotExist(): void
-    {
-        $this->expectException(OutOfBoundsException::class);
-        ReflectionProperty::createFromName(ReflectionProperty::class, 'notExist');
-    }
-
     public function testCreateFromInstance(): void
     {
         $property = ReflectionProperty::createFromInstance(new ClassForHinting(), 'someProperty');
