@@ -44,7 +44,6 @@ final class ReflectionAttribute extends CoreReflectionAttribute
     }
 
     /**
-     * @deprecated Use getArgumentsExpressions()
      * @return array<int|string, mixed>
      */
     public function getArguments(): array
