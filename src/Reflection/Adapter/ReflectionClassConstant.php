@@ -70,9 +70,6 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return ReflectionType::fromTypeOrNull($this->betterClassConstantOrEnumCase->getType());
     }
 
-    /**
-     * @deprecated Use getValueExpression()
-     */
     #[ReturnTypeWillChange]
     public function getValue()
     {
@@ -81,14 +78,6 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         }
 
         return $this->betterClassConstantOrEnumCase->getValue();
-    }
-
-    /**
-     * @deprecated Use getValueExpression()
-     */
-    public function getValueExpr(): Expr
-    {
-        return $this->getValueExpression();
     }
 
     public function getValueExpression(): Expr

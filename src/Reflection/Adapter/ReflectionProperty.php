@@ -146,21 +146,12 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /**
-     * @deprecated Use getDefaultValueExpression()
      * @return mixed
      */
     #[ReturnTypeWillChange]
     public function getDefaultValue()
     {
         return $this->betterReflectionProperty->getDefaultValue();
-    }
-
-    /**
-     * @deprecated Use getDefaultValueExpression()
-     */
-    public function getDefaultValueExpr(): Expr
-    {
-        return $this->betterReflectionProperty->getDefaultValueExpression();
     }
 
     public function getDefaultValueExpression(): Expr
