@@ -114,30 +114,6 @@ class ReflectionParameter
     }
 
     /**
-     * Create a reflection of a parameter using a class name
-     *
-     * @param non-empty-string $methodName
-     * @param non-empty-string $parameterName
-     *
-     * @throws OutOfBoundsException
-     */
-    public static function createFromClassNameAndMethod(
-        string $className,
-        string $methodName,
-        string $parameterName,
-    ): self {
-        $parameter = ReflectionClass::createFromName($className)
-            ->getMethod($methodName)
-            ?->getParameter($parameterName);
-
-        if ($parameter === null) {
-            throw new OutOfBoundsException(sprintf('Could not find parameter: %s', $parameterName));
-        }
-
-        return $parameter;
-    }
-
-    /**
      * Create a reflection of a parameter using an instance
      *
      * @param non-empty-string $methodName
@@ -178,52 +154,6 @@ class ReflectionParameter
         }
 
         return $parameter;
-    }
-
-    /**
-     * Create the parameter from the given spec. Possible $spec parameters are:
-     *
-     *  - [$instance, 'method']
-     *  - ['Foo', 'bar']
-     *  - ['foo']
-     *  - [function () {}]
-     *
-     * @param object[]|string[]|string|Closure $spec
-     * @param non-empty-string                 $parameterName
-     *
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
-    public static function createFromSpec(array|string|Closure $spec, string $parameterName): self
-    {
-        try {
-            if (is_array($spec) && count($spec) === 2 && is_string($spec[1])) {
-                assert($spec[1] !== '');
-
-                if (is_object($spec[0])) {
-                    return self::createFromClassInstanceAndMethod($spec[0], $spec[1], $parameterName);
-                }
-
-                return self::createFromClassNameAndMethod($spec[0], $spec[1], $parameterName);
-            }
-
-            if (is_string($spec)) {
-                $parameter = ReflectionFunction::createFromName($spec)->getParameter($parameterName);
-                if ($parameter === null) {
-                    throw new OutOfBoundsException(sprintf('Could not find parameter: %s', $parameterName));
-                }
-
-                return $parameter;
-            }
-
-            if ($spec instanceof Closure) {
-                return self::createFromClosure($spec, $parameterName);
-            }
-        } catch (OutOfBoundsException $e) {
-            throw new InvalidArgumentException('Could not create reflection from the spec given', 0, $e);
-        }
-
-        throw new InvalidArgumentException('Could not create reflection from the spec given');
     }
 
     /** @return non-empty-string */
@@ -358,14 +288,6 @@ class ReflectionParameter
         return $this->default !== null;
     }
 
-    /**
-     * @deprecated Use getDefaultValueExpression()
-     */
-    public function getDefaultValueExpr(): Node\Expr|null
-    {
-        return $this->getDefaultValueExpression();
-    }
-
     public function getDefaultValueExpression(): Node\Expr|null
     {
         return $this->default;
@@ -373,8 +295,6 @@ class ReflectionParameter
 
     /**
      * Get the default value of the parameter.
-     *
-     * @deprecated Use getDefaultValueExpression()
      *
      * @throws LogicException
      * @throws UnableToCompileNode
