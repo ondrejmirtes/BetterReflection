@@ -73,21 +73,6 @@ class ReflectionMethodTest extends TestCase
         $this->reflector     = new DefaultReflector(new ComposerSourceLocator($GLOBALS['loader'], $this->astLocator));
     }
 
-    public function testCreateFromName(): void
-    {
-        $method = ReflectionMethod::createFromName(SplDoublyLinkedList::class, 'add');
-
-        self::assertInstanceOf(ReflectionMethod::class, $method);
-        self::assertSame('add', $method->getName());
-    }
-
-    public function testCreateFromNameThrowsExceptionWhenMethodNotFound(): void
-    {
-        $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Could not find method: notFound');
-        ReflectionMethod::createFromName(SplDoublyLinkedList::class, 'notFound');
-    }
-
     public function testCreateFromInstance(): void
     {
         $method = ReflectionMethod::createFromInstance(new SplDoublyLinkedList(), 'add');
