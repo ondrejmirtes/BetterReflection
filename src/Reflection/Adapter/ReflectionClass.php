@@ -248,8 +248,6 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
-     * @deprecated Use getReflectionConstants()
-     *
      * @param int-mask-of<ReflectionClassConstant::IS_*>|null $filter
      *
      * @return array<non-empty-string, mixed>
@@ -266,7 +264,6 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /**
-     * @deprecated Use getReflectionConstant()
      * @return mixed
      */
     #[ReturnTypeWillChange]
