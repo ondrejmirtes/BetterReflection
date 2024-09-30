@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection;
 
 use PhpParser\Node;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -13,7 +12,6 @@ use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
 use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
 use Roave\BetterReflection\Reflection\StringCast\ReflectionConstantStringCast;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\Util\CalculateReflectionColumn;
@@ -99,18 +97,6 @@ class ReflectionConstant implements Reflection
         $this->endLine     = $endLine;
         $this->startColumn = CalculateReflectionColumn::getStartColumn($this->locatedSource->getSource(), $node);
         $this->endColumn   = CalculateReflectionColumn::getEndColumn($this->locatedSource->getSource(), $node);
-    }
-
-    /**
-     * Create a ReflectionConstant by name, using default reflectors etc.
-     *
-     * @deprecated Use Reflector instead.
-     *
-     * @throws IdentifierNotFound
-     */
-    public static function createFromName(string $constantName): self
-    {
-        return (new BetterReflection())->reflector()->reflectConstant($constantName);
     }
 
     /**
@@ -239,18 +225,11 @@ class ReflectionConstant implements Reflection
         return DeprecatedHelper::isDeprecated($this);
     }
 
-    /** @deprecated Use getValueExpression() */
-    public function getValueExpr(): Node\Expr
-    {
-        return $this->getValueExpression();
-    }
-
     public function getValueExpression(): Node\Expr
     {
         return $this->value;
     }
 
-    /** @deprecated Use getValueExpression() */
     public function getValue(): mixed
     {
         if ($this->compiledValue === null) {

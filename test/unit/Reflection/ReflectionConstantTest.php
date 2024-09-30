@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 use Roave\BetterReflection\Reflector\DefaultReflector;
@@ -168,37 +169,12 @@ class ReflectionConstantTest extends TestCase
         );
     }
 
-    public function testStaticCreationFromNameByConst(): void
-    {
-        require_once __DIR__ . '/../Fixture/Constants.php';
-        $reflection = ReflectionConstant::createFromName('Roave\BetterReflectionTest\Fixture\BY_CONST');
-
-        self::assertSame('Roave\BetterReflectionTest\Fixture\BY_CONST', $reflection->getName());
-        self::assertSame('BY_CONST', $reflection->getShortName());
-    }
-
-    public function testStaticCreationFromNameByDefine(): void
-    {
-        require_once __DIR__ . '/../Fixture/Constants.php';
-        $reflection = ReflectionConstant::createFromName('BY_DEFINE');
-
-        self::assertSame('BY_DEFINE', $reflection->getName());
-        self::assertSame('BY_DEFINE', $reflection->getShortName());
-    }
-
-    public function testStaticCreationFromNameByDefineWithNamespace(): void
-    {
-        require_once __DIR__ . '/../Fixture/Constants.php';
-        $reflection = ReflectionConstant::createFromName('Roave\BetterReflectionTest\Fixture\BY_DEFINE');
-
-        self::assertSame('Roave\BetterReflectionTest\Fixture\BY_DEFINE', $reflection->getName());
-        self::assertSame('BY_DEFINE', $reflection->getShortName());
-    }
-
     public function testToString(): void
     {
         require_once __DIR__ . '/../Fixture/Constants.php';
-        $reflection = ReflectionConstant::createFromName('Roave\BetterReflectionTest\Fixture\BY_CONST');
+
+        $reflector  = (new BetterReflection())->reflector();
+        $reflection = $reflector->reflectConstant('Roave\BetterReflectionTest\Fixture\BY_CONST');
 
         self::assertStringMatchesFormat("Constant [ <user> boolean Roave\BetterReflectionTest\Fixture\BY_CONST ] {\n  @@ %s/Fixture/Constants.php 5 - 5\n 1 }", (string) $reflection);
     }

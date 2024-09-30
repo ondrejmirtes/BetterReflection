@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
-$classInfo = ReflectionClass::createFromName(ReflectionClass::class);
+$classInfo = (new Roave\BetterReflection\BetterReflection())->reflector()->reflectClass(ReflectionClass::class);
 
 var_dump($classInfo->getName());
 var_dump($classInfo->isInternal());

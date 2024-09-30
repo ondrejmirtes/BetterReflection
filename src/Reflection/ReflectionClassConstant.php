@@ -149,12 +149,6 @@ class ReflectionClassConstant
         return $this->type !== null;
     }
 
-    /** @deprecated Use getValueExpression */
-    public function getValueExpr(): Node\Expr
-    {
-        return $this->getValueExpression();
-    }
-
     public function getValueExpression(): Node\Expr
     {
         return $this->value;
@@ -162,8 +156,6 @@ class ReflectionClassConstant
 
     /**
      * Returns constant value
-     *
-     * @deprecated Use getValueExpression()
      */
     public function getValue(): mixed
     {

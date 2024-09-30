@@ -126,7 +126,6 @@ final class ReflectionEnumBackedCase extends CoreReflectionEnumBackedCase
         return new ReflectionEnum($this->betterReflectionEnumCase->getDeclaringEnum());
     }
 
-    /** @deprecated Use getValueExpression() */
     public function getBackingValue(): int|string
     {
         return $this->betterReflectionEnumCase->getValue();
@@ -135,12 +134,6 @@ final class ReflectionEnumBackedCase extends CoreReflectionEnumBackedCase
     public function isDeprecated(): bool
     {
         return $this->betterReflectionEnumCase->isDeprecated();
-    }
-
-    /** @deprecated Use getValueExpression() */
-    public function getValueExpr(): Expr
-    {
-        return $this->getValueExpression();
     }
 
     public function getValueExpression(): Expr

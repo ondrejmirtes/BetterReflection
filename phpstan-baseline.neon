@@ -103,22 +103,10 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionObject.php
 
 		-
-			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionParameter\:\:getDefaultValueExpr\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Reflection/Adapter/ReflectionParameter.php
-
-		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionParameter\:\:getDefaultValueExpression\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Reflection/Adapter/ReflectionParameter.php
-
-		-
-			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionProperty\:\:getDefaultValueExpr\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Reflection/Adapter/ReflectionProperty.php
 
 		-
 			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionProperty\:\:getDefaultValueExpression\(\) should return PhpParser\\Node\\Expr but returns PhpParser\\Node\\Expr\|null\.$#'

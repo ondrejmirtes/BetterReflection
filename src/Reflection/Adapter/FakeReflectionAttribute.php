@@ -28,11 +28,7 @@ final class FakeReflectionAttribute
         return $this->betterReflectionAttribute->isRepeated();
     }
 
-    /**
-     * @deprecated Use getArgumentsExpressions()
-     *
-     * @return array<int|string, mixed>
-     */
+    /** @return array<int|string, mixed> */
     public function getArguments(): array
     {
         return $this->betterReflectionAttribute->getArguments();

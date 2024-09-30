@@ -7,6 +7,7 @@ namespace Roave\BetterReflectionTest\Reflection;
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
 use Roave\BetterReflection\Reflection\Exception\FunctionDoesNotExist;
 use Roave\BetterReflection\Reflection\ReflectionFunction;
@@ -107,13 +108,6 @@ class ReflectionFunctionTest extends TestCase
         self::assertTrue($function->isInternal());
         self::assertFalse($function->isUserDefined());
         self::assertSame('standard', $function->getExtensionName());
-    }
-
-    public function testStaticCreationFromName(): void
-    {
-        require_once __DIR__ . '/../Fixture/Functions.php';
-        $reflection = ReflectionFunction::createFromName('Roave\BetterReflectionTest\Fixture\myFunction');
-        self::assertSame('myFunction', $reflection->getShortName());
     }
 
     public function testCreateFromClosure(): void
@@ -234,7 +228,9 @@ class ReflectionFunctionTest extends TestCase
     public function testToString(): void
     {
         require_once __DIR__ . '/../Fixture/Functions.php';
-        $functionInfo = ReflectionFunction::createFromName('Roave\BetterReflectionTest\Fixture\myFunction');
+
+        $reflector    = (new BetterReflection())->reflector();
+        $functionInfo = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\myFunction');
 
         self::assertStringMatchesFormat("Function [ <user> function Roave\BetterReflectionTest\Fixture\myFunction ] {\n  @@ %s/test/unit/Fixture/Functions.php 5 - 6\n}", (string) $functionInfo);
     }
@@ -243,7 +239,8 @@ class ReflectionFunctionTest extends TestCase
     {
         require_once __DIR__ . '/../Fixture/Functions.php';
 
-        $functionReflection = ReflectionFunction::createFromName('Roave\BetterReflectionTest\Fixture\myFunctionWithParams');
+        $reflector          = (new BetterReflection())->reflector();
+        $functionReflection = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\myFunctionWithParams');
 
         $closure = $functionReflection->getClosure();
 
@@ -279,7 +276,8 @@ class ReflectionFunctionTest extends TestCase
     {
         require_once __DIR__ . '/../Fixture/Functions.php';
 
-        $functionReflection = ReflectionFunction::createFromName('Roave\BetterReflectionTest\Fixture\myFunctionWithParams');
+        $reflector          = (new BetterReflection())->reflector();
+        $functionReflection = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\myFunctionWithParams');
 
         self::assertSame(5, $functionReflection->invoke(2, 3));
         self::assertSame(10, $functionReflection->invokeArgs([3, 7]));
