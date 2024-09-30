@@ -25,59 +25,62 @@ use function is_string;
 class ReflectionEnumCase
 {
     /** @var non-empty-string */
-    private string $name;
+    private $name;
 
-    private Node\Expr|null $value;
+    /**
+     * @var \PhpParser\Node\Expr|null
+     */
+    private $value;
 
     /** @var list<ReflectionAttribute> */
-    private array $attributes;
+    private $attributes;
 
     /** @var non-empty-string|null */
-    private string|null $docComment;
+    private $docComment;
 
     /** @var positive-int */
-    private int $startLine;
+    private $startLine;
 
     /** @var positive-int */
-    private int $endLine;
+    private $endLine;
 
     /** @var positive-int */
-    private int $startColumn;
+    private $startColumn;
 
     /** @var positive-int */
-    private int $endColumn;
+    private $endColumn;
 
-    /** @psalm-allow-private-mutation */
-    private CompiledValue|null $compiledValue = null;
-
-    private function __construct(
-        private Reflector $reflector,
-        EnumCase $node,
-        private ReflectionEnum $enum,
-    ) {
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+    private $compiledValue = null;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionEnum
+     */
+    private $enum;
+    private function __construct(Reflector $reflector, EnumCase $node, ReflectionEnum $enum)
+    {
+        $this->reflector = $reflector;
+        $this->enum = $enum;
         $this->name = $node->name->toString();
-
         $this->value      = $node->expr;
         $this->attributes = ReflectionAttributeHelper::createAttributes($reflector, $this, $node->attrGroups);
         $this->docComment = GetLastDocComment::forNode($node);
-
         $startLine = $node->getStartLine();
         assert($startLine > 0);
         $endLine = $node->getEndLine();
         assert($endLine > 0);
-
         $this->startLine   = $startLine;
         $this->endLine     = $endLine;
         $this->startColumn = CalculateReflectionColumn::getStartColumn($this->enum->getLocatedSource()->getSource(), $node);
         $this->endColumn   = CalculateReflectionColumn::getEndColumn($this->enum->getLocatedSource()->getSource(), $node);
     }
-
     /** @internal */
-    public static function createFromNode(
-        Reflector $reflector,
-        EnumCase $node,
-        ReflectionEnum $enum,
-    ): self {
+    public static function createFromNode(Reflector $reflector, EnumCase $node, ReflectionEnum $enum): self
+    {
         return new self($reflector, $node, $enum);
     }
 
@@ -101,7 +104,10 @@ class ReflectionEnumCase
         return $this->value;
     }
 
-    public function getValue(): string|int
+    /**
+     * @return string|int
+     */
+    public function getValue()
     {
         $value = $this->getCompiledValue()->value;
         assert(is_string($value) || is_int($value));
@@ -121,10 +127,7 @@ class ReflectionEnumCase
         }
 
         if ($this->compiledValue === null) {
-            $this->compiledValue = (new CompileNodeToValue())->__invoke(
-                $this->value,
-                new CompilerContext($this->reflector, $this),
-            );
+            $this->compiledValue = (new CompileNodeToValue())->__invoke($this->value, new CompilerContext($this->reflector, $this));
         }
 
         return $this->compiledValue;
@@ -165,7 +168,7 @@ class ReflectionEnumCase
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->docComment;
     }

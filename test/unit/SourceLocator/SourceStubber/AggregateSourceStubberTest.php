@@ -44,15 +44,7 @@ class AggregateSourceStubberTest extends TestCase
         /** @phpstan-var class-string $someClassName */
         $someClassName = 'SomeClass';
 
-        self::assertSame(
-            $stubData,
-            (new AggregateSourceStubber(
-                $sourceStubber1,
-                $sourceStubber2,
-                $sourceStubber3,
-                $sourceStubber4,
-            ))->generateClassStub($someClassName),
-        );
+        self::assertSame($stubData, (new AggregateSourceStubber($sourceStubber1, $sourceStubber2, $sourceStubber3, $sourceStubber4))->generateClassStub($someClassName));
     }
 
     public function testTraverseAllGivenSourceStubbersAndFailToGenerateFunctionStub(): void
@@ -80,15 +72,7 @@ class AggregateSourceStubberTest extends TestCase
         $sourceStubber3->expects($this->once())->method('generateFunctionStub')->willReturn($stubData);
         $sourceStubber4->expects($this->never())->method('generateFunctionStub');
 
-        self::assertSame(
-            $stubData,
-            (new AggregateSourceStubber(
-                $sourceStubber1,
-                $sourceStubber2,
-                $sourceStubber3,
-                $sourceStubber4,
-            ))->generateFunctionStub('someFunction'),
-        );
+        self::assertSame($stubData, (new AggregateSourceStubber($sourceStubber1, $sourceStubber2, $sourceStubber3, $sourceStubber4))->generateFunctionStub('someFunction'));
     }
 
     public function testTraverseAllGivenSourceStubbersAndFailToGenerateConstantStub(): void
@@ -116,14 +100,6 @@ class AggregateSourceStubberTest extends TestCase
         $sourceStubber3->expects($this->once())->method('generateConstantStub')->willReturn($stubData);
         $sourceStubber4->expects($this->never())->method('generateConstantStub');
 
-        self::assertSame(
-            $stubData,
-            (new AggregateSourceStubber(
-                $sourceStubber1,
-                $sourceStubber2,
-                $sourceStubber3,
-                $sourceStubber4,
-            ))->generateConstantStub('SOME_CONSTANT'),
-        );
+        self::assertSame($stubData, (new AggregateSourceStubber($sourceStubber1, $sourceStubber2, $sourceStubber3, $sourceStubber4))->generateConstantStub('SOME_CONSTANT'));
     }
 }

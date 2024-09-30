@@ -11,9 +11,14 @@ use function array_key_exists;
 /** @internal */
 final class AlreadyVisitedClasses
 {
+    /**
+     * @var array<class-string, null>
+     */
+    private $classNames;
     /** @param array<class-string, null> $classNames */
-    private function __construct(private array $classNames)
+    private function __construct(array $classNames)
     {
+        $this->classNames = $classNames;
     }
 
     public static function createEmpty(): self
