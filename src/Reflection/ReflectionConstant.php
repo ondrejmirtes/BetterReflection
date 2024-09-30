@@ -102,18 +102,6 @@ class ReflectionConstant implements Reflection
     }
 
     /**
-     * Create a ReflectionConstant by name, using default reflectors etc.
-     *
-     * @deprecated Use Reflector instead.
-     *
-     * @throws IdentifierNotFound
-     */
-    public static function createFromName(string $constantName): self
-    {
-        return (new BetterReflection())->reflector()->reflectConstant($constantName);
-    }
-
-    /**
      * Create a reflection of a constant
      *
      * @internal
@@ -239,22 +227,12 @@ class ReflectionConstant implements Reflection
         return DeprecatedHelper::isDeprecated($this);
     }
 
-    /**
-     * @deprecated Use getValueExpression()
-     * @return Node\Expr
-     */
-    public function getValueExpr(): Node\Expr
-    {
-        return $this->getValueExpression();
-    }
-
     public function getValueExpression(): Node\Expr
     {
         return $this->value;
     }
 
     /**
-     * @deprecated Use getValueExpression()
      * @return mixed
      */
     public function getValue(): mixed

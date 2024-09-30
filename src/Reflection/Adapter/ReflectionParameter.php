@@ -204,21 +204,10 @@ final class ReflectionParameter extends CoreReflectionParameter
         return $this->betterReflectionParameter->isDefaultValueAvailable();
     }
 
-    /**
-     * @deprecated Use getDefaultValueExpression()
-     */
     #[ReturnTypeWillChange]
     public function getDefaultValue()
     {
         return $this->betterReflectionParameter->getDefaultValue();
-    }
-
-    /**
-     * @deprecated Use getDefaultValueExpression()
-     */
-    public function getDefaultValueExpr(): Expr
-    {
-        return $this->betterReflectionParameter->getDefaultValueExpression();
     }
 
     public function getDefaultValueExpression(): Expr

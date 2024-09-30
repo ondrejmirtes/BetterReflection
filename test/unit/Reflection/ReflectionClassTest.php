@@ -124,7 +124,8 @@ class ReflectionClassTest extends TestCase
 
     public function testCanReflectInternalClassWithDefaultLocator(): void
     {
-        self::assertSame(stdClass::class, ReflectionClass::createFromName(stdClass::class)->getName());
+        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        self::assertSame(stdClass::class, $reflector->reflectClass(stdClass::class)->getName());
     }
 
     public function testCanReflectInstance(): void
@@ -139,7 +140,9 @@ class ReflectionClassTest extends TestCase
 
         eval('class ' . $className . '{}');
 
-        self::assertSame($className, ReflectionClass::createFromName($className)->getName());
+        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+
+        self::assertSame($className, $reflector->reflectClass($className)->getName());
     }
 
     public function testClassNameMethodsWithNamespace(): void
@@ -848,12 +851,6 @@ PHP;
         self::assertSame($locatedSource, $reflection->getLocatedSource());
     }
 
-    public function testStaticCreation(): void
-    {
-        $reflection = ReflectionClass::createFromName(ExampleClass::class);
-        self::assertSame('ExampleClass', $reflection->getShortName());
-    }
-
     public function testGetParentClassDefault(): void
     {
         $childReflection = (new DefaultReflector(new SingleFileSourceLocator(
@@ -867,7 +864,8 @@ PHP;
 
     public function testGetParentClassThrowsExceptionWithNoParent(): void
     {
-        $reflection = ReflectionClass::createFromName(ExampleClass::class);
+        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflection = $reflector->reflectClass(ExampleClass::class);
 
         self::assertNull($reflection->getParentClass());
     }
@@ -2118,7 +2116,8 @@ PHP;
 
     public function testToString(): void
     {
-        $reflection = ReflectionClass::createFromName(ExampleClass::class);
+        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflection = $reflector->reflectClass(ExampleClass::class);
 
         $expectedString = file_get_contents(__DIR__ . '/../Fixture/ExampleClassExport.txt');
         assert($expectedString !== false);

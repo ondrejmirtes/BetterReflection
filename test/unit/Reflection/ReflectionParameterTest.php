@@ -64,20 +64,6 @@ class ReflectionParameterTest extends TestCase
         $this->reflector  = new DefaultReflector(new ComposerSourceLocator($loader, $this->astLocator));
     }
 
-    public function testCreateFromClassNameAndMethod(): void
-    {
-        $parameterInfo = ReflectionParameter::createFromClassNameAndMethod(SplDoublyLinkedList::class, 'add', 'index');
-
-        self::assertInstanceOf(ReflectionParameter::class, $parameterInfo);
-        self::assertSame('index', $parameterInfo->getName());
-    }
-
-    public function testCreateFromClassNameAndMethodThrowsExceptionWhenParameterDoesNotExist(): void
-    {
-        $this->expectException(OutOfBoundsException::class);
-        ReflectionParameter::createFromClassNameAndMethod(SplDoublyLinkedList::class, 'add', 'notExist');
-    }
-
     public function testCreateFromClassInstanceAndMethod(): void
     {
         $parameterInfo = ReflectionParameter::createFromClassInstanceAndMethod(new SplDoublyLinkedList(), 'add', 'index');
@@ -125,60 +111,6 @@ class ReflectionParameterTest extends TestCase
         $this->expectExceptionMessage('Could not find parameter: notExist');
         ReflectionParameter::createFromClosure(static function ($a): void {
         }, 'notExist');
-    }
-
-    public function testCreateFromSpecWithArray(): void
-    {
-        $parameterInfo = ReflectionParameter::createFromSpec([SplDoublyLinkedList::class, 'add'], 'index');
-
-        self::assertInstanceOf(ReflectionParameter::class, $parameterInfo);
-        self::assertSame('index', $parameterInfo->getName());
-    }
-
-    public function testCreateFromSpecWithArrayWithInstance(): void
-    {
-        $splDoublyLinkedList = new SplDoublyLinkedList();
-        $parameterInfo       = ReflectionParameter::createFromSpec([$splDoublyLinkedList, 'add'], 'index');
-
-        self::assertInstanceOf(ReflectionParameter::class, $parameterInfo);
-        self::assertSame('index', $parameterInfo->getName());
-    }
-
-    public function testCreateFromSpecWithFunctionName(): void
-    {
-        require_once __DIR__ . '/../Fixture/ClassForHinting.php';
-        $parameterInfo = ReflectionParameter::createFromSpec('Roave\BetterReflectionTest\Fixture\testFunction', 'param1');
-
-        self::assertInstanceOf(ReflectionParameter::class, $parameterInfo);
-        self::assertSame('param1', $parameterInfo->getName());
-    }
-
-    public function testCreateFromSpecWithFunctionNameThrowsExceptionWhenParameterDoesNotExist(): void
-    {
-        require_once __DIR__ . '/../Fixture/ClassForHinting.php';
-
-        try {
-            ReflectionParameter::createFromSpec('Roave\BetterReflectionTest\Fixture\testFunction', 'notExists');
-            self::fail('Parameter should not exits');
-        } catch (Throwable $e) {
-            self::assertInstanceOf(InvalidArgumentException::class, $e);
-            self::assertInstanceOf(OutOfBoundsException::class, $e->getPrevious());
-        }
-    }
-
-    public function testCreateFromSpecWithClosure(): void
-    {
-        $parameterInfo = ReflectionParameter::createFromSpec(static function ($a): void {
-        }, 'a');
-
-        self::assertInstanceOf(ReflectionParameter::class, $parameterInfo);
-        self::assertSame('a', $parameterInfo->getName());
-    }
-
-    public function testCreateFromSpecWithInvalidSpecThrowsException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        ReflectionParameter::createFromSpec([], 'index');
     }
 
     /** @return list<array{0: string, 1: mixed}> */

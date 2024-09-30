@@ -134,24 +134,6 @@ class ReflectionProperty
     }
 
     /**
-     * Create a reflection of a class's property by its name
-     *
-     * @param non-empty-string $propertyName
-     *
-     * @throws OutOfBoundsException
-     */
-    public static function createFromName(string $className, string $propertyName): self
-    {
-        $property = ReflectionClass::createFromName($className)->getProperty($propertyName);
-
-        if ($property === null) {
-            throw new OutOfBoundsException(sprintf('Could not find property: %s', $propertyName));
-        }
-
-        return $property;
-    }
-
-    /**
      * Create a reflection of an instance's property by its name
      *
      * @param non-empty-string $propertyName
@@ -366,14 +348,6 @@ class ReflectionProperty
         return ! $this->hasType() || $this->default !== null;
     }
 
-    /**
-     * @deprecated Use getDefaultValueExpression()
-     */
-    public function getDefaultValueExpr(): Node\Expr|null
-    {
-        return $this->getDefaultValueExpression();
-    }
-
     public function getDefaultValueExpression(): Node\Expr|null
     {
         return $this->default;
@@ -382,8 +356,6 @@ class ReflectionProperty
     /**
      * Get the default value of the property (as defined before constructor is
      * called, when the property is defined)
-     *
-     * @deprecated Use getDefaultValueExpr()
      */
     public function getDefaultValue(): mixed
     {

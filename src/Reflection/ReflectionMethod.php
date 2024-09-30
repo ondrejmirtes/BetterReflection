@@ -140,25 +140,6 @@ class ReflectionMethod
     }
 
     /**
-     * Create a reflection of a method by it's name using a named class
-     *
-     * @param non-empty-string $methodName
-     *
-     * @throws IdentifierNotFound
-     * @throws OutOfBoundsException
-     */
-    public static function createFromName(string $className, string $methodName): self
-    {
-        $method = ReflectionClass::createFromName($className)->getMethod($methodName);
-
-        if ($method === null) {
-            throw new OutOfBoundsException(sprintf('Could not find method: %s', $methodName));
-        }
-
-        return $method;
-    }
-
-    /**
      * Create a reflection of a method by it's name using an instance
      *
      * @param non-empty-string $methodName
