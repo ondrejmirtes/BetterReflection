@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Identifier;
+namespace PHPStan\BetterReflection\Identifier;
 
-use Roave\BetterReflection\Identifier\Exception\InvalidIdentifierName;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Identifier\Exception\InvalidIdentifierName;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
 
 use function ltrim;
 use function preg_match;
@@ -23,7 +23,7 @@ class Identifier
      */
     private $name;
     /**
-     * @var \Roave\BetterReflection\Identifier\IdentifierType
+     * @var \PHPStan\BetterReflection\Identifier\IdentifierType
      */
     private $type;
 
