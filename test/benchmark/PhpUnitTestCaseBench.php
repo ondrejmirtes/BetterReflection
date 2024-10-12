@@ -18,13 +18,16 @@ use function array_values;
 /** @Iterations(5) */
 class PhpUnitTestCaseBench
 {
-    private Reflector $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
 
     /** @var list<ReflectionMethod> */
-    private array $methods;
+    private $methods;
 
     /** @var list<ReflectionParameter> */
-    private array $parameters;
+    private $parameters;
 
     public function __construct()
     {
@@ -32,7 +35,9 @@ class PhpUnitTestCaseBench
         $this->reflector  = $reflection->reflector();
         $reflectionClass  = $this->reflector->reflectClass(TestCase::class);
         $this->methods    = array_values($reflectionClass->getMethods());
-        $this->parameters = array_merge([], ...array_map(static fn (ReflectionMethod $method): array => $method->getParameters(), $this->methods));
+        $this->parameters = array_merge([], ...array_map(static function (ReflectionMethod $method) : array {
+            return $method->getParameters();
+        }, $this->methods));
     }
 
     public function benchReflectClass(): void
