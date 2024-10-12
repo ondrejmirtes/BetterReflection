@@ -26,26 +26,26 @@ use ReflectionClass as CoreReflectionClass;
 use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
-use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionNamedType;
-use Roave\BetterReflection\Reflection\ReflectionParameter;
-use Roave\BetterReflection\Reflection\ReflectionProperty;
-use Roave\BetterReflection\Reflection\ReflectionUnionType;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\ComposerSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
+use PHPStan\BetterReflection\Reflection\Exception\CircularReference;
+use PHPStan\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionClassConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter;
+use PHPStan\BetterReflection\Reflection\ReflectionProperty;
+use PHPStan\BetterReflection\Reflection\ReflectionUnionType;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\ComposerSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\MemoizingSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\ClassesImplementingIterators;
 use Roave\BetterReflectionTest\ClassesWithCloneMethod;
@@ -106,7 +106,7 @@ use function uniqid;
 class ReflectionClassTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     * @var \PHPStan\BetterReflection\SourceLocator\Ast\Locator
      */
     private $astLocator;
 
@@ -124,7 +124,7 @@ class ReflectionClassTest extends TestCase
 
     public function testCanReflectInternalClassWithDefaultLocator(): void
     {
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
         self::assertSame(stdClass::class, $reflector->reflectClass(stdClass::class)->getName());
     }
 
@@ -140,7 +140,7 @@ class ReflectionClassTest extends TestCase
 
         eval('class ' . $className . '{}');
 
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
 
         self::assertSame($className, $reflector->reflectClass($className)->getName());
     }
@@ -766,7 +766,7 @@ PHP;
 
     public function testGetParentClassThrowsExceptionWithNoParent(): void
     {
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
         $reflection = $reflector->reflectClass(ExampleClass::class);
 
         self::assertNull($reflection->getParentClass());
@@ -1772,7 +1772,7 @@ PHP;
 
     public function testToString(): void
     {
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
         $reflection = $reflector->reflectClass(ExampleClass::class);
         self::assertStringMatchesFormat(file_get_contents(__DIR__ . '/../Fixture/ExampleClassExport.txt'), $reflection->__toString());
     }
