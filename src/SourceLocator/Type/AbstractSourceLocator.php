@@ -16,6 +16,10 @@ use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 abstract class AbstractSourceLocator implements SourceLocator
 {
     /**
+     * @var AstLocator
+     */
+    private $astLocator;
+    /**
      * Children should implement this method and return a LocatedSource object
      * which contains the source and the file from which it was located.
      *
@@ -23,10 +27,11 @@ abstract class AbstractSourceLocator implements SourceLocator
      *   return new LocatedSource(['<?php class Foo {}', null]);
      *   return new LocatedSource([\file_get_contents('Foo.php'), 'Foo.php']);
      */
-    abstract protected function createLocatedSource(Identifier $identifier): LocatedSource|null;
+    abstract protected function createLocatedSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 
-    public function __construct(private AstLocator $astLocator)
+    public function __construct(AstLocator $astLocator)
     {
+        $this->astLocator = $astLocator;
     }
 
     /**
@@ -34,7 +39,7 @@ abstract class AbstractSourceLocator implements SourceLocator
      *
      * @throws ParseToAstFailure
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         $locatedSource = $this->createLocatedSource($identifier);
 
@@ -44,7 +49,7 @@ abstract class AbstractSourceLocator implements SourceLocator
 
         try {
             return $this->astLocator->findReflection($reflector, $locatedSource, $identifier);
-        } catch (IdentifierNotFound) {
+        } catch (IdentifierNotFound $exception) {
             return null;
         }
     }
@@ -62,10 +67,6 @@ abstract class AbstractSourceLocator implements SourceLocator
             return [];
         }
 
-        return $this->astLocator->findReflectionsOfType(
-            $reflector,
-            $locatedSource,
-            $identifierType,
-        );
+        return $this->astLocator->findReflectionsOfType($reflector, $locatedSource, $identifierType);
     }
 }

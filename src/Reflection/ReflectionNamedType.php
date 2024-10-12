@@ -38,22 +38,36 @@ class ReflectionNamedType extends ReflectionType
     ];
 
     /** @var non-empty-string */
-    private string $name;
-
-    /** @internal */
-    public function __construct(
-        private Reflector $reflector,
-        private ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        private Identifier|Name $type,
-    ) {
+    private $name;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant
+     */
+    private $owner;
+    /**
+     * @var \PhpParser\Node\Identifier|\PhpParser\Node\Name
+     */
+    private $type;
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name $type */
+    public function __construct(Reflector $reflector, $owner, $type)
+    {
+        $this->reflector = $reflector;
+        $this->owner = $owner;
+        $this->type = $type;
         $name = $type->toString();
         assert($name !== '');
-
         $this->name = $name;
     }
 
-    /** @internal */
-    public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @return $this */
+    public function withOwner($owner)
     {
         $clone        = clone $this;
         $clone->owner = $owner;
@@ -121,11 +135,14 @@ class ReflectionNamedType extends ReflectionType
 
     public function allowsNull(): bool
     {
-        return match (strtolower($this->name)) {
-            'mixed' => true,
-            'null' => true,
-            default => false,
-        };
+        switch (strtolower($this->name)) {
+            case 'mixed':
+                return true;
+            case 'null':
+                return true;
+            default:
+                return false;
+        }
     }
 
     public function isIdentifier(): bool

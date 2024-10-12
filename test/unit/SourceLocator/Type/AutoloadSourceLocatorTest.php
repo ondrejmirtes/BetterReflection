@@ -52,7 +52,10 @@ use function unlink;
 #[CoversClass(AutoloadSourceLocator::class)]
 class AutoloadSourceLocatorTest extends TestCase
 {
-    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
 
     protected function setUp(): void
     {
@@ -62,7 +65,10 @@ class AutoloadSourceLocatorTest extends TestCase
         $this->astLocator = $configuration->astLocator();
     }
 
-    private function getMockReflector(): Reflector&MockObject
+    /**
+     * @return \Roave\BetterReflection\Reflector\Reflector&\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getMockReflector()
     {
         return $this->createMock(Reflector::class);
     }
@@ -113,10 +119,7 @@ class AutoloadSourceLocatorTest extends TestCase
         self::assertFalse(interface_exists(AutoloadableInterface::class, false));
 
         $reflectionClass = (new AutoloadSourceLocator($this->astLocator))
-            ->locateIdentifier($this->getMockReflector(), new Identifier(
-                AutoloadableInterface::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ));
+            ->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableInterface::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflectionClass);
         self::assertInstanceOf(LocatedSource::class, $reflectionClass->getLocatedSource());
@@ -130,10 +133,7 @@ class AutoloadSourceLocatorTest extends TestCase
         self::assertTrue(interface_exists(AutoloadableInterface::class));
 
         $reflectionClass = (new AutoloadSourceLocator($this->astLocator))
-            ->locateIdentifier($this->getMockReflector(), new Identifier(
-                AutoloadableInterface::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ));
+            ->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableInterface::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflectionClass);
         self::assertInstanceOf(LocatedSource::class, $reflectionClass->getLocatedSource());
@@ -145,10 +145,7 @@ class AutoloadSourceLocatorTest extends TestCase
         self::assertFalse(trait_exists(AutoloadableTrait::class, false));
 
         $reflectionClass = (new AutoloadSourceLocator($this->astLocator))
-            ->locateIdentifier($this->getMockReflector(), new Identifier(
-                AutoloadableTrait::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ));
+            ->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableTrait::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflectionClass);
         self::assertInstanceOf(LocatedSource::class, $reflectionClass->getLocatedSource());
@@ -160,10 +157,7 @@ class AutoloadSourceLocatorTest extends TestCase
         self::assertTrue(trait_exists(AutoloadableTrait::class));
 
         $reflectionClass = (new AutoloadSourceLocator($this->astLocator))
-            ->locateIdentifier($this->getMockReflector(), new Identifier(
-                AutoloadableTrait::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ));
+            ->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableTrait::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflectionClass);
         self::assertInstanceOf(LocatedSource::class, $reflectionClass->getLocatedSource());
@@ -172,13 +166,16 @@ class AutoloadSourceLocatorTest extends TestCase
     /** @runInSeparateProcess */
     public function testCanLocateAutoloadableEnum(): void
     {
-        self::assertFalse(enum_exists(AutoloadableEnum::class, false));
+        $enumExists = function (string $enum, bool $autoload = true) : bool {
+            if (function_exists('enum_exists')) {
+                return enum_exists($enum, $autoload);
+            }
+            return $autoload && class_exists($enum) && false;
+        };
+        self::assertFalse($enumExists(AutoloadableEnum::class, false));
 
         $reflectionClass = (new AutoloadSourceLocator($this->astLocator))
-            ->locateIdentifier($this->getMockReflector(), new Identifier(
-                AutoloadableEnum::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ));
+            ->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableEnum::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflectionClass);
         self::assertInstanceOf(LocatedSource::class, $reflectionClass->getLocatedSource());
@@ -187,13 +184,16 @@ class AutoloadSourceLocatorTest extends TestCase
     /** @runInSeparateProcess */
     public function testCanLocateAutoloadedEnum(): void
     {
-        self::assertTrue(enum_exists(AutoloadableEnum::class));
+        $enumExists = function (string $enum, bool $autoload = true) : bool {
+            if (function_exists('enum_exists')) {
+                return enum_exists($enum, $autoload);
+            }
+            return $autoload && class_exists($enum) && false;
+        };
+        self::assertTrue($enumExists(AutoloadableEnum::class));
 
         $reflectionClass = (new AutoloadSourceLocator($this->astLocator))
-            ->locateIdentifier($this->getMockReflector(), new Identifier(
-                AutoloadableEnum::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ));
+            ->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableEnum::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflectionClass);
         self::assertInstanceOf(LocatedSource::class, $reflectionClass->getLocatedSource());
@@ -206,10 +206,7 @@ class AutoloadSourceLocatorTest extends TestCase
 
         self::assertTrue(class_exists(AutoloadableAlias::class, false));
 
-        $reflection = (new AutoloadSourceLocator($this->astLocator))->locateIdentifier($this->getMockReflector(), new Identifier(
-            AutoloadableAlias::class,
-            new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-        ));
+        $reflection = (new AutoloadSourceLocator($this->astLocator))->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableAlias::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(BetterReflectionClass::class, $reflection);
         self::assertSame(AutoloadableByAlias::class, $reflection->getName());
@@ -258,21 +255,15 @@ class AutoloadSourceLocatorTest extends TestCase
 
         self::assertIsString($temporarySourceFile);
 
-        file_put_contents(
-            $temporarySourceFile,
-            '<?php namespace Roave\BetterReflectionTest\SourceLocator\Type; const ' . $constantName . ' = "foo";',
-        );
+        file_put_contents($temporarySourceFile, '<?php namespace Roave\BetterReflectionTest\SourceLocator\Type; const ' . $constantName . ' = "foo";');
 
         require $temporarySourceFile;
 
         $sourceLocator = new AutoloadSourceLocator($this->astLocator);
         $reflector     = new DefaultReflector($sourceLocator);
 
-        self::assertSame(
-            'Roave\BetterReflectionTest\SourceLocator\Type\\' . $constantName,
-            $reflector->reflectConstant('Roave\BetterReflectionTest\SourceLocator\Type\\' . $constantName)
-                ->getName(),
-        );
+        self::assertSame('Roave\BetterReflectionTest\SourceLocator\Type\\' . $constantName, $reflector->reflectConstant('Roave\BetterReflectionTest\SourceLocator\Type\\' . $constantName)
+            ->getName());
 
         unlink($temporarySourceFile);
 
@@ -353,10 +344,7 @@ class AutoloadSourceLocatorTest extends TestCase
     {
         $sourceLocator = new AutoloadSourceLocator($this->astLocator);
 
-        self::assertNull($sourceLocator->locateIdentifier(
-            new DefaultReflector($sourceLocator),
-            new Identifier('Some\Class\That\Cannot\Exist', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
-        ));
+        self::assertNull($sourceLocator->locateIdentifier(new DefaultReflector($sourceLocator), new Identifier('Some\Class\That\Cannot\Exist', new IdentifierType(IdentifierType::IDENTIFIER_CLASS))));
     }
 
     public function testShouldNotConsiderEvaledSources(): void
@@ -365,21 +353,13 @@ class AutoloadSourceLocatorTest extends TestCase
 
         eval('class ' . $className . '{}');
 
-        self::assertNull(
-            (new AutoloadSourceLocator($this->astLocator))
-                ->locateIdentifier($this->getMockReflector(), new Identifier($className, new IdentifierType(IdentifierType::IDENTIFIER_CLASS))),
-        );
+        self::assertNull((new AutoloadSourceLocator($this->astLocator))
+            ->locateIdentifier($this->getMockReflector(), new Identifier($className, new IdentifierType(IdentifierType::IDENTIFIER_CLASS))));
     }
 
     public function testReturnsNullWithInternalFunctions(): void
     {
-        self::assertNull(
-            (new AutoloadSourceLocator($this->astLocator))
-                ->locateIdentifier(
-                    $this->getMockReflector(),
-                    new Identifier('strlen', new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION)),
-                ),
-        );
+        self::assertNull((new AutoloadSourceLocator($this->astLocator))->locateIdentifier($this->getMockReflector(), new Identifier('strlen', new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION))));
     }
 
     public function testCanAutoloadPsr4ClassesInPotentiallyMultipleDirectories(): void
@@ -405,13 +385,7 @@ class AutoloadSourceLocatorTest extends TestCase
         /** @phpstan-ignore-next-line */
         spl_autoload_register($autoload);
 
-        self::assertNotNull(
-            (new AutoloadSourceLocator($this->astLocator))
-                ->locateIdentifier(
-                    $this->getMockReflector(),
-                    new Identifier(AutoloadableClassWithTwoDirectories::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
-                ),
-        );
+        self::assertNotNull((new AutoloadSourceLocator($this->astLocator))->locateIdentifier($this->getMockReflector(), new Identifier(AutoloadableClassWithTwoDirectories::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS))));
 
         spl_autoload_unregister($autoload);
 
@@ -439,8 +413,10 @@ class AutoloadSourceLocatorTest extends TestCase
 
     public function testBrokenAutoloader(): void
     {
-        $getErrorHandler = static function (): callable|null {
-            $errorHandler = set_error_handler(static fn (): bool => true);
+        $getErrorHandler = static function () {
+            $errorHandler = set_error_handler(static function () : bool {
+                return true;
+            });
             restore_error_handler();
 
             return $errorHandler;
@@ -455,11 +431,7 @@ class AutoloadSourceLocatorTest extends TestCase
         spl_autoload_register($brokenAutoloader);
 
         try {
-            (new AutoloadSourceLocator($this->astLocator))
-                ->locateIdentifier(
-                    $this->getMockReflector(),
-                    new Identifier('Whatever', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)),
-                );
+            (new AutoloadSourceLocator($this->astLocator))->locateIdentifier($this->getMockReflector(), new Identifier('Whatever', new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
             self::fail('No exception was thrown');
         } catch (BrokenAutoloaderException $e) {

@@ -17,7 +17,7 @@ use function strpos;
 final class Psr0Mapping implements PsrAutoloaderMapping
 {
     /** @var array<string, list<string>> */
-    private array $mappings = [];
+    private $mappings = [];
 
     private function __construct()
     {
@@ -28,12 +28,11 @@ final class Psr0Mapping implements PsrAutoloaderMapping
     {
         $instance = new self();
 
-        $instance->mappings = array_map(
-            static function (array $directories): array {
-                return array_map(static fn (string $directory): string => rtrim($directory, '/'), $directories);
-            },
-            $mappings,
-        );
+        $instance->mappings = array_map(static function (array $directories): array {
+            return array_map(static function (string $directory) : string {
+                return rtrim($directory, '/');
+            }, $directories);
+        }, $mappings);
 
         return $instance;
     }
@@ -53,10 +52,9 @@ final class Psr0Mapping implements PsrAutoloaderMapping
             }
 
             if (strpos($className, $prefix) === 0) {
-                return array_map(
-                    static fn (string $path): string => $path . '/' . str_replace(['\\', '_'], '/', $className) . '.php',
-                    $paths,
-                );
+                return array_map(static function (string $path) use ($className) : string {
+                    return $path . '/' . str_replace(['\\', '_'], '/', $className) . '.php';
+                }, $paths);
             }
         }
 

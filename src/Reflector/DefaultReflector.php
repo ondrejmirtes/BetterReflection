@@ -16,8 +16,13 @@ use function assert;
 
 final class DefaultReflector implements Reflector
 {
-    public function __construct(private SourceLocator $sourceLocator)
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator
+     */
+    private $sourceLocator;
+    public function __construct(SourceLocator $sourceLocator)
     {
+        $this->sourceLocator = $sourceLocator;
     }
 
     /**
@@ -48,10 +53,7 @@ final class DefaultReflector implements Reflector
     public function reflectAllClasses(): iterable
     {
         /** @var list<ReflectionClass> $allClasses */
-        $allClasses = $this->sourceLocator->locateIdentifiersByType(
-            $this,
-            new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-        );
+        $allClasses = $this->sourceLocator->locateIdentifiersByType($this, new IdentifierType(IdentifierType::IDENTIFIER_CLASS));
 
         return $allClasses;
     }
@@ -84,10 +86,7 @@ final class DefaultReflector implements Reflector
     public function reflectAllFunctions(): iterable
     {
         /** @var list<ReflectionFunction> $allFunctions */
-        $allFunctions = $this->sourceLocator->locateIdentifiersByType(
-            $this,
-            new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION),
-        );
+        $allFunctions = $this->sourceLocator->locateIdentifiersByType($this, new IdentifierType(IdentifierType::IDENTIFIER_FUNCTION));
 
         return $allFunctions;
     }
@@ -120,10 +119,7 @@ final class DefaultReflector implements Reflector
     public function reflectAllConstants(): iterable
     {
         /** @var list<ReflectionConstant> $allConstants */
-        $allConstants = $this->sourceLocator->locateIdentifiersByType(
-            $this,
-            new IdentifierType(IdentifierType::IDENTIFIER_CONSTANT),
-        );
+        $allConstants = $this->sourceLocator->locateIdentifiersByType($this, new IdentifierType(IdentifierType::IDENTIFIER_CONSTANT));
 
         return $allConstants;
     }
