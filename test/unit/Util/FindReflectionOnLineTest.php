@@ -6,18 +6,18 @@ namespace Roave\BetterReflectionTest\Util;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Util\FindReflectionOnLine;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod;
+use PHPStan\BetterReflection\Util\FindReflectionOnLine;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 
 #[CoversClass(FindReflectionOnLine::class)]
 class FindReflectionOnLineTest extends TestCase
 {
     /**
-     * @var \Roave\BetterReflection\Util\FindReflectionOnLine
+     * @var \PHPStan\BetterReflection\Util\FindReflectionOnLine
      */
     private $finder;
 
