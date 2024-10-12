@@ -23,8 +23,7 @@ final class ReflectionTypeStringCastTest extends TestCase
     /** @return list<array{0: ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType, 1: string}> */
     public static function toStringProvider(): array
     {
-        $reflector = new DefaultReflector(new StringSourceLocator(
-            <<<'PHP'
+        $reflector = new DefaultReflector(new StringSourceLocator(<<<'PHP'
 <?php
 
 interface A {}
@@ -40,13 +39,10 @@ function h(): null {}
 function i(): (A&B)|null {}
 function j(): (A&B)|(A&C) {}
 function k(): null|(A&B)|(A&C) {}
-PHP
-            ,
-            BetterReflectionSingleton::instance()
-                ->astLocator(),
-        ));
+PHP, BetterReflectionSingleton::instance()
+            ->astLocator()));
 
-        $returnTypeForFunction = static function (string $function) use ($reflector): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType {
+        $returnTypeForFunction = static function (string $function) use ($reflector) {
             $type = $reflector->reflectFunction($function)
                 ->getReturnType();
 
@@ -70,11 +66,12 @@ PHP
         ];
     }
 
+    /**
+     * @param \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType $type
+     */
     #[DataProvider('toStringProvider')]
-    public function testToString(
-        ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType $type,
-        string $expectedString,
-    ): void {
+    public function testToString($type, string $expectedString) : void
+    {
         self::assertSame($expectedString, ReflectionTypeStringCast::toString($type));
     }
 }

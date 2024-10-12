@@ -21,29 +21,31 @@ use function file_get_contents;
 
 final class PsrAutoloaderLocator implements SourceLocator
 {
-    public function __construct(private PsrAutoloaderMapping $mapping, private Locator $astLocator)
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\Composer\Psr\PsrAutoloaderMapping
+     */
+    private $mapping;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Ast\Locator
+     */
+    private $astLocator;
+    public function __construct(PsrAutoloaderMapping $mapping, Locator $astLocator)
     {
+        $this->mapping = $mapping;
+        $this->astLocator = $astLocator;
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         /** @phpstan-var non-empty-string $file */
         foreach ($this->mapping->resolvePossibleFilePaths($identifier) as $file) {
             try {
                 FileChecker::assertReadableFile($file);
 
-                return $this->astLocator->findReflection(
-                    $reflector,
-                    new LocatedSource(
-                        file_get_contents($file),
-                        $identifier->getName(),
-                        $file,
-                    ),
-                    $identifier,
-                );
-            } catch (InvalidFileLocation) {
+                return $this->astLocator->findReflection($reflector, new LocatedSource(file_get_contents($file), $identifier->getName(), $file), $identifier);
+            } catch (InvalidFileLocation $exception) {
                 // Ignore
-            } catch (IdentifierNotFound) {
+            } catch (IdentifierNotFound $exception) {
                 // on purpose - autoloading is allowed to fail, and silently-failing autoloaders are normal/endorsed
             }
         }
@@ -58,9 +60,6 @@ final class PsrAutoloaderLocator implements SourceLocator
      */
     public function locateIdentifiersByType(Reflector $reflector, IdentifierType $identifierType): array
     {
-        return (new DirectoriesSourceLocator(
-            $this->mapping->directories(),
-            $this->astLocator,
-        ))->locateIdentifiersByType($reflector, $identifierType);
+        return (new DirectoriesSourceLocator($this->mapping->directories(), $this->astLocator))->locateIdentifiersByType($reflector, $identifierType);
     }
 }
