@@ -155,7 +155,10 @@ final class ReflectionSourceStubber implements SourceStubber
         $this->addDocComment($functionNode, $functionReflection);
         $this->addParameters($functionNode, $functionReflection);
 
-        $returnType = $functionReflection->getReturnType() ?? $functionReflection->getTentativeReturnType();
+        $returnType = $functionReflection->getReturnType();
+        if ($returnType === null && method_exists($functionReflection, 'getTentativeReturnType')) {
+            $returnType = $functionReflection->getTentativeReturnType();
+        }
 
         if ($returnType !== null) {
             assert($returnType instanceof CoreReflectionNamedType || $returnType instanceof CoreReflectionUnionType || $returnType instanceof CoreReflectionIntersectionType);
@@ -263,7 +266,7 @@ final class ReflectionSourceStubber implements SourceStubber
                 $annotations[] = '@deprecated';
             }
 
-            if ($reflection->hasTentativeReturnType()) {
+            if (method_exists($reflection, 'hasTentativeReturnType') && $reflection->hasTentativeReturnType()) {
                 $annotations[] = sprintf('@%s', AnnotationHelper::TENTATIVE_RETURN_TYPE_ANNOTATION);
             }
         }
@@ -459,7 +462,7 @@ final class ReflectionSourceStubber implements SourceStubber
     private function addClassConstants(Class_|Interface_|Trait_|Enum_ $classNode, CoreReflectionClass $classReflection): void
     {
         foreach ($classReflection->getReflectionConstants() as $constantReflection) {
-            if ($constantReflection->isEnumCase()) {
+            if (method_exists($constantReflection, 'isEnumCase') && $constantReflection->isEnumCase()) {
                 continue;
             }
 
@@ -492,7 +495,7 @@ final class ReflectionSourceStubber implements SourceStubber
 
     private function addClassConstantModifiers(ClassConst $classConstantNode, CoreReflectionClassConstant $classConstantReflection): void
     {
-        if ($classConstantReflection->isFinal()) {
+        if (method_exists($classConstantReflection, 'isFinal') && $classConstantReflection->isFinal()) {
             $classConstantNode->makeFinal();
         }
 
@@ -519,7 +522,10 @@ final class ReflectionSourceStubber implements SourceStubber
             $this->addDocComment($methodNode, $methodReflection);
             $this->addParameters($methodNode, $methodReflection);
 
-            $returnType = $methodReflection->getReturnType() ?? $methodReflection->getTentativeReturnType();
+            $returnType = $methodReflection->getReturnType();
+            if ($returnType === null && method_exists($methodReflection, 'getTentativeReturnType')) {
+                $returnType = $methodReflection->getTentativeReturnType();
+            }
 
             if ($returnType !== null) {
                 assert($returnType instanceof CoreReflectionNamedType || $returnType instanceof CoreReflectionUnionType || $returnType instanceof CoreReflectionIntersectionType);
