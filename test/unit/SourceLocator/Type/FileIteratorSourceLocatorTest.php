@@ -25,35 +25,28 @@ use function sort;
 #[CoversClass(FileIteratorSourceLocator::class)]
 class FileIteratorSourceLocatorTest extends TestCase
 {
-    private FileIteratorSourceLocator $sourceLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\FileIteratorSourceLocator
+     */
+    private $sourceLocator;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->sourceLocator = new FileIteratorSourceLocator(
-            new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
-                __DIR__ . '/../../Assets/DirectoryScannerAssets',
-                RecursiveDirectoryIterator::SKIP_DOTS,
-            ), RecursiveIteratorIterator::SELF_FIRST),
-            BetterReflectionSingleton::instance()->astLocator(),
-        );
+        $this->sourceLocator = new FileIteratorSourceLocator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . '/../../Assets/DirectoryScannerAssets', RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST), BetterReflectionSingleton::instance()->astLocator());
     }
 
     public function testScanDirectoryClasses(): void
     {
         /** @var list<ReflectionClass> $classes */
-        $classes = $this->sourceLocator->locateIdentifiersByType(
-            new DefaultReflector($this->sourceLocator),
-            new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-        );
+        $classes = $this->sourceLocator->locateIdentifiersByType(new DefaultReflector($this->sourceLocator), new IdentifierType(IdentifierType::IDENTIFIER_CLASS));
 
         self::assertCount(2, $classes);
 
-        $classNames = array_map(
-            static fn (ReflectionClass $reflectionClass): string => $reflectionClass->getName(),
-            $classes,
-        );
+        $classNames = array_map(static function (ReflectionClass $reflectionClass) : string {
+            return $reflectionClass->getName();
+        }, $classes);
 
         sort($classNames);
 
@@ -63,13 +56,7 @@ class FileIteratorSourceLocatorTest extends TestCase
 
     public function testLocateIdentifier(): void
     {
-        $class = $this->sourceLocator->locateIdentifier(
-            new DefaultReflector($this->sourceLocator),
-            new Identifier(
-                DirectoryScannerAssets\Bar\FooBar::class,
-                new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
-            ),
-        );
+        $class = $this->sourceLocator->locateIdentifier(new DefaultReflector($this->sourceLocator), new Identifier(DirectoryScannerAssets\Bar\FooBar::class, new IdentifierType(IdentifierType::IDENTIFIER_CLASS)));
 
         self::assertInstanceOf(ReflectionClass::class, $class);
         self::assertSame(DirectoryScannerAssets\Bar\FooBar::class, $class->getName());
