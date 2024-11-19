@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type;
+namespace PHPStan\BetterReflection\SourceLocator\Type;
 
 use Composer\Autoload\ClassLoader;
 use InvalidArgumentException;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
 
 use function file_get_contents;
 
@@ -39,7 +39,7 @@ class ComposerSourceLocator extends AbstractSourceLocator
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    protected function createLocatedSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\LocatedSource
+    protected function createLocatedSource(Identifier $identifier): ?\PHPStan\BetterReflection\SourceLocator\Located\LocatedSource
     {
         if ($identifier->getType()->getName() !== IdentifierType::IDENTIFIER_CLASS) {
             return null;

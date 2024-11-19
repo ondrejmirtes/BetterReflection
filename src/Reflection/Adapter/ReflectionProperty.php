@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use ArgumentCountError;
 use OutOfBoundsException;
@@ -10,10 +10,10 @@ use PhpParser\Node\Expr;
 use ReflectionException as CoreReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
 use ReturnTypeWillChange;
-use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
-use Roave\BetterReflection\Reflection\Exception\NotAnObject;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
+use PHPStan\BetterReflection\Reflection\Exception\NoObjectProvided;
+use PHPStan\BetterReflection\Reflection\Exception\NotAnObject;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
 use Throwable;
 use TypeError;
 use ValueError;

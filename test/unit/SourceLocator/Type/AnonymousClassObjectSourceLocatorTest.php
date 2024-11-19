@@ -9,17 +9,17 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Exception\EvaledAnonymousClassCannotBeLocated;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
-use Roave\BetterReflection\SourceLocator\Exception\NoAnonymousClassOnLine;
-use Roave\BetterReflection\SourceLocator\Exception\TwoAnonymousClassesOnSameLine;
-use Roave\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
-use Roave\BetterReflection\Util\FileHelper;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Exception\EvaledAnonymousClassCannotBeLocated;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use PHPStan\BetterReflection\SourceLocator\Exception\NoAnonymousClassOnLine;
+use PHPStan\BetterReflection\SourceLocator\Exception\TwoAnonymousClassesOnSameLine;
+use PHPStan\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
+use PHPStan\BetterReflection\Util\FileHelper;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use stdClass;
 
@@ -37,7 +37,7 @@ class AnonymousClassObjectSourceLocatorTest extends TestCase
     private $parser;
 
     /**
-     * @var \Roave\BetterReflection\Reflector\Reflector
+     * @var \PHPStan\BetterReflection\Reflector\Reflector
      */
     private $reflector;
 
