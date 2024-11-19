@@ -253,7 +253,37 @@ parameters:
 			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
 
 		-
+			message: '#^Call to function method_exists\(\) with ReflectionClassConstant and ''isEnumCase'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ReflectionClassConstant and ''isFinal'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
 			message: '#^Call to function method_exists\(\) with ReflectionClass\|ReflectionClassConstant\|ReflectionFunction\|ReflectionMethod\|ReflectionParameter\|ReflectionProperty and ''getAttributes'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ReflectionFunction and ''getTentativeReturnT…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ReflectionFunction\|ReflectionMethod and ''hasTentativeReturnT…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ReflectionMethod and ''getTentativeReturnT…'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
