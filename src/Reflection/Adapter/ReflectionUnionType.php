@@ -14,14 +14,19 @@ use function assert;
 /** @psalm-immutable */
 final class ReflectionUnionType extends CoreReflectionUnionType
 {
-    public function __construct(private BetterReflectionUnionType $betterReflectionType)
+    /**
+     * @var BetterReflectionUnionType
+     */
+    private $betterReflectionType;
+    public function __construct(BetterReflectionUnionType $betterReflectionType)
     {
+        $this->betterReflectionType = $betterReflectionType;
     }
 
     /** @return non-empty-list<ReflectionNamedType|ReflectionIntersectionType> */
     public function getTypes(): array
     {
-        return array_map(static function (BetterReflectionType $type): ReflectionNamedType|ReflectionIntersectionType {
+        return array_map(static function (BetterReflectionType $type) {
             $adapterType = ReflectionType::fromType($type);
             assert($adapterType instanceof ReflectionNamedType || $adapterType instanceof ReflectionIntersectionType);
 

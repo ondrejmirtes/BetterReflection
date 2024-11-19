@@ -66,7 +66,7 @@ final class MakeLocatorForComposerJson
         assert(is_string($composerJsonContent));
 
         /** @psalm-var array{autoload: ComposerAutoload} $composer */
-        $composer = json_decode($composerJsonContent, true, flags: JSON_THROW_ON_ERROR);
+        $composer = json_decode($composerJsonContent, true, 512, JSON_THROW_ON_ERROR);
 
         $pathPrefix          = $realInstallationPath . '/';
         $classMapPaths       = $this->prefixPaths($this->packageToClassMapPaths($composer), $pathPrefix);
@@ -74,31 +74,15 @@ final class MakeLocatorForComposerJson
         $classMapDirectories = array_values(array_filter($classMapPaths, 'is_dir'));
         $filePaths           = $this->prefixPaths($this->packageToFilePaths($composer), $pathPrefix);
 
-        return new AggregateSourceLocator(array_merge(
-            [
-                new PsrAutoloaderLocator(
-                    Psr4Mapping::fromArrayMappings(
-                        $this->prefixWithInstallationPath($this->packageToPsr4AutoloadNamespaces($composer), $pathPrefix),
-                    ),
-                    $astLocator,
-                ),
-                new PsrAutoloaderLocator(
-                    Psr0Mapping::fromArrayMappings(
-                        $this->prefixWithInstallationPath($this->packageToPsr0AutoloadNamespaces($composer), $pathPrefix),
-                    ),
-                    $astLocator,
-                ),
-                new DirectoriesSourceLocator($classMapDirectories, $astLocator),
-            ],
-            ...array_map(
-                static function (string $file) use ($astLocator): array {
-                    assert($file !== '');
+        return new AggregateSourceLocator(array_merge([
+            new PsrAutoloaderLocator(Psr4Mapping::fromArrayMappings($this->prefixWithInstallationPath($this->packageToPsr4AutoloadNamespaces($composer), $pathPrefix)), $astLocator),
+            new PsrAutoloaderLocator(Psr0Mapping::fromArrayMappings($this->prefixWithInstallationPath($this->packageToPsr0AutoloadNamespaces($composer), $pathPrefix)), $astLocator),
+            new DirectoriesSourceLocator($classMapDirectories, $astLocator),
+        ], ...array_map(static function (string $file) use ($astLocator): array {
+            assert($file !== '');
 
-                    return [new SingleFileSourceLocator($file, $astLocator)];
-                },
-                array_merge($classMapFiles, $filePaths),
-            ),
-        ));
+            return [new SingleFileSourceLocator($file, $astLocator)];
+        }, array_merge($classMapFiles, $filePaths))));
     }
 
     /**
@@ -108,7 +92,9 @@ final class MakeLocatorForComposerJson
      */
     private function packageToPsr4AutoloadNamespaces(array $package): array
     {
-        return array_map(static fn (string|array $namespacePaths): array => (array) $namespacePaths, $package['autoload']['psr-4'] ?? []);
+        return array_map(static function ($namespacePaths) : array {
+            return (array) $namespacePaths;
+        }, $package['autoload']['psr-4'] ?? []);
     }
 
     /**
@@ -118,7 +104,9 @@ final class MakeLocatorForComposerJson
      */
     private function packageToPsr0AutoloadNamespaces(array $package): array
     {
-        return array_map(static fn (string|array $namespacePaths): array => (array) $namespacePaths, $package['autoload']['psr-0'] ?? []);
+        return array_map(static function ($namespacePaths) : array {
+            return (array) $namespacePaths;
+        }, $package['autoload']['psr-0'] ?? []);
     }
 
     /**
@@ -148,7 +136,9 @@ final class MakeLocatorForComposerJson
      */
     private function prefixWithInstallationPath(array $paths, string $trimmedInstallationPath): array
     {
-        return array_map(fn (array $paths): array => $this->prefixPaths($paths, $trimmedInstallationPath), $paths);
+        return array_map(function (array $paths) use ($trimmedInstallationPath) : array {
+            return $this->prefixPaths($paths, $trimmedInstallationPath);
+        }, $paths);
     }
 
     /**
@@ -158,6 +148,8 @@ final class MakeLocatorForComposerJson
      */
     private function prefixPaths(array $paths, string $prefix): array
     {
-        return array_map(static fn (string $path): string => $prefix . $path, $paths);
+        return array_map(static function (string $path) use ($prefix) : string {
+            return $prefix . $path;
+        }, $paths);
     }
 }

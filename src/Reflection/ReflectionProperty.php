@@ -41,76 +41,95 @@ use function str_contains;
 class ReflectionProperty
 {
     /** @var non-empty-string */
-    private string $name;
+    private $name;
 
     /** @var int-mask-of<ReflectionPropertyAdapter::IS_*> */
-    private int $modifiers;
+    private $modifiers;
 
-    private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private $type;
 
-    private Node\Expr|null $default;
+    /**
+     * @var \PhpParser\Node\Expr|null
+     */
+    private $default;
 
     /** @var non-empty-string|null */
-    private string|null $docComment;
+    private $docComment;
 
     /** @var list<ReflectionAttribute> */
-    private array $attributes;
+    private $attributes;
 
     /** @var positive-int|null */
-    private int|null $startLine;
+    private $startLine;
 
     /** @var positive-int|null */
-    private int|null $endLine;
+    private $endLine;
 
     /** @var positive-int|null */
-    private int|null $startColumn;
+    private $startColumn;
 
     /** @var positive-int|null */
-    private int|null $endColumn;
+    private $endColumn;
 
-    /** @psalm-allow-private-mutation */
-    private CompiledValue|null $compiledDefaultValue = null;
-
-    private function __construct(
-        private Reflector $reflector,
-        PropertyNode $node,
-        Node\PropertyItem $propertyNode,
-        private ReflectionClass $declaringClass,
-        private ReflectionClass $implementingClass,
-        private bool $isPromoted,
-        private bool $declaredAtCompileTime,
-    ) {
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+    private $compiledDefaultValue = null;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector
+     */
+    private $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionClass
+     */
+    private $declaringClass;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionClass
+     */
+    private $implementingClass;
+    /**
+     * @var bool
+     */
+    private $isPromoted;
+    /**
+     * @var bool
+     */
+    private $declaredAtCompileTime;
+    private function __construct(Reflector $reflector, PropertyNode $node, Node\PropertyItem $propertyNode, ReflectionClass $declaringClass, ReflectionClass $implementingClass, bool $isPromoted, bool $declaredAtCompileTime)
+    {
+        $this->reflector = $reflector;
+        $this->declaringClass = $declaringClass;
+        $this->implementingClass = $implementingClass;
+        $this->isPromoted = $isPromoted;
+        $this->declaredAtCompileTime = $declaredAtCompileTime;
         $this->name       = $propertyNode->name->name;
         $this->modifiers  = $this->computeModifiers($node);
         $this->type       = $this->createType($node);
         $this->default    = $propertyNode->default;
         $this->docComment = GetLastDocComment::forNode($node);
         $this->attributes = ReflectionAttributeHelper::createAttributes($reflector, $this, $node->attrGroups);
-
         $startLine = $node->getStartLine();
         if ($startLine === -1) {
             $startLine = null;
         }
-
         $endLine = $node->getEndLine();
         if ($endLine === -1) {
             $endLine = null;
         }
-
         /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->startLine = $startLine;
         /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->endLine = $endLine;
-
         try {
             $this->startColumn = CalculateReflectionColumn::getStartColumn($declaringClass->getLocatedSource()->getSource(), $node);
-        } catch (NoNodePosition) {
+        } catch (NoNodePosition $exception) {
             $this->startColumn = null;
         }
-
         try {
             $this->endColumn = CalculateReflectionColumn::getEndColumn($declaringClass->getLocatedSource()->getSource(), $node);
-        } catch (NoNodePosition) {
+        } catch (NoNodePosition $exception) {
             $this->endColumn = null;
         }
     }
@@ -145,7 +164,9 @@ class ReflectionProperty
             $clone->type = $clone->type->withOwner($clone);
         }
 
-        $clone->attributes = array_map(static fn (ReflectionAttribute $attribute): ReflectionAttribute => $attribute->withOwner($clone), $this->attributes);
+        $clone->attributes = array_map(static function (ReflectionAttribute $attribute) use ($clone) : ReflectionAttribute {
+            return $attribute->withOwner($clone);
+        }, $this->attributes);
 
         $this->compiledDefaultValue = null;
 
@@ -163,24 +184,9 @@ class ReflectionProperty
      *
      * @param PropertyNode $node Node has to be processed by the PhpParser\NodeVisitor\NameResolver
      */
-    public static function createFromNode(
-        Reflector $reflector,
-        PropertyNode $node,
-        Node\PropertyItem $propertyProperty,
-        ReflectionClass $declaringClass,
-        ReflectionClass $implementingClass,
-        bool $isPromoted = false,
-        bool $declaredAtCompileTime = true,
-    ): self {
-        return new self(
-            $reflector,
-            $node,
-            $propertyProperty,
-            $declaringClass,
-            $implementingClass,
-            $isPromoted,
-            $declaredAtCompileTime,
-        );
+    public static function createFromNode(Reflector $reflector, PropertyNode $node, Node\PropertyItem $propertyProperty, ReflectionClass $declaringClass, ReflectionClass $implementingClass, bool $isPromoted = false, bool $declaredAtCompileTime = true): self
+    {
+        return new self($reflector, $node, $propertyProperty, $declaringClass, $implementingClass, $isPromoted, $declaredAtCompileTime);
     }
 
     /**
@@ -252,7 +258,7 @@ class ReflectionProperty
         return $this->isPromoted;
     }
 
-    public function isInitialized(object|null $object = null): bool
+    public function isInitialized($object = null): bool
     {
         if ($object === null && $this->isStatic()) {
             return ! $this->hasType() || $this->hasDefaultValue();
@@ -265,7 +271,7 @@ class ReflectionProperty
 
         /** @phpstan-ignore catch.neverThrown */
         } catch (Error $e) {
-            if (str_contains($e->getMessage(), 'must not be accessed before initialization')) {
+            if (strpos($e->getMessage(), 'must not be accessed before initialization') !== false) {
                 return false;
             }
 
@@ -290,7 +296,7 @@ class ReflectionProperty
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->docComment;
     }
@@ -300,7 +306,7 @@ class ReflectionProperty
         return ! $this->hasType() || $this->default !== null;
     }
 
-    public function getDefaultValueExpression(): Node\Expr|null
+    public function getDefaultValueExpression(): ?\PhpParser\Node\Expr
     {
         return $this->default;
     }
@@ -308,21 +314,16 @@ class ReflectionProperty
     /**
      * Get the default value of the property (as defined before constructor is
      * called, when the property is defined)
+     * @return mixed
      */
-    public function getDefaultValue(): mixed
+    public function getDefaultValue()
     {
         if ($this->default === null) {
             return null;
         }
 
         if ($this->compiledDefaultValue === null) {
-            $this->compiledDefaultValue = (new CompileNodeToValue())->__invoke(
-                $this->default,
-                new CompilerContext(
-                    $this->reflector,
-                    $this,
-                ),
-            );
+            $this->compiledDefaultValue = (new CompileNodeToValue())->__invoke($this->default, new CompilerContext($this->reflector, $this));
         }
 
         /** @psalm-var scalar|array<scalar>|null $value */
@@ -422,15 +423,18 @@ class ReflectionProperty
      * @throws ClassDoesNotExist
      * @throws NoObjectProvided
      * @throws ObjectNotInstanceOfClass
+     * @return mixed
      */
-    public function getValue(object|null $object = null): mixed
+    public function getValue($object = null)
     {
         $implementingClassName = $this->getImplementingClass()->getName();
 
         if ($this->isStatic()) {
             $this->assertClassExist($implementingClassName);
 
-            $closure = Closure::bind(fn (string $implementingClassName, string $propertyName): mixed => $implementingClassName::${$propertyName}, null, $implementingClassName);
+            $closure = Closure::bind(function (string $implementingClassName, string $propertyName) {
+                return $implementingClassName::${$propertyName};
+            }, null, $implementingClassName);
 
             /** @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue */
             assert($closure instanceof Closure);
@@ -440,7 +444,9 @@ class ReflectionProperty
 
         $instance = $this->assertObject($object);
 
-        $closure = Closure::bind(fn (object $instance, string $propertyName): mixed => $instance->{$propertyName}, $instance, $implementingClassName);
+        $closure = Closure::bind(function (object $instance, string $propertyName) {
+            return $instance->{$propertyName};
+        }, $instance, $implementingClassName);
 
         /** @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue */
         assert($closure instanceof Closure);
@@ -453,15 +459,17 @@ class ReflectionProperty
      * @throws NoObjectProvided
      * @throws NotAnObject
      * @throws ObjectNotInstanceOfClass
+     * @param mixed $object
+     * @param mixed $value
      */
-    public function setValue(mixed $object, mixed $value = null): void
+    public function setValue($object, $value = null): void
     {
         $implementingClassName = $this->getImplementingClass()->getName();
 
         if ($this->isStatic()) {
             $this->assertClassExist($implementingClassName);
 
-            $closure = Closure::bind(function (string $_implementingClassName, string $_propertyName, mixed $value): void {
+            $closure = Closure::bind(function (string $_implementingClassName, string $_propertyName, $value): void {
                 /** @psalm-suppress MixedAssignment */
                 $_implementingClassName::${$_propertyName} = $value;
             }, null, $implementingClassName);
@@ -476,7 +484,7 @@ class ReflectionProperty
 
         $instance = $this->assertObject($object);
 
-        $closure = Closure::bind(function (object $instance, string $propertyName, mixed $value): void {
+        $closure = Closure::bind(function (object $instance, string $propertyName, $value): void {
             $instance->{$propertyName} = $value;
         }, $instance, $implementingClassName);
 
@@ -494,7 +502,10 @@ class ReflectionProperty
         return $this->type === null || $this->type->allowsNull();
     }
 
-    private function createType(PropertyNode $node): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private function createType(PropertyNode $node)
     {
         $type = $node->type;
 
@@ -512,8 +523,9 @@ class ReflectionProperty
      * this property
      *
      * (note: this has nothing to do with DocBlocks).
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
-    public function getType(): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    public function getType()
     {
         return $this->type;
     }
@@ -546,8 +558,9 @@ class ReflectionProperty
      * @throws ObjectNotInstanceOfClass
      *
      * @psalm-assert object $object
+     * @param mixed $object
      */
-    private function assertObject(mixed $object): object
+    private function assertObject($object): object
     {
         if ($object === null) {
             throw NoObjectProvided::create();
@@ -559,7 +572,7 @@ class ReflectionProperty
 
         $implementingClassName = $this->getImplementingClass()->getName();
 
-        if ($object::class !== $implementingClassName) {
+        if (get_class($object) !== $implementingClassName) {
             throw ObjectNotInstanceOfClass::fromClassName($implementingClassName);
         }
 
