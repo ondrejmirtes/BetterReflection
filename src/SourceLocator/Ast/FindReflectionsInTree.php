@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Ast;
+namespace PHPStan\BetterReflection\SourceLocator\Ast;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
@@ -10,16 +10,16 @@ use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\NodeVisitorAbstract;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\Util\ConstantNodeChecker;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\Exception\InvalidConstantNode;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Util\ConstantNodeChecker;
 
 use function assert;
 use function count;
@@ -28,7 +28,7 @@ use function count;
 final class FindReflectionsInTree
 {
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy
+     * @var \PHPStan\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy
      */
     private $astConversionStrategy;
     public function __construct(AstConversionStrategy $astConversionStrategy)
@@ -55,19 +55,19 @@ final class FindReflectionsInTree
              */
             private $currentNamespace = null;
             /**
-             * @var \Roave\BetterReflection\Reflector\Reflector
+             * @var \PHPStan\BetterReflection\Reflector\Reflector
              */
             private $reflector;
             /**
-             * @var \Roave\BetterReflection\Identifier\IdentifierType
+             * @var \PHPStan\BetterReflection\Identifier\IdentifierType
              */
             private $identifierType;
             /**
-             * @var \Roave\BetterReflection\SourceLocator\Located\LocatedSource
+             * @var \PHPStan\BetterReflection\SourceLocator\Located\LocatedSource
              */
             private $locatedSource;
             /**
-             * @var \Roave\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy
+             * @var \PHPStan\BetterReflection\SourceLocator\Ast\Strategy\AstConversionStrategy
              */
             private $astConversionStrategy;
             public function __construct(Reflector $reflector, IdentifierType $identifierType, LocatedSource $locatedSource, AstConversionStrategy $astConversionStrategy)
