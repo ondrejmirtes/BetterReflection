@@ -9,8 +9,13 @@ use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAtt
 
 final class FakeReflectionAttribute
 {
-    public function __construct(private BetterReflectionAttribute $betterReflectionAttribute)
+    /**
+     * @var BetterReflectionAttribute
+     */
+    private $betterReflectionAttribute;
+    public function __construct(BetterReflectionAttribute $betterReflectionAttribute)
     {
+        $this->betterReflectionAttribute = $betterReflectionAttribute;
     }
 
     public function getName(): string

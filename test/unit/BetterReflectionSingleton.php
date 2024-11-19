@@ -8,7 +8,10 @@ use Roave\BetterReflection\BetterReflection;
 
 abstract class BetterReflectionSingleton
 {
-    private static BetterReflection $betterReflection;
+    /**
+     * @var \Roave\BetterReflection\BetterReflection
+     */
+    private static $betterReflection;
 
     final private function __construct()
     {

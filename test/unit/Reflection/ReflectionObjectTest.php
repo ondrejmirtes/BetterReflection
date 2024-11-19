@@ -310,31 +310,28 @@ class ReflectionObjectTest extends TestCase
         $reflectionObjectReflectionClassPropertyReflection->setValue($reflectionObject, $mockReflectionClass);
 
         $reflectionObjectReflectionMethod = $reflectionObjectReflection->getMethod($methodName);
-        $fakeParams                       = array_map(
-            static function (ReflectionParameter $parameter) use ($methodName) {
-                if ($methodName === 'isInstance' && $parameter->getName() === 'object') {
-                    return new stdClass();
-                }
+        $fakeParams                       = array_map(static function (ReflectionParameter $parameter) use ($methodName) {
+            if ($methodName === 'isInstance' && $parameter->getName() === 'object') {
+                return new stdClass();
+            }
 
-                $type     = $parameter->getType();
-                $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
+            $type     = $parameter->getType();
+            $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
 
-                switch ($typeName) {
-                    case 'int':
-                        return random_int(1, 1000);
+            switch ($typeName) {
+                case 'int':
+                    return random_int(1, 1000);
 
-                    case 'null':
-                        return null;
+                case 'null':
+                    return null;
 
-                    case 'bool':
-                        return (bool) random_int(0, 1);
+                case 'bool':
+                    return (bool) random_int(0, 1);
 
-                    default:
-                        return uniqid('stringParam', true);
-                }
-            },
-            $reflectionObjectReflectionMethod->getParameters(),
-        );
+                default:
+                    return uniqid('stringParam', true);
+            }
+        }, $reflectionObjectReflectionMethod->getParameters());
 
         // Finally, call the method name with some dummy parameters. This should
         // ensure that the method of the same name gets called on the
