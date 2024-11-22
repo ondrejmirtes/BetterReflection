@@ -24,6 +24,7 @@ jobs:
         php-version:
           - "8.2"
           - "8.3"
+          - "8.4"
         operating-system:
           - "ubuntu-latest"
           - "windows-latest"
@@ -67,6 +68,7 @@ jobs:
         php-version:
           - "8.2"
           - "8.3"
+          - "8.4"
         operating-system:
           - "ubuntu-latest"
 
@@ -107,6 +109,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
+          # Throws deprecated errors on 8.4
           - "8.3"
         operating-system:
           - "ubuntu-latest"
@@ -148,6 +151,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
+            # Does not work on 8.4
           - "8.3"
         operating-system:
           - "ubuntu-latest"
@@ -192,7 +196,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
-          - "8.3"
+          - "8.4"
         operating-system:
           - "ubuntu-latest"
           - "windows-latest"
@@ -234,7 +238,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
-          - "8.3"
+          - "8.4"
         operating-system:
           - "ubuntu-latest"
 
@@ -268,7 +272,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
-          - "8.3"
+          - "8.4"
         operating-system:
           - "ubuntu-latest"
           - "windows-latest"
@@ -347,7 +351,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
-          - "8.3"
+          - "8.4"
         operating-system:
           - "ubuntu-latest"
 
