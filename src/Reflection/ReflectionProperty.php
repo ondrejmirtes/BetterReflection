@@ -265,6 +265,11 @@ class ReflectionProperty
         return ($this->modifiers & CoreReflectionProperty::IS_STATIC) === CoreReflectionProperty::IS_STATIC;
     }
 
+    public function isFinal(): bool
+    {
+        return ($this->modifiers & ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY) === ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY;
+    }
+
     public function isPromoted(): bool
     {
         return $this->isPromoted;
@@ -594,6 +599,7 @@ class ReflectionProperty
         $modifiers += $node->isPrivate() ? CoreReflectionProperty::IS_PRIVATE : 0;
         $modifiers += $node->isProtected() ? CoreReflectionProperty::IS_PROTECTED : 0;
         $modifiers += $node->isPublic() ? CoreReflectionProperty::IS_PUBLIC : 0;
+        $modifiers += ($node->flags & ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY) === ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY ? ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY : 0;
 
         return $modifiers;
     }

@@ -43,6 +43,8 @@ namespace Roave\BetterReflectionTest\Fixture {
 
         public readonly int $readOnlyProperty;
 
+        final public int $finalPublicProperty = 123;
+
         public static $publicStaticProperty;
 
         protected static $protectedStaticProperty;

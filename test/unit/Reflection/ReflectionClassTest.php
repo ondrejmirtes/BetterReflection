@@ -24,6 +24,7 @@ use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
 use Roave\BetterReflection\Reflection\Exception\CircularReference;
 use Roave\BetterReflection\Reflection\Exception\NotAClassReflection;
 use Roave\BetterReflection\Reflection\Exception\NotAnInterfaceReflection;
@@ -615,7 +616,7 @@ class ReflectionClassTest extends TestCase
         $properties = $classInfo->getProperties();
 
         self::assertContainsOnlyInstancesOf(ReflectionProperty::class, $properties);
-        self::assertCount(9, $properties);
+        self::assertCount(10, $properties);
     }
 
     public function testGetPropertiesForPureEnum(): void
@@ -724,20 +725,22 @@ PHP;
         self::assertSame($expectedPropertiesNames, array_keys($properties));
     }
 
-    /** @return list<array{0: int-mask-of<CoreReflectionProperty::IS_*>, 1: int}> */
+    /** @return list<array{0: int-mask-of<ReflectionPropertyAdapter::IS_*>, 1: int}> */
     public static function getPropertiesWithFilterDataProvider(): array
     {
         return [
             [CoreReflectionProperty::IS_STATIC, 3],
-            [CoreReflectionProperty::IS_PUBLIC, 3],
+            [ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY, 1],
+            [CoreReflectionProperty::IS_PUBLIC, 4],
             [CoreReflectionProperty::IS_PROTECTED, 2],
             [CoreReflectionProperty::IS_PRIVATE, 4],
             [
                 CoreReflectionProperty::IS_STATIC |
+                ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY |
                 CoreReflectionProperty::IS_PUBLIC |
                 CoreReflectionProperty::IS_PROTECTED |
                 CoreReflectionProperty::IS_PRIVATE,
-                9,
+                10,
             ],
         ];
     }

@@ -23,6 +23,9 @@ use function sprintf;
 /** @psalm-suppress PropertyNotSetInConstructor */
 final class ReflectionProperty extends CoreReflectionProperty
 {
+    /** @internal */
+    public const IS_FINAL_COMPATIBILITY = 32;
+
     public function __construct(private BetterReflectionProperty $betterReflectionProperty)
     {
         unset($this->name);
@@ -115,6 +118,12 @@ final class ReflectionProperty extends CoreReflectionProperty
     public function isStatic(): bool
     {
         return $this->betterReflectionProperty->isStatic();
+    }
+
+    /** @psalm-mutation-free */
+    public function isFinal(): bool
+    {
+        return $this->betterReflectionProperty->isFinal();
     }
 
     /** @psalm-mutation-free */
