@@ -11,8 +11,8 @@ use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
 use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\StringCast\ReflectionClassConstantStringCast;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\Util\CalculateReflectionColumn;
@@ -265,7 +265,7 @@ class ReflectionClassConstant
 
     public function isDeprecated(): bool
     {
-        return AnnotationHelper::isDeprecated($this->getDocComment());
+        return DeprecatedHelper::isDeprecated($this);
     }
 
     /** @return non-empty-string */

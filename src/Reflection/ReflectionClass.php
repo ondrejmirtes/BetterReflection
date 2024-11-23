@@ -21,8 +21,8 @@ use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClass
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
 use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\Exception\CircularReference;
 use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
 use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
@@ -1191,7 +1191,7 @@ class ReflectionClass implements Reflection
 
     public function isDeprecated(): bool
     {
-        return AnnotationHelper::isDeprecated($this->docComment);
+        return DeprecatedHelper::isDeprecated($this);
     }
 
     /**
