@@ -129,6 +129,11 @@ final class ReflectionEnumBackedCase extends CoreReflectionEnumBackedCase
         return $this->betterReflectionEnumCase->getValue();
     }
 
+    public function isDeprecated(): bool
+    {
+        return $this->betterReflectionEnumCase->isDeprecated();
+    }
+
     public function __get(string $name): mixed
     {
         if ($name === 'name') {
