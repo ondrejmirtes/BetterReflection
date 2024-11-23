@@ -10,14 +10,16 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
+use ReflectionEnum as CoreReflectionEnum;
+use ReflectionEnumBackedCase as CoreReflectionEnumBackedCase;
 use ReflectionException;
 use ReflectionFunction as CoreReflectionFunction;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionParameter as CoreReflectionParameter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionType;
 use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
+use Roave\BetterReflection\Reflection\ReflectionEnum;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionParameter;
 use Roave\BetterReflection\Reflector\DefaultReflector;
@@ -41,6 +43,7 @@ use Traversable;
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function enum_exists;
 use function get_declared_classes;
 use function get_declared_interfaces;
 use function get_declared_traits;
@@ -278,7 +281,9 @@ class ReflectionSourceStubberTest extends TestCase
         self::assertTrue($class->isInternal());
         self::assertFalse($class->isUserDefined());
 
-        $internalReflection = new CoreReflectionClass($className);
+        $internalReflection = enum_exists($className, false)
+            ? new CoreReflectionEnum($className)
+            : new CoreReflectionClass($className);
 
         self::assertSame($internalReflection->isInterface(), $class->isInterface());
         self::assertSame($internalReflection->isTrait(), $class->isTrait());
@@ -308,7 +313,7 @@ class ReflectionSourceStubberTest extends TestCase
         self::assertSame($originalInterfacesNames, $stubbedInterfacesNames);
     }
 
-    private function assertSameClassAttributes(CoreReflectionClass $original, ReflectionClass $stubbed): void
+    private function assertSameClassAttributes(CoreReflectionClass|CoreReflectionEnum $original, ReflectionClass|ReflectionEnum $stubbed): void
     {
         self::assertSame($original->getName(), $stubbed->getName());
 
@@ -320,16 +325,23 @@ class ReflectionSourceStubberTest extends TestCase
         }
 
         $this->assertSameClassConstants($original, $stubbed);
+
+        if (! ($original instanceof CoreReflectionEnum && $stubbed instanceof ReflectionEnum)) {
+            return;
+        }
+
+        $this->assertSameEnumCases($original, $stubbed);
     }
 
     private function assertSameClassConstants(CoreReflectionClass $original, ReflectionClass $stubbed): void
     {
-        self::assertEquals(
-            $original->getConstants(),
-            array_map(static fn (ReflectionClassConstant $classConstant) => $classConstant->getValue(), $stubbed->getConstants()),
-        );
+        // We don't check getConstants() method because native reflection returns constants and enum cases together
 
         foreach ($original->getReflectionConstants() as $originalConstant) {
+            if ($originalConstant->isEnumCase()) {
+                continue;
+            }
+
             if (
                 ! method_exists($originalConstant, 'hasType')
                 || ! method_exists($originalConstant, 'getType')
@@ -339,11 +351,31 @@ class ReflectionSourceStubberTest extends TestCase
 
             $stubbedConstant = $stubbed->getConstant($originalConstant->getName());
 
+            self::assertNotNull($stubbedConstant);
             self::assertSame($originalConstant->hasType(), $stubbedConstant->hasType());
             self::assertSame(
                 (string) $originalConstant->getType(),
                 (string) ReflectionType::fromTypeOrNull($stubbedConstant->getType()),
                 $original->getName() . '::' . $originalConstant->getName(),
+            );
+        }
+    }
+
+    private function assertSameEnumCases(CoreReflectionEnum $original, ReflectionEnum $stubbed): void
+    {
+        foreach ($original->getCases() as $originalEnumCase) {
+            $stubbedEnumCase = $stubbed->getCase($originalEnumCase->getName());
+
+            self::assertNotNull($stubbedEnumCase);
+
+            if (! ($originalEnumCase instanceof CoreReflectionEnumBackedCase)) {
+                continue;
+            }
+
+            self::assertSame(
+                $originalEnumCase->getBackingValue(),
+                $stubbedEnumCase->getValue(),
+                $original->getName() . '::' . $originalEnumCase->getName(),
             );
         }
     }
