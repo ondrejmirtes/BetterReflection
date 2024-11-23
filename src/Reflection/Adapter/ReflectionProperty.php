@@ -66,6 +66,21 @@ final class ReflectionProperty extends CoreReflectionProperty
         }
     }
 
+    public function setRawValueWithoutLazyInitialization(object $object, mixed $value): void
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function isLazy(object $object): bool
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function skipLazyInitialization(object $object): void
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
     /** @psalm-mutation-free */
     public function hasType(): bool
     {
