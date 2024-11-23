@@ -1140,4 +1140,92 @@ class ReflectionEnumTest extends TestCase
         self::assertCount(1, $reflectionEnumAdapter->getProperties(CoreReflectionProperty::IS_PRIVATE));
         self::assertCount(1, $reflectionEnumAdapter->getProperties(CoreReflectionProperty::IS_PROTECTED));
     }
+
+    public function testNewLazyGhost(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->newLazyGhost(static fn () => null);
+    }
+
+    public function testNewLazyProxy(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->newLazyProxy(static fn () => null);
+    }
+
+    public function testMarkLazyObjectAsInitialized(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->markLazyObjectAsInitialized(new stdClass());
+    }
+
+    public function testGetLazyInitializer(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->getLazyInitializer(new stdClass());
+    }
+
+    public function testInitializeLazyObject(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->initializeLazyObject(new stdClass());
+    }
+
+    public function testIsUninitializedLazyObject(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->isUninitializedLazyObject(new stdClass());
+    }
+
+    public function testResetAsLazyGhost(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->resetAsLazyGhost(new stdClass(), static fn () => null);
+    }
+
+    public function testResetAsLazyProxy(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionEnum = $this->createMock(BetterReflectionEnum::class);
+
+        $reflectionEnumAdapter = new ReflectionEnumAdapter($betterReflectionEnum);
+        $reflectionEnumAdapter->resetAsLazyProxy(new stdClass(), static fn () => null);
+    }
 }
