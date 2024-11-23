@@ -455,7 +455,7 @@ class ReflectionSourceStubberTest extends TestCase
                 static function (string $functionName): bool {
                     $reflection = new CoreReflectionFunction($functionName);
 
-                    return $reflection->isInternal();
+                    return $reflection->isInternal() && ! $reflection->isDeprecated();
                 },
             ),
         );
