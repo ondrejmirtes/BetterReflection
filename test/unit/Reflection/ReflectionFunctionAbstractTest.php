@@ -136,30 +136,44 @@ class ReflectionFunctionAbstractTest extends TestCase
         self::assertTrue($function->isClosure());
     }
 
-    #[DataProvider('nonDeprecatedProvider')]
-    public function testIsDeprecated(string $comment): void
+    /** @return list<array{0: string, 1: bool}> */
+    public static function deprecatedProvider(): array
+    {
+        return [
+            [
+                '#[Deprecated]',
+                true,
+            ],
+            [
+                '/**
+                  * @deprecated since 8.0
+                  */',
+                true,
+            ],
+            [
+                '/**
+                  * @deprecated
+                  */',
+                true,
+            ],
+            [
+                '',
+                false,
+            ],
+        ];
+    }
+
+    #[DataProvider('deprecatedProvider')]
+    public function testIsDeprecated(string $deprecatedCode, bool $isDeprecated): void
     {
         $php = sprintf('<?php
         %s
-        function foo() {}', $comment);
+        function foo() {}', $deprecatedCode);
 
         $reflector = new DefaultReflector(new StringSourceLocator($php, $this->astLocator));
         $function  = $reflector->reflectFunction('foo');
 
-        self::assertFalse($function->isDeprecated());
-    }
-
-    /** @return list<array{0: string}> */
-    public static function nonDeprecatedProvider(): array
-    {
-        return [
-            [''],
-            [
-                '/**
-                  * @deprecatedPolicy
-                  */',
-            ],
-        ];
+        self::assertSame($isDeprecated, $function->isDeprecated());
     }
 
     public function testIsInternal(): void

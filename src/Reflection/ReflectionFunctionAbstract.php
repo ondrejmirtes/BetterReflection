@@ -13,6 +13,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FindingVisitor;
 use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
 use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\Exception\CodeLocationMissing;
 use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\Util\CalculateReflectionColumn;
@@ -283,7 +284,7 @@ trait ReflectionFunctionAbstract
 
     public function isDeprecated(): bool
     {
-        return AnnotationHelper::isDeprecated($this->docComment);
+        return DeprecatedHelper::isDeprecated($this);
     }
 
     public function isInternal(): bool

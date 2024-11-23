@@ -10,8 +10,8 @@ use PhpParser\Node\Stmt\EnumCase;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
 use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\StringCast\ReflectionEnumCaseStringCast;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\Util\CalculateReflectionColumn;
@@ -172,7 +172,7 @@ class ReflectionEnumCase
 
     public function isDeprecated(): bool
     {
-        return AnnotationHelper::isDeprecated($this->docComment);
+        return DeprecatedHelper::isDeprecated($this);
     }
 
     /** @return list<ReflectionAttribute> */

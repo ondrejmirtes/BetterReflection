@@ -2793,9 +2793,13 @@ PHP;
     }
 
     /** @return list<array{0: string, 1: bool}> */
-    public static function deprecatedDocCommentProvider(): array
+    public static function deprecatedProvider(): array
     {
         return [
+            [
+                '#[Deprecated]',
+                true,
+            ],
             [
                 '/**
                   * @deprecated since 8.0
@@ -2815,12 +2819,12 @@ PHP;
         ];
     }
 
-    #[DataProvider('deprecatedDocCommentProvider')]
-    public function testIsDeprecated(string $docComment, bool $isDeprecated): void
+    #[DataProvider('deprecatedProvider')]
+    public function testIsDeprecated(string $deprecatedCode, bool $isDeprecated): void
     {
         $php = sprintf('<?php
         %s
-        class Foo {}', $docComment);
+        class Foo {}', $deprecatedCode);
 
         $reflector       = new DefaultReflector(new StringSourceLocator($php, $this->astLocator));
         $classReflection = $reflector->reflectClass('Foo');
