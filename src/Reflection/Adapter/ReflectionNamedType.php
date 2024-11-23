@@ -12,29 +12,48 @@ use function strtolower;
 /** @psalm-immutable */
 final class ReflectionNamedType extends CoreReflectionNamedType
 {
-    public function __construct(private BetterReflectionNamedType $betterReflectionType, private bool $allowsNull)
+    /** @var non-empty-string */
+    private string $nameType;
+
+    private bool $isBuiltin;
+
+    /** @var non-empty-string */
+    private string $toString;
+
+    /** @param \Roave\BetterReflection\Reflection\ReflectionNamedType|non-empty-string $type */
+    public function __construct(BetterReflectionNamedType|string $type, private bool $allowsNull)
     {
+        if ($type instanceof BetterReflectionNamedType) {
+            $nameType        = $type->getName();
+            $this->nameType  = $nameType;
+            $this->isBuiltin = $this->computeIsBuiltin($nameType, $type->isBuiltin());
+            $this->toString  = $type->__toString();
+        } else {
+            $this->nameType  = $type;
+            $this->isBuiltin = true;
+            $this->toString  = $type;
+        }
     }
 
     public function getName(): string
     {
-        return $this->betterReflectionType->getName();
+        return $this->nameType;
     }
 
     /** @return non-empty-string */
     public function __toString(): string
     {
-        $type = strtolower($this->betterReflectionType->getName());
+        $normalizedType = strtolower($this->nameType);
 
         if (
             ! $this->allowsNull
-            || $type === 'mixed'
-            || $type === 'null'
+            || $normalizedType === 'mixed'
+            || $normalizedType === 'null'
         ) {
-            return $this->betterReflectionType->__toString();
+            return $this->toString;
         }
 
-        return '?' . $this->betterReflectionType->__toString();
+        return '?' . $this->toString;
     }
 
     public function allowsNull(): bool
@@ -44,12 +63,17 @@ final class ReflectionNamedType extends CoreReflectionNamedType
 
     public function isBuiltin(): bool
     {
-        $type = strtolower($this->betterReflectionType->getName());
+        return $this->isBuiltin;
+    }
 
-        if ($type === 'self' || $type === 'parent' || $type === 'static') {
+    private function computeIsBuiltin(string $namedType, bool $isBuiltin): bool
+    {
+        $normalizedType = strtolower($namedType);
+
+        if ($normalizedType === 'self' || $normalizedType === 'parent' || $normalizedType === 'static') {
             return false;
         }
 
-        return $this->betterReflectionType->isBuiltin();
+        return $isBuiltin;
     }
 }
