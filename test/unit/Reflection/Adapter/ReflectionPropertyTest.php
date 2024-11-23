@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionException as CoreReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
+use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType as ReflectionNamedTypeAdapter;
@@ -459,5 +460,35 @@ class ReflectionPropertyTest extends TestCase
         $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionProperty::$foo does not exist.');
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $reflectionPropertyAdapter->foo;
+    }
+
+    public function testSetRawValueWithoutLazyInitialization(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        $reflectionPropertyAdapter->setRawValueWithoutLazyInitialization(new stdClass(), null);
+    }
+
+    public function testIsLazy(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        $reflectionPropertyAdapter->isLazy(new stdClass());
+    }
+
+    public function testSkipLazyInitialization(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        $reflectionPropertyAdapter->skipLazyInitialization(new stdClass());
     }
 }
