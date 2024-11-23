@@ -54,6 +54,7 @@ class ReflectionEnumUnitCaseTest extends TestCase
             ['getValue', NotImplemented::class, null, []],
             ['getDocComment', null, null, []],
             ['getAttributes', null, [], []],
+            ['isDeprecated', null, true, []],
         ];
     }
 

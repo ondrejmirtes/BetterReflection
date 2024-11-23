@@ -124,6 +124,11 @@ final class ReflectionEnumUnitCase extends CoreReflectionEnumUnitCase
         return new ReflectionEnum($this->betterReflectionEnumCase->getDeclaringEnum());
     }
 
+    public function isDeprecated(): bool
+    {
+        return $this->betterReflectionEnumCase->isDeprecated();
+    }
+
     public function __get(string $name): mixed
     {
         if ($name === 'name') {
