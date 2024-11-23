@@ -733,12 +733,14 @@ PHP;
         return [
             [CoreReflectionProperty::IS_STATIC, 3],
             [ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY, 1],
+            [ReflectionPropertyAdapter::IS_ABSTRACT_COMPATIBILITY, 0],
             [CoreReflectionProperty::IS_PUBLIC, 4],
             [CoreReflectionProperty::IS_PROTECTED, 2],
             [CoreReflectionProperty::IS_PRIVATE, 4],
             [
                 CoreReflectionProperty::IS_STATIC |
                 ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY |
+                ReflectionPropertyAdapter::IS_ABSTRACT_COMPATIBILITY |
                 CoreReflectionProperty::IS_PUBLIC |
                 CoreReflectionProperty::IS_PROTECTED |
                 CoreReflectionProperty::IS_PRIVATE,
@@ -781,6 +783,26 @@ PHP;
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/AsymetricVisibilityClass.php', $this->astLocator));
         $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\AsymetricVisibilityClass');
+
+        self::assertCount($count, $classInfo->getProperties($filter));
+        self::assertCount($count, $classInfo->getImmediateProperties($filter));
+    }
+
+    /** @return list<array{0: int-mask-of<ReflectionPropertyAdapter::IS_*>, 1: int}> */
+    public static function getPropertiesWithVirtualFilterDataProvider(): array
+    {
+        return [
+            [0, 3],
+            [ReflectionPropertyAdapter::IS_VIRTUAL_COMPATIBILITY, 1],
+        ];
+    }
+
+    /** @param int-mask-of<CoreReflectionProperty::IS_*> $filter */
+    #[DataProvider('getPropertiesWithVirtualFilterDataProvider')]
+    public function testGetPropertiesWithVirtualFilter(int $filter, int $count): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\PropertyHooks');
 
         self::assertCount($count, $classInfo->getProperties($filter));
         self::assertCount($count, $classInfo->getImmediateProperties($filter));

@@ -24,7 +24,9 @@ use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
 use Roave\BetterReflection\Reflection\Exception\NotAnObject;
 use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
 use Roave\BetterReflection\Reflection\ReflectionClass;
+use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
+use Roave\BetterReflection\Reflection\ReflectionPropertyHookType;
 use Roave\BetterReflection\Reflector\DefaultReflector;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Ast\Locator;
@@ -50,6 +52,7 @@ use TraitWithProperty;
 use function sprintf;
 
 #[CoversClass(ReflectionProperty::class)]
+#[CoversClass(ReflectionPropertyHookType::class)]
 class ReflectionPropertyTest extends TestCase
 {
     private Reflector $reflector;
@@ -185,6 +188,14 @@ class ReflectionPropertyTest extends TestCase
         $finalPublicProperty = $classInfo->getProperty('finalPublicProperty');
         self::assertTrue($finalPublicProperty->isFinal());
         self::assertTrue($finalPublicProperty->isPublic());
+    }
+
+    public function testIsNotAbstract(): void
+    {
+        $classInfo = $this->reflector->reflectClass(ExampleClass::class);
+
+        $notAbstractProperty = $classInfo->getProperty('publicProperty');
+        self::assertFalse($notAbstractProperty->isAbstract());
     }
 
     public function testIsReadOnlyInReadOnlyClass(): void
@@ -911,5 +922,203 @@ PHP;
         $property  = $classInfo->getProperty($propertyName);
 
         self::assertSame($expectedModifier, $property->getModifiers());
+    }
+
+    public function testIsAbstract(): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\AbstractPropertyHooks');
+
+        $hookProperty = $classInfo->getProperty('hook');
+        self::assertTrue($hookProperty->isAbstract());
+    }
+
+    public function testNoHooks(): void
+    {
+        $classInfo = $this->reflector->reflectClass(ExampleClass::class);
+        $property  = $classInfo->getProperty('publicProperty');
+
+        self::assertFalse($property->hasHooks());
+        self::assertCount(0, $property->getHooks());
+        self::assertFalse($property->hasHook(ReflectionPropertyHookType::Get));
+        self::assertNull($property->getHook(ReflectionPropertyHookType::Set));
+        self::assertFalse($property->hasHook(ReflectionPropertyHookType::Get));
+        self::assertNull($property->getHook(ReflectionPropertyHookType::Set));
+    }
+
+    public function testReadOnlyHook(): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\PropertyHooks');
+
+        $hookProperty = $classInfo->getProperty('readOnlyHook');
+        self::assertTrue($hookProperty->isDefault());
+        self::assertTrue($hookProperty->isVirtual());
+        self::assertTrue($hookProperty->hasHooks());
+
+        self::assertTrue($hookProperty->hasHook(ReflectionPropertyHookType::Get));
+        self::assertFalse($hookProperty->hasHook(ReflectionPropertyHookType::Set));
+
+        $hooks = $hookProperty->getHooks();
+        self::assertCount(1, $hooks);
+        self::assertArrayHasKey('get', $hooks);
+        self::assertInstanceOf(ReflectionMethod::class, $hooks['get']);
+        self::assertSame('$readOnlyHook::get', $hooks['get']->getName());
+        self::assertSame($hooks['get'], $hookProperty->getHook(ReflectionPropertyHookType::Get));
+    }
+
+    public function testWriteOnlyHook(): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\PropertyHooks');
+
+        $hookProperty = $classInfo->getProperty('writeOnlyHook');
+        self::assertTrue($hookProperty->isDefault());
+        self::assertFalse($hookProperty->isVirtual());
+        self::assertTrue($hookProperty->hasHooks());
+
+        self::assertFalse($hookProperty->hasHook(ReflectionPropertyHookType::Get));
+        self::assertTrue($hookProperty->hasHook(ReflectionPropertyHookType::Set));
+
+        $hooks = $hookProperty->getHooks();
+        self::assertCount(1, $hooks);
+        self::assertArrayHasKey('set', $hooks);
+        self::assertInstanceOf(ReflectionMethod::class, $hooks['set']);
+        self::assertSame('$writeOnlyHook::set', $hooks['set']->getName());
+        self::assertSame($hooks['set'], $hookProperty->getHook(ReflectionPropertyHookType::Set));
+    }
+
+    public function testBothReadAndWriteHooks(): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\PropertyHooks');
+
+        $hookProperty = $classInfo->getProperty('readAndWriteHook');
+        self::assertTrue($hookProperty->isDefault());
+        self::assertFalse($hookProperty->isVirtual());
+        self::assertTrue($hookProperty->hasHooks());
+
+        self::assertTrue($hookProperty->hasHook(ReflectionPropertyHookType::Get));
+        self::assertTrue($hookProperty->hasHook(ReflectionPropertyHookType::Set));
+
+        $hooks = $hookProperty->getHooks();
+        self::assertCount(2, $hooks);
+
+        self::assertArrayHasKey('get', $hooks);
+        self::assertInstanceOf(ReflectionMethod::class, $hooks['get']);
+        self::assertSame('$readAndWriteHook::get', $hooks['get']->getName());
+        self::assertSame($hooks['get'], $hookProperty->getHook(ReflectionPropertyHookType::Get));
+
+        self::assertArrayHasKey('set', $hooks);
+        self::assertInstanceOf(ReflectionMethod::class, $hooks['set']);
+        self::assertSame('$readAndWriteHook::set', $hooks['set']->getName());
+        self::assertSame($hooks['set'], $hookProperty->getHook(ReflectionPropertyHookType::Set));
+    }
+
+    public function testHooksForAbstractProperty(): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\AbstractPropertyHooks');
+
+        $hookProperty = $classInfo->getProperty('hook');
+
+        self::assertTrue($hookProperty->isAbstract());
+        self::assertTrue($hookProperty->isDefault());
+        self::assertTrue($hookProperty->isVirtual());
+        self::assertTrue($hookProperty->hasHooks());
+
+        $hooks = $hookProperty->getHooks();
+        self::assertCount(1, $hooks);
+
+        self::assertArrayHasKey('get', $hooks);
+        self::assertInstanceOf(ReflectionMethod::class, $hooks['get']);
+        self::assertSame('$hook::get', $hooks['get']->getName());
+        self::assertSame($hooks['get'], $hookProperty->getHook(ReflectionPropertyHookType::Get));
+    }
+
+    public function testHooksInInterface(): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\InterfacePropertyHooks');
+
+        $readOnlyHookProperty = $classInfo->getProperty('readOnlyHook');
+
+        self::assertTrue($readOnlyHookProperty->isDefault());
+        self::assertTrue($readOnlyHookProperty->isVirtual());
+        self::assertTrue($readOnlyHookProperty->hasHooks());
+        self::assertCount(1, $readOnlyHookProperty->getHooks());
+
+        $writeOnlyHookProperty = $classInfo->getProperty('writeOnlyHook');
+
+        self::assertTrue($writeOnlyHookProperty->isDefault());
+        self::assertTrue($writeOnlyHookProperty->isVirtual());
+        self::assertTrue($writeOnlyHookProperty->hasHooks());
+        self::assertCount(1, $writeOnlyHookProperty->getHooks());
+
+        $readAndWriteHookProperty = $classInfo->getProperty('readAndWriteHook');
+
+        self::assertTrue($readAndWriteHookProperty->isDefault());
+        self::assertTrue($readAndWriteHookProperty->isVirtual());
+        self::assertTrue($readAndWriteHookProperty->hasHooks());
+        self::assertCount(2, $readAndWriteHookProperty->getHooks());
+    }
+
+    /** @return list<array{0: non-empty-string, 1: bool}> */
+    public static function virtualProvider(): array
+    {
+        return [
+            ['notVirtualBecauseNoHooks', false],
+            ['notVirtualBecauseOfPublicVisibilityAndThePropertyIsUsedInGet', false],
+            ['virtualBecauseOfNotPublicVisibilityAndNoSet', true],
+            ['notVirtualBecauseOfShortSyntax', false],
+            ['virtualBecauseThePropertyIsNotUsedInGet', true],
+            ['virtualBecauseSetWorksWithDifferentProperty', true],
+            ['notVirtualBecauseIsPublicSoTheSetWithDifferentPropertyIsNotRelevant', false],
+            ['virtualBecauseGetAndSetAbstract', true],
+            ['notVirtualBecauseSetIsNotAbstract', false],
+        ];
+    }
+
+    #[DataProvider('virtualProvider')]
+    public function testVirtual(string $propertyName, bool $isVirtual): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\ToBeVirtualOrNotToBeVirtualThatIsTheQuestion');
+
+        $hookProperty = $classInfo->getProperty($propertyName);
+        self::assertSame($isVirtual, $hookProperty->isVirtual());
+    }
+
+    public function testExtendingHooks(): void
+    {
+        $reflector    = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $getClassInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\GetPropertyHook');
+
+        $getHookProperty = $getClassInfo->getProperty('hook');
+        self::assertCount(1, $getHookProperty->getHooks());
+        self::assertTrue($getHookProperty->hasHook(ReflectionPropertyHookType::Get));
+        self::assertFalse($getHookProperty->hasHook(ReflectionPropertyHookType::Set));
+        self::assertSame('Roave\BetterReflectionTest\Fixture\GetPropertyHook', $getHookProperty->getHook(ReflectionPropertyHookType::Get)->getDeclaringClass()->getName());
+
+        $getAndSetClassInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\GetAndSetPropertyHook');
+
+        $getAndSetHookProperty = $getAndSetClassInfo->getProperty('hook');
+        self::assertCount(2, $getAndSetHookProperty->getHooks());
+        self::assertTrue($getAndSetHookProperty->hasHook(ReflectionPropertyHookType::Get));
+        self::assertTrue($getAndSetHookProperty->hasHook(ReflectionPropertyHookType::Set));
+        self::assertSame('Roave\BetterReflectionTest\Fixture\GetPropertyHook', $getAndSetHookProperty->getHook(ReflectionPropertyHookType::Get)->getDeclaringClass()->getName());
+        self::assertSame('Roave\BetterReflectionTest\Fixture\GetAndSetPropertyHook', $getAndSetHookProperty->getHook(ReflectionPropertyHookType::Set)->getDeclaringClass()->getName());
+    }
+
+    public function testUseHookFromTrait(): void
+    {
+        $reflector    = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
+        $getClassInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\UsePropertyHookFromTrait');
+
+        $hookProperty = $getClassInfo->getProperty('hook');
+        self::assertCount(1, $hookProperty->getHooks());
+        self::assertTrue($hookProperty->hasHook(ReflectionPropertyHookType::Get));
+        self::assertFalse($hookProperty->hasHook(ReflectionPropertyHookType::Set));
+        self::assertSame('Roave\BetterReflectionTest\Fixture\PropertyHookTrait', $hookProperty->getHook(ReflectionPropertyHookType::Get)->getDeclaringClass()->getName());
     }
 }

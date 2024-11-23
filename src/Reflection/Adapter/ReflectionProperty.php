@@ -6,12 +6,16 @@ namespace Roave\BetterReflection\Reflection\Adapter;
 
 use ArgumentCountError;
 use OutOfBoundsException;
+use PropertyHookType;
 use ReflectionException as CoreReflectionException;
+use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
 use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
 use Roave\BetterReflection\Reflection\Exception\NotAnObject;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
+use Roave\BetterReflection\Reflection\ReflectionPropertyHookType as BetterReflectionPropertyHookType;
 use Throwable;
 use TypeError;
 use ValueError;
@@ -29,6 +33,20 @@ final class ReflectionProperty extends CoreReflectionProperty
      * @see CoreReflectionProperty::IS_FINAL
      */
     public const IS_FINAL_COMPATIBILITY = 32;
+
+    /**
+     * @internal
+     *
+     * @see CoreReflectionProperty::IS_ABSTRACT
+     */
+    public const IS_ABSTRACT_COMPATIBILITY = 64;
+
+    /**
+     * @internal
+     *
+     * @see CoreReflectionProperty::IS_VIRTUAL
+     */
+    public const IS_VIRTUAL_COMPATIBILITY = 512;
 
     /**
      * @internal
@@ -157,6 +175,12 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /** @psalm-mutation-free */
+    public function isAbstract(): bool
+    {
+        return $this->betterReflectionProperty->isAbstract();
+    }
+
+    /** @psalm-mutation-free */
     public function isDefault(): bool
     {
         return $this->betterReflectionProperty->isDefault();
@@ -248,6 +272,71 @@ final class ReflectionProperty extends CoreReflectionProperty
     public function isReadOnly(): bool
     {
         return $this->betterReflectionProperty->isReadOnly();
+    }
+
+    /** @psalm-mutation-free */
+    public function isVirtual(): bool
+    {
+        return $this->betterReflectionProperty->isVirtual();
+    }
+
+    public function hasHooks(): bool
+    {
+        return $this->betterReflectionProperty->hasHooks();
+    }
+
+    /** @psalm-suppress UndefinedClass */
+    public function hasHook(PropertyHookType $hookType): bool
+    {
+        return $this->betterReflectionProperty->hasHook(BetterReflectionPropertyHookType::fromCoreReflectionPropertyHookType($hookType));
+    }
+
+    /** @psalm-suppress UndefinedClass */
+    public function getHook(PropertyHookType $hookType): ReflectionMethod|null
+    {
+        $hook = $this->betterReflectionProperty->getHook(BetterReflectionPropertyHookType::fromCoreReflectionPropertyHookType($hookType));
+        if ($hook === null) {
+            return null;
+        }
+
+        return new ReflectionMethod($hook);
+    }
+
+    /** @return array{get?: ReflectionMethod, set?: ReflectionMethod} */
+    public function getHooks(): array
+    {
+        return array_map(
+            static fn (BetterReflectionMethod $betterReflectionMethod): CoreReflectionMethod => new ReflectionMethod($betterReflectionMethod),
+            $this->betterReflectionProperty->getHooks(),
+        );
+    }
+
+    public function getSettableType(): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    {
+        $setHook = $this->betterReflectionProperty->getHook(BetterReflectionPropertyHookType::Set);
+        if ($setHook !== null) {
+            return ReflectionType::fromTypeOrNull($setHook->getParameters()[0]->getType());
+        }
+
+        if ($this->isVirtual()) {
+            return new ReflectionNamedType('never');
+        }
+
+        return $this->getType();
+    }
+
+    public function getRawValue(object $object): mixed
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function setRawValue(object $object, mixed $value): void
+    {
+        if ($this->hasHooks()) {
+            throw new Exception\NotImplemented('Not implemented');
+        }
+
+        $this->setValue($object, $value);
     }
 
     public function __get(string $name): mixed

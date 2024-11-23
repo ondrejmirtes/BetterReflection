@@ -26,6 +26,10 @@ parameters:
 
     ignoreErrors:
         -
+            identifier: class.notFound
+            message: '#(unknown class|invalid type) PropertyHookType#'
+
+        -
             identifier: missingType.generics
         -
             identifier: possiblyImpure.functionCall

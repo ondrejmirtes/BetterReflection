@@ -34,23 +34,25 @@ class ReflectionMethod
     private int $modifiers;
 
     /**
+     * @param non-empty-string      $name
      * @param non-empty-string|null $aliasName
      * @param non-empty-string|null $namespace
      */
     private function __construct(
         private Reflector $reflector,
-        MethodNode|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
+        MethodNode|Node\PropertyHook|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
         private LocatedSource $locatedSource,
+        string $name,
         private string|null $namespace,
         private ReflectionClass $declaringClass,
         private ReflectionClass $implementingClass,
         private ReflectionClass $currentClass,
         private string|null $aliasName,
     ) {
-        assert($node instanceof MethodNode);
+        assert($node instanceof MethodNode || $node instanceof Node\PropertyHook);
 
-        $this->name      = $node->name->name;
-        $this->modifiers = $this->computeModifiers($node);
+        $this->name      = $name;
+        $this->modifiers = $node instanceof MethodNode ? $this->computeModifiers($node) : 0;
 
         $this->fillFromNode($node);
     }
@@ -58,13 +60,15 @@ class ReflectionMethod
     /**
      * @internal
      *
+     * @param non-empty-string      $name
      * @param non-empty-string|null $aliasName
      * @param non-empty-string|null $namespace
      */
     public static function createFromNode(
         Reflector $reflector,
-        MethodNode $node,
+        MethodNode|Node\PropertyHook $node,
         LocatedSource $locatedSource,
+        string $name,
         string|null $namespace,
         ReflectionClass $declaringClass,
         ReflectionClass $implementingClass,
@@ -75,6 +79,7 @@ class ReflectionMethod
             $reflector,
             $node,
             $locatedSource,
+            $name,
             $namespace,
             $declaringClass,
             $implementingClass,

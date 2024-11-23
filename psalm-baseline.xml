@@ -144,10 +144,14 @@
       <code><![CDATA[getEndLine]]></code>
       <code><![CDATA[getEndLine]]></code>
       <code><![CDATA[getEndLine]]></code>
+      <code><![CDATA[getEndLine]]></code>
+      <code><![CDATA[getReturnType]]></code>
       <code><![CDATA[getStartLine]]></code>
       <code><![CDATA[getStartLine]]></code>
       <code><![CDATA[getStartLine]]></code>
       <code><![CDATA[getStartLine]]></code>
+      <code><![CDATA[getStartLine]]></code>
+      <code><![CDATA[getStmts]]></code>
       <code><![CDATA[getStmts]]></code>
       <code><![CDATA[getSubNodeNames]]></code>
       <code><![CDATA[traverse]]></code>
@@ -201,16 +205,22 @@
     <ImpureMethodCall>
       <code><![CDATA[__invoke]]></code>
       <code><![CDATA[classExists]]></code>
+      <code><![CDATA[createFromNode]]></code>
       <code><![CDATA[getEndLine]]></code>
       <code><![CDATA[getStartLine]]></code>
+      <code><![CDATA[getStmts]]></code>
+      <code><![CDATA[getStmts]]></code>
       <code><![CDATA[isPrivate]]></code>
       <code><![CDATA[isPrivateSet]]></code>
       <code><![CDATA[isProtected]]></code>
       <code><![CDATA[isProtectedSet]]></code>
       <code><![CDATA[isPublic]]></code>
+      <code><![CDATA[isPublic]]></code>
       <code><![CDATA[isReadonly]]></code>
       <code><![CDATA[isStatic]]></code>
       <code><![CDATA[traitExists]]></code>
+      <code><![CDATA[traverse]]></code>
+      <code><![CDATA[traverse]]></code>
     </ImpureMethodCall>
   </file>
   <file src="src/Reflection/ReflectionType.php">

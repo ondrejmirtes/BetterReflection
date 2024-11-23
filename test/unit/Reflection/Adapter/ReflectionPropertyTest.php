@@ -8,7 +8,9 @@ use ArgumentCountError;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
+use PropertyHookType;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionException as CoreReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
@@ -22,7 +24,9 @@ use Roave\BetterReflection\Reflection\Exception\NotAnObject;
 use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
+use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
 use Roave\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
+use Roave\BetterReflection\Reflection\ReflectionParameter as BetterReflectionParameter;
 use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
 use stdClass;
 use TypeError;
@@ -66,6 +70,7 @@ class ReflectionPropertyTest extends TestCase
             ['isProtectedSet', [], true, null, true, null],
             ['isStatic', [], true, null, true, null],
             ['isFinal', [], true, null, true, null],
+            ['isAbstract', [], true, null, true, null],
             ['isDefault', [], true, null, true, null],
             ['isDynamic', [], false, null, false, null],
             ['getModifiers', [], 123, null, 123, null],
@@ -75,6 +80,9 @@ class ReflectionPropertyTest extends TestCase
             ['getDefaultValue', [], null, null, null, null],
             ['isPromoted', [], true, null, true, null],
             ['isReadOnly', [], true, null, true, null],
+            ['isVirtual', [], true, null, true, null],
+            ['hasHooks', [], false, null, false, null],
+            ['getHooks', [], [], null, [], null],
         ];
     }
 
@@ -494,5 +502,137 @@ class ReflectionPropertyTest extends TestCase
         $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
         $reflectionPropertyAdapter->skipLazyInitialization(new stdClass());
+    }
+
+    #[RequiresPhp('8.4')]
+    public function testHasAndGetHookWhenNoHooks(): void
+    {
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('hasHook')
+            ->willReturn(false);
+        $betterReflectionProperty
+            ->method('getHook')
+            ->willReturn(null);
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        self::assertFalse($reflectionPropertyAdapter->hasHook(PropertyHookType::Get));
+        self::assertNull($reflectionPropertyAdapter->getHook(PropertyHookType::Get));
+    }
+
+    #[RequiresPhp('8.4')]
+    public function testHasAndGetHook(): void
+    {
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('hasHook')
+            ->willReturn(true);
+        $betterReflectionProperty
+            ->method('getHook')
+            ->willReturn($this->createMock(BetterReflectionMethod::class));
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        self::assertTrue($reflectionPropertyAdapter->hasHook(PropertyHookType::Get));
+        self::assertNotNull($reflectionPropertyAdapter->getHook(PropertyHookType::Get));
+    }
+
+    public function testGetSettableType(): void
+    {
+        $setHookParameterType = $this->createMock(BetterReflectionNamedType::class);
+        $setHookParameterType
+            ->method('getName')
+            ->willReturn('int');
+
+        $setHookParameter = $this->createMock(BetterReflectionParameter::class);
+        $setHookParameter
+            ->method('getType')
+            ->willReturn($setHookParameterType);
+
+        $setHook = $this->createMock(BetterReflectionMethod::class);
+        $setHook
+            ->method('getParameters')
+            ->willReturn([$setHookParameter]);
+
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('getHook')
+            ->willReturn($setHook);
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        self::assertInstanceOf(ReflectionNamedTypeAdapter::class, $reflectionPropertyAdapter->getSettableType());
+        self::assertSame('int', $reflectionPropertyAdapter->getSettableType()->getName());
+    }
+
+    public function testGetSettableTypeWhenVirtual(): void
+    {
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('getHook')
+            ->willReturn(null);
+        $betterReflectionProperty
+            ->method('isVirtual')
+            ->willReturn(true);
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        self::assertInstanceOf(ReflectionNamedTypeAdapter::class, $reflectionPropertyAdapter->getSettableType());
+        self::assertSame('never', $reflectionPropertyAdapter->getSettableType()->getName());
+    }
+
+    public function testGetSettableTypeWhenNoHooks(): void
+    {
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('getHook')
+            ->willReturn(null);
+        $betterReflectionProperty
+            ->method('isVirtual')
+            ->willReturn(false);
+        $betterReflectionProperty
+            ->method('getType')
+            ->willReturn($this->createMock(BetterReflectionNamedType::class));
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        self::assertInstanceOf(ReflectionNamedTypeAdapter::class, $reflectionPropertyAdapter->getSettableType());
+    }
+
+    public function testGetSettableTypeWhenNoHooksAndNoType(): void
+    {
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('getHook')
+            ->willReturn(null);
+        $betterReflectionProperty
+            ->method('isVirtual')
+            ->willReturn(false);
+        $betterReflectionProperty
+            ->method('getType')
+            ->willReturn(null);
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        self::assertNull($reflectionPropertyAdapter->getSettableType());
+    }
+
+    public function testSetRawValueWhenNoHooks(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
+        $betterReflectionProperty
+            ->method('hasHooks')
+            ->willReturn(true);
+
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        $reflectionPropertyAdapter->setRawValue(new stdClass(), null);
+    }
+
+    public function testGetRawValue(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
+        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
+        $reflectionPropertyAdapter->getRawValue(new stdClass());
     }
 }
