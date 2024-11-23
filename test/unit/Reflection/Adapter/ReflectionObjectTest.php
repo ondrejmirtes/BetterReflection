@@ -1239,4 +1239,92 @@ class ReflectionObjectTest extends TestCase
         self::assertCount(1, $reflectionObjectAdapter->getProperties(CoreReflectionProperty::IS_PRIVATE));
         self::assertCount(1, $reflectionObjectAdapter->getProperties(CoreReflectionProperty::IS_PROTECTED));
     }
+
+    public function testNewLazyGhost(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->newLazyGhost(static fn () => null);
+    }
+
+    public function testNewLazyProxy(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->newLazyProxy(static fn () => null);
+    }
+
+    public function testMarkLazyObjectAsInitialized(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->markLazyObjectAsInitialized(new stdClass());
+    }
+
+    public function testGetLazyInitializer(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->getLazyInitializer(new stdClass());
+    }
+
+    public function testInitializeLazyObject(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->initializeLazyObject(new stdClass());
+    }
+
+    public function testIsUninitializedLazyObject(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->isUninitializedLazyObject(new stdClass());
+    }
+
+    public function testResetAsLazyGhost(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->resetAsLazyGhost(new stdClass(), static fn () => null);
+    }
+
+    public function testResetAsLazyProxy(): void
+    {
+        self::expectException(NotImplemented::class);
+        self::expectExceptionMessage('Not implemented');
+
+        $betterReflectionObject = $this->createMock(BetterReflectionObject::class);
+
+        $reflectionObjectAdapter = new ReflectionObjectAdapter($betterReflectionObject);
+        $reflectionObjectAdapter->resetAsLazyProxy(new stdClass(), static fn () => null);
+    }
 }
