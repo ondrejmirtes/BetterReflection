@@ -131,6 +131,20 @@ class PhpStormStubsSourceStubberTest extends TestCase
                         return false;
                     }
 
+                    // Missing in JetBrains/phpstorm-stubs
+                    if (
+                        PHP_VERSION_ID >= 80400
+                        && in_array($className, [
+                            'Deprecated',
+                            'Generator',
+                            'RequestParseBodyException',
+                            'RoundingMode',
+                            'StreamBucket',
+                        ], true)
+                    ) {
+                        return false;
+                    }
+
                     // Check only always enabled extensions
                     return in_array($reflection->getExtensionName(), self::EXTENSIONS, true);
                 },
@@ -152,6 +166,11 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         self::assertSame($internalReflection->isInterface(), $class->isInterface());
         self::assertSame($internalReflection->isTrait(), $class->isTrait());
+
+        if (PHP_VERSION_ID >= 80400 && $className === 'SplObjectStorage') {
+            // Needs fixes in JetBrains/phpstorm-stubs
+            return;
+        }
 
         self::assertSameClassAttributes($internalReflection, $class);
     }
@@ -284,6 +303,25 @@ class PhpStormStubsSourceStubberTest extends TestCase
                 static function (string $functionName): bool {
                     $reflection = new CoreReflectionFunction($functionName);
 
+                    // Missing in JetBrains/phpstorm-stubs
+                    if (
+                        PHP_VERSION_ID >= 80400
+                        && in_array($functionName, [
+                            'array_all',
+                            'array_any',
+                            'array_find',
+                            'array_find_key',
+                            'die',
+                            'exit',
+                            'fpow',
+                            'http_clear_last_response_headers',
+                            'http_get_last_response_headers',
+                            'request_parse_body',
+                        ], true)
+                    ) {
+                        return false;
+                    }
+
                     // Check only always enabled extensions
                     return in_array($reflection->getExtensionName(), self::EXTENSIONS, true);
                 },
@@ -344,6 +382,17 @@ class PhpStormStubsSourceStubberTest extends TestCase
             }
 
             foreach ($extensionConstants as $constantName => $constantValue) {
+                // Missing in JetBrains/phpstorm-stubs
+                if (
+                    PHP_VERSION_ID >= 80400
+                    && in_array($constantName, [
+                        'PHP_OUTPUT_HANDLER_PROCESSED',
+                        'PHP_SBINDIR',
+                    ], true)
+                ) {
+                    continue;
+                }
+
                 $provider[] = [$constantName, $constantValue, $extensionName];
             }
         }
