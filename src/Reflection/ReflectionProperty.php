@@ -213,6 +213,11 @@ class ReflectionProperty
         return $this->declaredAtCompileTime;
     }
 
+    public function isDynamic(): bool
+    {
+        return ! $this->isDefault();
+    }
+
     /**
      * Get the core-reflection-compatible modifier values.
      *

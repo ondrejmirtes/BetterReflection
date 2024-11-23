@@ -275,15 +275,22 @@ class ReflectionPropertyTest extends TestCase
         self::assertSame('/** Some doccomment */', $promotedProperty->getDocComment());
     }
 
-    public function testIsDefault(): void
+    public function testIsDefaultAndIsDynamic(): void
     {
         $classInfo = $this->reflector->reflectClass(ExampleClass::class);
 
-        self::assertTrue($classInfo->getProperty('publicProperty')->isDefault());
-        self::assertTrue($classInfo->getProperty('publicStaticProperty')->isDefault());
+        $publicProperty = $classInfo->getProperty('publicProperty');
+
+        self::assertTrue($publicProperty->isDefault());
+        self::assertFalse($publicProperty->isDynamic());
+
+        $publicStaticProperty = $classInfo->getProperty('publicStaticProperty');
+
+        self::assertTrue($publicStaticProperty->isDefault());
+        self::assertFalse($publicStaticProperty->isDynamic());
     }
 
-    public function testIsDefaultWithRuntimeDeclaredProperty(): void
+    public function testIsDefaultAndIsDynamicWithRuntimeDeclaredProperty(): void
     {
         $classInfo            = $this->reflector->reflectClass(ExampleClass::class);
         $propertyPropertyNode = new PropertyItem('foo');
@@ -298,6 +305,7 @@ class ReflectionPropertyTest extends TestCase
         );
 
         self::assertFalse($propertyNode->isDefault());
+        self::assertTrue($propertyNode->isDynamic());
     }
 
     public function testToString(): void

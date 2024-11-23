@@ -65,6 +65,7 @@ class ReflectionPropertyTest extends TestCase
             ['isStatic', [], true, null, true, null],
             ['isFinal', [], true, null, true, null],
             ['isDefault', [], true, null, true, null],
+            ['isDynamic', [], false, null, false, null],
             ['getModifiers', [], 123, null, 123, null],
             ['getDocComment', [], null, null, false, null],
             ['hasType', [], true, null, true, null],
