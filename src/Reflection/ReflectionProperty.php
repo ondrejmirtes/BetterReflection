@@ -246,12 +246,22 @@ class ReflectionProperty
         return ($this->modifiers & CoreReflectionProperty::IS_PRIVATE) === CoreReflectionProperty::IS_PRIVATE;
     }
 
+    public function isPrivateSet(): bool
+    {
+        return ($this->modifiers & ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY) === ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY;
+    }
+
     /**
      * Is the property protected?
      */
     public function isProtected(): bool
     {
         return ($this->modifiers & CoreReflectionProperty::IS_PROTECTED) === CoreReflectionProperty::IS_PROTECTED;
+    }
+
+    public function isProtectedSet(): bool
+    {
+        return ($this->modifiers & ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY) === ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY;
     }
 
     /**
@@ -602,10 +612,13 @@ class ReflectionProperty
         $modifiers  = $node->isReadonly() ? ReflectionPropertyAdapter::IS_READONLY : 0;
         $modifiers += $node->isStatic() ? CoreReflectionProperty::IS_STATIC : 0;
         $modifiers += $node->isPrivate() ? CoreReflectionProperty::IS_PRIVATE : 0;
+        $modifiers += $node->isPrivateSet() ? ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY : 0;
         $modifiers += $node->isProtected() ? CoreReflectionProperty::IS_PROTECTED : 0;
+        $modifiers += $node->isProtectedSet() ? ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY : 0;
         $modifiers += $node->isPublic() ? CoreReflectionProperty::IS_PUBLIC : 0;
         $modifiers += ($node->flags & ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY) === ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY ? ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY : 0;
 
+        /** @phpstan-ignore return.type */
         return $modifiers;
     }
 }

@@ -204,7 +204,9 @@
       <code><![CDATA[getEndLine]]></code>
       <code><![CDATA[getStartLine]]></code>
       <code><![CDATA[isPrivate]]></code>
+      <code><![CDATA[isPrivateSet]]></code>
       <code><![CDATA[isProtected]]></code>
+      <code><![CDATA[isProtectedSet]]></code>
       <code><![CDATA[isPublic]]></code>
       <code><![CDATA[isReadonly]]></code>
       <code><![CDATA[isStatic]]></code>

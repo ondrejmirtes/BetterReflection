@@ -882,4 +882,34 @@ PHP;
         self::assertCount(2, $cloneAttributes);
         self::assertNotSame($attributes[0], $cloneAttributes[0]);
     }
+
+    /** @return list<array{0: non-empty-string, 1: int-mask-of<ReflectionPropertyAdapter::IS_*>}> */
+    public static function asymetricVisibilityModifierProvider(): array
+    {
+        return [
+            ['publicPublicSet', CoreReflectionProperty::IS_PUBLIC],
+            ['publicProtectedSet', CoreReflectionProperty::IS_PUBLIC | ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY],
+            ['publicPrivateSet', CoreReflectionProperty::IS_PUBLIC | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY],
+            ['protectedProtectedSet', CoreReflectionProperty::IS_PROTECTED | ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY],
+            ['protectedPrivateSet', CoreReflectionProperty::IS_PROTECTED | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY],
+            ['privatePrivateSet', CoreReflectionProperty::IS_PRIVATE | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY],
+            ['promotedPublicPublicSet', CoreReflectionProperty::IS_PUBLIC],
+            ['promotedPublicProtectedSet', CoreReflectionProperty::IS_PUBLIC | ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY],
+            ['promotedPublicPrivateSet', CoreReflectionProperty::IS_PUBLIC | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY],
+            ['promotedProtectedProtectedSet', CoreReflectionProperty::IS_PROTECTED | ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY],
+            ['promotedProtectedPrivateSet', CoreReflectionProperty::IS_PROTECTED | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY],
+            ['promotedPrivatePrivateSet', CoreReflectionProperty::IS_PRIVATE | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY],
+        ];
+    }
+
+    /** @param non-empty-string $propertyName */
+    #[DataProvider('asymetricVisibilityModifierProvider')]
+    public function testGetAsymetricVisibilityModifiers(string $propertyName, int $expectedModifier): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/AsymetricVisibilityClass.php', $this->astLocator));
+        $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\AsymetricVisibilityClass');
+        $property  = $classInfo->getProperty($propertyName);
+
+        self::assertSame($expectedModifier, $property->getModifiers());
+    }
 }
