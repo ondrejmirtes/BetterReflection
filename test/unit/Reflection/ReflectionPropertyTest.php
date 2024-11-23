@@ -175,6 +175,18 @@ class ReflectionPropertyTest extends TestCase
         self::assertTrue($readOnlyProperty->isReadOnly());
     }
 
+    public function testIsFinal(): void
+    {
+        $classInfo = $this->reflector->reflectClass(ExampleClass::class);
+
+        $notReadOnlyProperty = $classInfo->getProperty('publicProperty');
+        self::assertFalse($notReadOnlyProperty->isFinal());
+
+        $finalPublicProperty = $classInfo->getProperty('finalPublicProperty');
+        self::assertTrue($finalPublicProperty->isFinal());
+        self::assertTrue($finalPublicProperty->isPublic());
+    }
+
     public function testIsReadOnlyInReadOnlyClass(): void
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
@@ -221,7 +233,7 @@ class ReflectionPropertyTest extends TestCase
         self::assertNull($property->getDocComment());
     }
 
-    /** @return list<array{0: non-empty-string, 1: int}> */
+    /** @return list<array{0: non-empty-string, 1: int-mask-of<ReflectionPropertyAdapter::IS_*>}> */
     public static function modifierProvider(): array
     {
         return [
@@ -230,6 +242,7 @@ class ReflectionPropertyTest extends TestCase
             ['privateProperty', CoreReflectionProperty::IS_PRIVATE],
             ['publicStaticProperty', CoreReflectionProperty::IS_PUBLIC | CoreReflectionProperty::IS_STATIC],
             ['readOnlyProperty', CoreReflectionProperty::IS_PUBLIC | ReflectionPropertyAdapter::IS_READONLY],
+            ['finalPublicProperty', CoreReflectionProperty::IS_PUBLIC | ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY],
         ];
     }
 
@@ -255,8 +268,8 @@ class ReflectionPropertyTest extends TestCase
         self::assertSame('int|null', $promotedProperty->getType()->__toString());
         self::assertFalse($promotedProperty->hasDefaultValue());
         self::assertNull($promotedProperty->getDefaultValue());
-        self::assertSame(52, $promotedProperty->getStartLine());
-        self::assertSame(52, $promotedProperty->getEndLine());
+        self::assertSame(54, $promotedProperty->getStartLine());
+        self::assertSame(54, $promotedProperty->getEndLine());
         self::assertSame(60, $promotedProperty->getStartColumn());
         self::assertSame(95, $promotedProperty->getEndColumn());
         self::assertSame('/** Some doccomment */', $promotedProperty->getDocComment());
