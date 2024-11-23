@@ -571,6 +571,7 @@ class ReflectionClass implements Reflection
                 $reflector,
                 $methodNode,
                 $this->locatedSource,
+                $methodNode->name->name,
                 $this->getNamespaceName(),
                 $this,
                 $this,
@@ -596,6 +597,8 @@ class ReflectionClass implements Reflection
     {
         $internalLocatedSource = new InternalLocatedSource('', $this->getName(), 'Core');
         $createMethod          = function (string $name, array $params, Node\Identifier|Node\NullableType $returnType) use ($internalLocatedSource): ReflectionMethod {
+            assert($name !== '');
+
             /** @var array{flags: int, params: Node\Param[], returnType: Node\Identifier|Node\NullableType} $classMethodSubnodes */
             $classMethodSubnodes = [
                 'flags' => Modifiers::PUBLIC | Modifiers::STATIC,
@@ -610,6 +613,7 @@ class ReflectionClass implements Reflection
                     $classMethodSubnodes,
                 ),
                 $internalLocatedSource,
+                $name,
                 $this->getNamespaceName(),
                 $this,
                 $this,

@@ -7,8 +7,11 @@ namespace Roave\BetterReflection\Reflection;
 use Closure;
 use Error;
 use OutOfBoundsException;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Property as PropertyNode;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\FindingVisitor;
 use ReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
@@ -32,6 +35,7 @@ use Roave\BetterReflection\Util\GetLastDocComment;
 
 use function array_map;
 use function assert;
+use function count;
 use function func_num_args;
 use function is_object;
 use function sprintf;
@@ -68,6 +72,20 @@ class ReflectionProperty
     /** @var positive-int|null */
     private int|null $endColumn;
 
+    private bool $immediateVirtual;
+
+    /** @var array{get?: ReflectionMethod, set?: ReflectionMethod} */
+    private array $immediateHooks;
+
+    /**
+     * @var array{get?: ReflectionMethod, set?: ReflectionMethod}|null
+     * @psalm-allow-private-mutation
+     */
+    private array|null $cachedHooks = null;
+
+    /** @psalm-allow-private-mutation */
+    private bool|null $cachedVirtual = null;
+
     /** @psalm-allow-private-mutation */
     private CompiledValue|null $compiledDefaultValue = null;
 
@@ -80,12 +98,14 @@ class ReflectionProperty
         private bool $isPromoted,
         private bool $declaredAtCompileTime,
     ) {
-        $this->name       = $propertyNode->name->name;
-        $this->modifiers  = $this->computeModifiers($node);
-        $this->type       = $this->createType($node);
-        $this->default    = $propertyNode->default;
-        $this->docComment = GetLastDocComment::forNode($node);
-        $this->attributes = ReflectionAttributeHelper::createAttributes($reflector, $this, $node->attrGroups);
+        $this->name             = $propertyNode->name->name;
+        $this->modifiers        = $this->computeModifiers($node);
+        $this->type             = $this->createType($node);
+        $this->default          = $propertyNode->default;
+        $this->docComment       = GetLastDocComment::forNode($node);
+        $this->attributes       = ReflectionAttributeHelper::createAttributes($reflector, $this, $node->attrGroups);
+        $this->immediateVirtual = $this->computeImmediateVirtual($node);
+        $this->immediateHooks   = $this->createImmediateHooks($node);
 
         $startLine = $node->getStartLine();
         if ($startLine === -1) {
@@ -225,7 +245,11 @@ class ReflectionProperty
      */
     public function getModifiers(): int
     {
-        return $this->modifiers;
+        /** @var int-mask-of<ReflectionPropertyAdapter::IS_*> $modifiers */
+        $modifiers = $this->modifiers
+            + ($this->isVirtual() ? ReflectionPropertyAdapter::IS_VIRTUAL_COMPATIBILITY : 0);
+
+        return $modifiers;
     }
 
     /**
@@ -283,6 +307,11 @@ class ReflectionProperty
     public function isFinal(): bool
     {
         return ($this->modifiers & ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY) === ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY;
+    }
+
+    public function isAbstract(): bool
+    {
+        return ($this->modifiers & ReflectionPropertyAdapter::IS_ABSTRACT_COMPATIBILITY) === ReflectionPropertyAdapter::IS_ABSTRACT_COMPATIBILITY;
     }
 
     public function isPromoted(): bool
@@ -568,6 +597,36 @@ class ReflectionProperty
         return $this->type !== null;
     }
 
+    public function isVirtual(): bool
+    {
+        $this->cachedVirtual ??= $this->createCachedVirtual();
+
+        return $this->cachedVirtual;
+    }
+
+    public function hasHooks(): bool
+    {
+        return $this->getHooks() !== [];
+    }
+
+    public function hasHook(ReflectionPropertyHookType $hookType): bool
+    {
+        return isset($this->getHooks()[$hookType->value]);
+    }
+
+    public function getHook(ReflectionPropertyHookType $hookType): ReflectionMethod|null
+    {
+        return $this->getHooks()[$hookType->value] ?? null;
+    }
+
+    /** @return array{get?: ReflectionMethod, set?: ReflectionMethod} */
+    public function getHooks(): array
+    {
+        $this->cachedHooks ??= $this->createCachedHooks();
+
+        return $this->cachedHooks;
+    }
+
     /**
      * @param class-string $className
      *
@@ -617,8 +676,118 @@ class ReflectionProperty
         $modifiers += $node->isProtectedSet() ? ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY : 0;
         $modifiers += $node->isPublic() ? CoreReflectionProperty::IS_PUBLIC : 0;
         $modifiers += ($node->flags & ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY) === ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY ? ReflectionPropertyAdapter::IS_FINAL_COMPATIBILITY : 0;
+        $modifiers += ($node->flags & Modifiers::ABSTRACT) === Modifiers::ABSTRACT ? ReflectionPropertyAdapter::IS_ABSTRACT_COMPATIBILITY : 0;
 
         /** @phpstan-ignore return.type */
         return $modifiers;
+    }
+
+    private function computeImmediateVirtual(PropertyNode $node): bool
+    {
+        if ($node->hooks === []) {
+            return false;
+        }
+
+        $setHook = null;
+
+        foreach ($node->hooks as $hook) {
+            if ($hook->name->name === 'set') {
+                $setHook = $hook;
+                break;
+            }
+        }
+
+        if ($setHook === null) {
+            return true;
+        }
+
+        $setHookBody = $setHook->getStmts();
+        assert($setHookBody !== null);
+
+        // Short syntax
+        if (count($setHookBody) === 1 && $setHookBody[0] instanceof Node\Stmt\Return_) {
+            return false;
+        }
+
+        $visitor   = new FindingVisitor(static fn (Node $node): bool => $node instanceof Node\Expr\Assign);
+        $traverser = new NodeTraverser($visitor);
+        $traverser->traverse($setHookBody);
+
+        foreach ($visitor->getFoundNodes() as $assigNode) {
+            assert($assigNode instanceof Node\Expr\Assign);
+            $variableToAssign = $assigNode->var;
+
+            if (
+                $variableToAssign instanceof Node\Expr\PropertyFetch
+                && $variableToAssign->var instanceof Node\Expr\Variable
+                && $variableToAssign->var->name === 'this'
+                && $variableToAssign->name instanceof Node\Identifier
+                && $variableToAssign->name->name === $this->name
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** @return array{get?: ReflectionMethod, set?: ReflectionMethod} */
+    private function createImmediateHooks(PropertyNode $node): array
+    {
+        $hooks = [];
+
+        foreach ($node->hooks as $hook) {
+            $hookName = $hook->name->name;
+            assert($hookName === 'get' || $hookName === 'set');
+
+            $hooks[$hookName] = ReflectionMethod::createFromNode(
+                $this->reflector,
+                $hook,
+                $this->getDeclaringClass()->getLocatedSource(),
+                sprintf('$%s::%s', $this->name, $hookName),
+                null,
+                $this->getDeclaringClass(),
+                $this->getImplementingClass(),
+                $this->getDeclaringClass(),
+            );
+        }
+
+        return $hooks;
+    }
+
+    private function createCachedVirtual(): bool
+    {
+        if (! $this->immediateVirtual) {
+            return false;
+        }
+
+        return $this->getParentProperty()?->isVirtual() ?? true;
+    }
+
+    /** @return array{get?: ReflectionMethod, set?: ReflectionMethod} */
+    private function createCachedHooks(): array
+    {
+        $hooks = $this->immediateHooks;
+
+        if (isset($hooks['get'], $hooks['set'])) {
+            return $hooks;
+        }
+
+        $parentHooks = $this->getParentProperty()?->getHooks() ?? [];
+
+        foreach ($parentHooks as $hookName => $parentHook) {
+            if (isset($hooks[$hookName])) {
+                continue;
+            }
+
+            $hooks[$hookName] = $parentHook;
+        }
+
+        return $hooks;
+    }
+
+    private function getParentProperty(): ReflectionProperty|null
+    {
+        return $this->getDeclaringClass()->getParentClass()?->getProperty($this->name);
     }
 }
