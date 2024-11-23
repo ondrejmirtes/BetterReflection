@@ -1,0 +1,42 @@
+Class [ <user> class Roave\BetterReflectionTest\Fixture\AsymetricVisibilityClass ] {
+  @@ %s/Fixture/AsymetricVisibilityClass.php 5-24
+
+  - Constants [0] {
+  }
+
+  - Static properties [0] {
+  }
+
+  - Static methods [0] {
+  }
+
+  - Properties [12] {
+    Property [ <default> public string $publicPublicSet ]
+    Property [ <default> public string $publicProtectedSet ]
+    Property [ <default> public string $publicPrivateSet ]
+    Property [ <default> protected int $protectedProtectedSet ]
+    Property [ <default> protected int $protectedPrivateSet ]
+    Property [ <default> private bool $privatePrivateSet ]
+    Property [ <default> public string $promotedPublicPublicSet ]
+    Property [ <default> public string $promotedPublicProtectedSet ]
+    Property [ <default> public string $promotedPublicPrivateSet ]
+    Property [ <default> protected int $promotedProtectedProtectedSet ]
+    Property [ <default> protected int $promotedProtectedPrivateSet ]
+    Property [ <default> private bool $promotedPrivatePrivateSet ]
+  }
+
+  - Methods [1] {
+    Method [ <user, ctor> public method __construct ] {
+      @@ %s/Fixture/AsymetricVisibilityClass.php 14 - 23
+
+      - Parameters [6] {
+        Parameter #0 [ <required> string $promotedPublicPublicSet ]
+        Parameter #1 [ <required> string $promotedPublicProtectedSet ]
+        Parameter #2 [ <required> string $promotedPublicPrivateSet ]
+        Parameter #3 [ <required> int $promotedProtectedProtectedSet ]
+        Parameter #4 [ <required> int $promotedProtectedPrivateSet ]
+        Parameter #5 [ <required> bool $promotedPrivatePrivateSet ]
+      }
+    }
+  }
+}
