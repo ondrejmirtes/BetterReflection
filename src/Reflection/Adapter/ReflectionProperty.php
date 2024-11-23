@@ -133,6 +133,12 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /** @psalm-mutation-free */
+    public function isDynamic(): bool
+    {
+        return $this->betterReflectionProperty->isDynamic();
+    }
+
+    /** @psalm-mutation-free */
     public function getModifiers(): int
     {
         return $this->betterReflectionProperty->getModifiers();

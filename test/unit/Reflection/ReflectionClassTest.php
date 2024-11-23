@@ -638,6 +638,7 @@ class ReflectionClassTest extends TestCase
         self::assertTrue($property->isReadOnly());
         self::assertFalse($property->isPromoted());
         self::assertTrue($property->isDefault());
+        self::assertFalse($property->isDynamic());
 
         // No value property for pure enum
         self::assertArrayNotHasKey('value', $properties);
@@ -696,6 +697,7 @@ class ReflectionClassTest extends TestCase
             self::assertTrue($property->isReadOnly(), $fullPropertyName);
             self::assertFalse($property->isPromoted(), $fullPropertyName);
             self::assertTrue($property->isDefault(), $fullPropertyName);
+            self::assertFalse($property->isDynamic(), $fullPropertyName);
             self::assertSame($propertyType, $property->getType()->__toString(), $fullPropertyName);
         }
     }
