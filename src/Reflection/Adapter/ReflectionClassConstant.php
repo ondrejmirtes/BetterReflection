@@ -160,6 +160,11 @@ final class ReflectionClassConstant extends CoreReflectionClassConstant
         return $this->betterClassConstantOrEnumCase instanceof BetterReflectionEnumCase;
     }
 
+    public function isDeprecated(): bool
+    {
+        return $this->betterClassConstantOrEnumCase->isDeprecated();
+    }
+
     public function __get(string $name): mixed
     {
         if ($name === 'name') {

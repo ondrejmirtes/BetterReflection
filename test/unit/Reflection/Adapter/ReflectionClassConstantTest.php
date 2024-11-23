@@ -61,6 +61,7 @@ class ReflectionClassConstantTest extends TestCase
             ['getDocComment', null, null, []],
             ['getAttributes', null, [], []],
             ['isFinal', null, true, []],
+            ['isDeprecated', null, true, []],
         ];
     }
 
