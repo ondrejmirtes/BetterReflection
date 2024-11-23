@@ -33,6 +33,12 @@ use function strtolower;
  */
 final class ReflectionClass extends CoreReflectionClass
 {
+    /** @internal */
+    public const SKIP_INITIALIZATION_ON_SERIALIZE_COMPATIBILITY = 8;
+
+    /** @internal */
+    public const SKIP_DESTRUCTOR_COMPATIBILITY = 16;
+
     public function __construct(private BetterReflectionClass|BetterReflectionEnum $betterReflectionClass)
     {
         unset($this->name);
@@ -446,6 +452,50 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     public function newInstanceArgs(array|null $args = null): object
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    /** @param int-mask-of<self::SKIP_*> $options */
+    public function newLazyGhost(callable $initializer, int $options = 0): object
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    /** @param int-mask-of<self::SKIP_*> $options */
+    public function newLazyProxy(callable $factory, int $options = 0): object
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function markLazyObjectAsInitialized(object $object): object
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function getLazyInitializer(object $object): callable|null
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function initializeLazyObject(object $object): object
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    public function isUninitializedLazyObject(object $object): bool
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    /** @param int-mask-of<self::SKIP_*> $options */
+    public function resetAsLazyGhost(object $object, callable $initializer, int $options = 0): void
+    {
+        throw new Exception\NotImplemented('Not implemented');
+    }
+
+    /** @param int-mask-of<self::SKIP_*> $options */
+    public function resetAsLazyProxy(object $object, callable $factory, int $options = 0): void
     {
         throw new Exception\NotImplemented('Not implemented');
     }
