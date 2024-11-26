@@ -12,8 +12,12 @@ use function strtolower;
 /** @psalm-immutable */
 final class ReflectionNamedType extends CoreReflectionNamedType
 {
-    public function __construct(private BetterReflectionNamedType $betterReflectionType, private bool $allowsNull)
+    private BetterReflectionNamedType $betterReflectionType;
+    private bool $allowsNull;
+    public function __construct(BetterReflectionNamedType $betterReflectionType, bool $allowsNull)
     {
+        $this->betterReflectionType = $betterReflectionType;
+        $this->allowsNull = $allowsNull;
     }
 
     /** @return non-empty-string */
