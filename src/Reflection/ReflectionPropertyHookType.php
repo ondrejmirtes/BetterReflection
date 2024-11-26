@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflection\Reflection;
 
+use LogicException;
 use PropertyHookType as CoreReflectionPropertyHookType;
 
 /**
@@ -14,16 +15,24 @@ use PropertyHookType as CoreReflectionPropertyHookType;
  *
  * @see CoreReflectionPropertyHookType
  */
-enum ReflectionPropertyHookType: string
+class ReflectionPropertyHookType
 {
-    case Get = 'get';
-    case Set = 'set';
+    // the names match the cases of the native PropertyHookType enum
+    // phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
+    public const Get = 'get';
+    public const Set = 'set';
+    // phpcs:enable
 
-    public static function fromCoreReflectionPropertyHookType(CoreReflectionPropertyHookType $hookType): self
+    public static function fromCoreReflectionPropertyHookType(CoreReflectionPropertyHookType $hookType): string
     {
-        return match ($hookType) {
-            CoreReflectionPropertyHookType::Get => self::Get,
-            CoreReflectionPropertyHookType::Set => self::Set,
-        };
+        if ($hookType === CoreReflectionPropertyHookType::Get) {
+            return self::Get;
+        }
+
+        if ($hookType === CoreReflectionPropertyHookType::Set) {
+            return self::Set;
+        }
+
+        throw new LogicException('Unknown hook type');
     }
 }
