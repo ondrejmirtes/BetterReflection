@@ -11,6 +11,7 @@ use PropertyHookType;
 use ReflectionException as CoreReflectionException;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
+use ReflectionType as CoreReflectionType;
 use ReturnTypeWillChange;
 use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
 use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
@@ -139,7 +140,7 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /** @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null */
-    public function getType(): ?\ReflectionType
+    public function getType(): ?CoreReflectionType
     {
         return ReflectionType::fromTypeOrNull($this->betterReflectionProperty->getType());
     }
@@ -351,7 +352,8 @@ final class ReflectionProperty extends CoreReflectionProperty
         );
     }
 
-    public function getSettableType(): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    /** @return ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null */
+    public function getSettableType(): ?CoreReflectionType
     {
         $setHook = $this->betterReflectionProperty->getHook(BetterReflectionPropertyHookType::Set);
         if ($setHook !== null) {
