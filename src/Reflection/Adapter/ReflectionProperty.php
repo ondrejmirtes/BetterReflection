@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use ArgumentCountError;
 use OutOfBoundsException;
@@ -12,12 +12,12 @@ use ReflectionException as CoreReflectionException;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionProperty as CoreReflectionProperty;
 use ReturnTypeWillChange;
-use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
-use Roave\BetterReflection\Reflection\Exception\NotAnObject;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
-use Roave\BetterReflection\Reflection\ReflectionPropertyHookType as BetterReflectionPropertyHookType;
+use PHPStan\BetterReflection\Reflection\Exception\NoObjectProvided;
+use PHPStan\BetterReflection\Reflection\Exception\NotAnObject;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
+use PHPStan\BetterReflection\Reflection\ReflectionProperty as BetterReflectionProperty;
+use PHPStan\BetterReflection\Reflection\ReflectionPropertyHookType as BetterReflectionPropertyHookType;
 use Throwable;
 use TypeError;
 use ValueError;
@@ -300,7 +300,7 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /** @psalm-suppress UndefinedClass */
-    public function getHook(PropertyHookType $hookType): ?\Roave\BetterReflection\Reflection\Adapter\ReflectionMethod
+    public function getHook(PropertyHookType $hookType): ?\PHPStan\BetterReflection\Reflection\Adapter\ReflectionMethod
     {
         $hook = $this->betterReflectionProperty->getHook(BetterReflectionPropertyHookType::fromCoreReflectionPropertyHookType($hookType));
         if ($hook === null) {
@@ -320,7 +320,7 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /**
-     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\Adapter\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\Adapter\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null
      */
     public function getSettableType()
     {
