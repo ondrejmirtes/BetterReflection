@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Throw_ as NodeThrow;
@@ -11,14 +11,14 @@ use PhpParser\Node\Expr\YieldFrom as YieldFromNode;
 use PhpParser\Node\Stmt\ClassMethod as MethodNode;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FindingVisitor;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
-use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
-use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
-use Roave\BetterReflection\Reflection\Exception\CodeLocationMissing;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\Util\CalculateReflectionColumn;
-use Roave\BetterReflection\Util\Exception\NoNodePosition;
-use Roave\BetterReflection\Util\GetLastDocComment;
+use PHPStan\BetterReflection\Reflection\Annotation\AnnotationHelper;
+use PHPStan\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use PHPStan\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
+use PHPStan\BetterReflection\Reflection\Exception\CodeLocationMissing;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Util\CalculateReflectionColumn;
+use PHPStan\BetterReflection\Util\Exception\NoNodePosition;
+use PHPStan\BetterReflection\Util\GetLastDocComment;
 
 use function array_filter;
 use function array_values;
@@ -45,7 +45,7 @@ trait ReflectionFunctionAbstract
     private bool $returnsReference;
 
     /** @psalm-allow-private-mutation
-     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null */
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null */
     private $returnType;
 
     /**
@@ -255,7 +255,7 @@ trait ReflectionFunctionAbstract
      *
      * @param non-empty-string $parameterName
      */
-    public function getParameter(string $parameterName): ?\Roave\BetterReflection\Reflection\ReflectionParameter
+    public function getParameter(string $parameterName): ?\PHPStan\BetterReflection\Reflection\ReflectionParameter
     {
         return $this->parameters[$parameterName] ?? null;
     }
@@ -464,7 +464,7 @@ trait ReflectionFunctionAbstract
 
     /**
      * Get the return type declaration
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     public function getReturnType()
     {
@@ -497,7 +497,7 @@ trait ReflectionFunctionAbstract
     }
 
     /**
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     public function getTentativeReturnType()
     {
@@ -510,7 +510,7 @@ trait ReflectionFunctionAbstract
 
     /**
      * @param MethodNode|\PhpParser\Node\PropertyHook|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     private function createReturnType($node)
     {
