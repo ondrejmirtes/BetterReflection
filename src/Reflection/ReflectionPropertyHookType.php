@@ -14,16 +14,21 @@ use PropertyHookType as CoreReflectionPropertyHookType;
  *
  * @see CoreReflectionPropertyHookType
  */
-enum ReflectionPropertyHookType: string
+class ReflectionPropertyHookType
 {
-    case Get = 'get';
-    case Set = 'set';
+    const Get = 'get';
+    const Set = 'set';
 
-    public static function fromCoreReflectionPropertyHookType(CoreReflectionPropertyHookType $hookType): self
+    public static function fromCoreReflectionPropertyHookType(CoreReflectionPropertyHookType $hookType): string
     {
-        return match ($hookType) {
-            CoreReflectionPropertyHookType::Get => self::Get,
-            CoreReflectionPropertyHookType::Set => self::Set,
-        };
+        if ($hookType === CoreReflectionPropertyHookType::Get) {
+            return self::Get;
+        }
+
+        if ($hookType === CoreReflectionPropertyHookType::Set) {
+            return self::Set;
+        }
+
+        throw new \LogicException('Unknown hook type');
     }
 }
