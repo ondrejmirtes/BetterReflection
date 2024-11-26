@@ -36,6 +36,10 @@ use function strtolower;
  */
 final class ReflectionClass extends CoreReflectionClass
 {
+    /**
+     * @var BetterReflectionClass|BetterReflectionEnum
+     */
+    private $betterReflectionClass;
     /** @internal */
     public const SKIP_INITIALIZATION_ON_SERIALIZE_COMPATIBILITY = 8;
 
@@ -45,8 +49,12 @@ final class ReflectionClass extends CoreReflectionClass
     /** @internal */
     public const IS_READONLY_COMPATIBILITY = 65536;
 
-    public function __construct(private BetterReflectionClass|BetterReflectionEnum $betterReflectionClass)
+    /**
+     * @param BetterReflectionClass|BetterReflectionEnum $betterReflectionClass
+     */
+    public function __construct($betterReflectionClass)
     {
+        $this->betterReflectionClass = $betterReflectionClass;
         unset($this->name);
     }
 
@@ -56,7 +64,10 @@ final class ReflectionClass extends CoreReflectionClass
         return $this->betterReflectionClass->__toString();
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterReflectionClass->getName();
@@ -263,11 +274,11 @@ final class ReflectionClass extends CoreReflectionClass
      *
      * @psalm-mutation-free
      */
-    public function getConstants(int|null $filter = null): array
+    public function getConstants(?int $filter = null): array
     {
         /** @psalm-suppress ImpureFunctionCall */
         return array_map(
-            fn (BetterReflectionClassConstant|BetterReflectionEnumCase $betterConstantOrEnumCase): mixed => $this->getConstantValue($betterConstantOrEnumCase),
+            fn ($betterConstantOrEnumCase) => $this->getConstantValue($betterConstantOrEnumCase),
             $this->filterBetterReflectionClassConstants($filter),
         );
     }
@@ -297,8 +308,10 @@ final class ReflectionClass extends CoreReflectionClass
         return $betterReflectionConstant->getValue();
     }
 
-    /** @psalm-pure */
-    private function getConstantValue(BetterReflectionClassConstant|BetterReflectionEnumCase $betterConstantOrEnumCase): mixed
+    /** @psalm-pure
+     * @param BetterReflectionClassConstant|BetterReflectionEnumCase $betterConstantOrEnumCase
+     * @return mixed */
+    private function getConstantValue($betterConstantOrEnumCase)
     {
         if ($betterConstantOrEnumCase instanceof BetterReflectionEnumCase) {
             throw new Exception\NotImplemented('Not implemented');
@@ -340,10 +353,10 @@ final class ReflectionClass extends CoreReflectionClass
      *
      * @psalm-mutation-free
      */
-    public function getReflectionConstants(int|null $filter = null): array
+    public function getReflectionConstants(?int $filter = null): array
     {
         return array_values(array_map(
-            static fn (BetterReflectionClassConstant|BetterReflectionEnumCase $betterConstantOrEnum): ReflectionClassConstant => new ReflectionClassConstant($betterConstantOrEnum),
+            static fn ($betterConstantOrEnum): ReflectionClassConstant => new ReflectionClassConstant($betterConstantOrEnum),
             $this->filterBetterReflectionClassConstants($filter),
         ));
     }
@@ -355,7 +368,7 @@ final class ReflectionClass extends CoreReflectionClass
      *
      * @psalm-mutation-free
      */
-    private function filterBetterReflectionClassConstants(int|null $filter): array
+    private function filterBetterReflectionClassConstants(?int $filter): array
     {
         $reflectionConstants = $this->betterReflectionClass->getConstants($filter ?? 0);
 
@@ -739,7 +752,7 @@ final class ReflectionClass extends CoreReflectionClass
      *
      * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
-    public function getAttributes(string|null $name = null, int $flags = 0): array
+    public function getAttributes(?string $name = null, int $flags = 0): array
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
@@ -754,7 +767,7 @@ final class ReflectionClass extends CoreReflectionClass
         }
 
         /** @psalm-suppress ImpureFunctionCall */
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
+        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute) => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
     }
 
     /** @psalm-mutation-free */

@@ -23,8 +23,10 @@ use function file_get_contents;
  */
 class ComposerSourceLocator extends AbstractSourceLocator
 {
-    public function __construct(private ClassLoader $classLoader, Locator $astLocator)
+    private ClassLoader $classLoader;
+    public function __construct(ClassLoader $classLoader, Locator $astLocator)
     {
+        $this->classLoader = $classLoader;
         parent::__construct($astLocator);
     }
 
@@ -34,7 +36,7 @@ class ComposerSourceLocator extends AbstractSourceLocator
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    protected function createLocatedSource(Identifier $identifier): LocatedSource|null
+    protected function createLocatedSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\LocatedSource
     {
         if ($identifier->getType()->getName() !== IdentifierType::IDENTIFIER_CLASS) {
             return null;
