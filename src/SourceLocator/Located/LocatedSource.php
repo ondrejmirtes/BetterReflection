@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Located;
+namespace PHPStan\BetterReflection\SourceLocator\Located;
 
 use InvalidArgumentException;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
-use Roave\BetterReflection\Util\FileHelper;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use PHPStan\BetterReflection\Util\FileHelper;
 
 use function assert;
 

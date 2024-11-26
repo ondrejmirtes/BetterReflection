@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\SourceStubber;
+namespace PHPStan\BetterReflection\SourceLocator\SourceStubber;
 
 /** @internal */
 class StubData

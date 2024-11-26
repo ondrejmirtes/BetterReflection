@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type;
+namespace PHPStan\BetterReflection\SourceLocator\Type;
 
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\Reflection;
-use Roave\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\Reflection;
+use PHPStan\BetterReflection\Reflector\Reflector;
 
 interface SourceLocator
 {
@@ -21,7 +21,7 @@ interface SourceLocator
      * locate the identifier, it should simply return null. If an exception is
      * thrown, it will break the Generic Reflector.
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection;
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\PHPStan\BetterReflection\Reflection\Reflection;
 
     /**
      * Find all identifiers of a type

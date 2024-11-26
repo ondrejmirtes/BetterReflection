@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type;
+namespace PHPStan\BetterReflection\SourceLocator\Type;
 
 use InvalidArgumentException;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
-use Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData;
 
 final class PhpInternalSourceLocator extends AbstractSourceLocator
 {
@@ -28,14 +28,14 @@ final class PhpInternalSourceLocator extends AbstractSourceLocator
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    protected function createLocatedSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\LocatedSource
+    protected function createLocatedSource(Identifier $identifier): ?\PHPStan\BetterReflection\SourceLocator\Located\LocatedSource
     {
         return $this->getClassSource($identifier)
             ?? $this->getFunctionSource($identifier)
             ?? $this->getConstantSource($identifier);
     }
 
-    private function getClassSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource
+    private function getClassSource(Identifier $identifier): ?\PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource
     {
         if (! $identifier->isClass()) {
             return null;
@@ -47,7 +47,7 @@ final class PhpInternalSourceLocator extends AbstractSourceLocator
         return $this->createLocatedSourceFromStubData($identifier, $this->stubber->generateClassStub($className));
     }
 
-    private function getFunctionSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource
+    private function getFunctionSource(Identifier $identifier): ?\PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource
     {
         if (! $identifier->isFunction()) {
             return null;
@@ -56,7 +56,7 @@ final class PhpInternalSourceLocator extends AbstractSourceLocator
         return $this->createLocatedSourceFromStubData($identifier, $this->stubber->generateFunctionStub($identifier->getName()));
     }
 
-    private function getConstantSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource
+    private function getConstantSource(Identifier $identifier): ?\PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource
     {
         if (! $identifier->isConstant()) {
             return null;
@@ -65,7 +65,7 @@ final class PhpInternalSourceLocator extends AbstractSourceLocator
         return $this->createLocatedSourceFromStubData($identifier, $this->stubber->generateConstantStub($identifier->getName()));
     }
 
-    private function createLocatedSourceFromStubData(Identifier $identifier, ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData $stubData): ?\Roave\BetterReflection\SourceLocator\Located\InternalLocatedSource
+    private function createLocatedSourceFromStubData(Identifier $identifier, ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData $stubData): ?\PHPStan\BetterReflection\SourceLocator\Located\InternalLocatedSource
     {
         if ($stubData === null) {
             return null;
