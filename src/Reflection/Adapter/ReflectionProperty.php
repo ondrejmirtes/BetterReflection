@@ -325,10 +325,10 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->getType();
     }
 
-    public function getRawValue(object $object): mixed
+    /*public function getRawValue(object $object): mixed
     {
         throw new Exception\NotImplemented('Not implemented');
-    }
+    }*/
 
     public function setRawValue(object $object, mixed $value): void
     {
