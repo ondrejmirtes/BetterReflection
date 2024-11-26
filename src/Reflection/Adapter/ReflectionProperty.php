@@ -30,6 +30,7 @@ use function sprintf;
 final class ReflectionProperty extends CoreReflectionProperty
 {
 
+    private BetterReflectionProperty $betterReflectionProperty;
     /** @internal */
     public const IS_FINAL_COMPATIBILITY = 32;
 
@@ -48,8 +49,9 @@ final class ReflectionProperty extends CoreReflectionProperty
     /** @internal */
     public const IS_READONLY_COMPATIBILITY = 128;
 
-    public function __construct(private BetterReflectionProperty $betterReflectionProperty)
+    public function __construct(BetterReflectionProperty $betterReflectionProperty)
     {
+        $this->betterReflectionProperty = $betterReflectionProperty;
         unset($this->name);
         unset($this->class);
     }
@@ -67,34 +69,40 @@ final class ReflectionProperty extends CoreReflectionProperty
 
     /**
      * {@inheritDoc}
+     * @return mixed
      */
     #[ReturnTypeWillChange]
-    public function getValue($object = null): mixed
+    public function getValue($object = null)
     {
         try {
             return $this->betterReflectionProperty->getValue($object);
-        } catch (NoObjectProvided) {
+        } catch (NoObjectProvided $exception) {
             return null;
         } catch (Throwable $e) {
             throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
-    /** @psalm-suppress MethodSignatureMismatch */
-    public function setValue(mixed $objectOrValue, mixed $value = null): void
+    /** @psalm-suppress MethodSignatureMismatch
+     * @param mixed $objectOrValue
+     * @param mixed $value */
+    public function setValue($objectOrValue, $value = null): void
     {
         try {
             $this->betterReflectionProperty->setValue($objectOrValue, $value);
-        } catch (NoObjectProvided) {
+        } catch (NoObjectProvided $exception) {
             throw new ArgumentCountError('ReflectionProperty::setValue() expects exactly 2 arguments, 1 given');
-        } catch (NotAnObject) {
+        } catch (NotAnObject $exception) {
             throw new TypeError(sprintf('ReflectionProperty::setValue(): Argument #1 ($objectOrValue) must be of type object, %s given', gettype($objectOrValue)));
         } catch (Throwable $e) {
             throw new CoreReflectionException($e->getMessage(), 0, $e);
         }
     }
 
-    public function setRawValueWithoutLazyInitialization(object $object, mixed $value): void
+    /**
+     * @param mixed $value
+     */
+    public function setRawValueWithoutLazyInitialization(object $object, $value): void
     {
         throw new Exception\NotImplemented('Not implemented');
     }
@@ -252,7 +260,7 @@ final class ReflectionProperty extends CoreReflectionProperty
      *
      * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
-    public function getAttributes(string|null $name = null, int $flags = 0): array
+    public function getAttributes(?string $name = null, int $flags = 0): array
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
@@ -266,7 +274,7 @@ final class ReflectionProperty extends CoreReflectionProperty
             $attributes = $this->betterReflectionProperty->getAttributes();
         }
 
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
+        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute) => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
     }
 
     public function isReadOnly(): bool
@@ -292,7 +300,7 @@ final class ReflectionProperty extends CoreReflectionProperty
     }
 
     /** @psalm-suppress UndefinedClass */
-    public function getHook(PropertyHookType $hookType): ReflectionMethod|null
+    public function getHook(PropertyHookType $hookType): ?\Roave\BetterReflection\Reflection\Adapter\ReflectionMethod
     {
         $hook = $this->betterReflectionProperty->getHook(BetterReflectionPropertyHookType::fromCoreReflectionPropertyHookType($hookType));
         if ($hook === null) {
@@ -311,7 +319,10 @@ final class ReflectionProperty extends CoreReflectionProperty
         );
     }
 
-    public function getSettableType(): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null
+     */
+    public function getSettableType()
     {
         $setHook = $this->betterReflectionProperty->getHook(BetterReflectionPropertyHookType::Set);
         if ($setHook !== null) {
@@ -325,12 +336,18 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->getType();
     }
 
-    public function getRawValue(object $object): mixed
+    /**
+     * @return mixed
+     */
+    public function getRawValue(object $object)
     {
         throw new Exception\NotImplemented('Not implemented');
     }
 
-    public function setRawValue(object $object, mixed $value): void
+    /**
+     * @param mixed $value
+     */
+    public function setRawValue(object $object, $value): void
     {
         if ($this->hasHooks()) {
             throw new Exception\NotImplemented('Not implemented');
@@ -339,7 +356,10 @@ final class ReflectionProperty extends CoreReflectionProperty
         $this->setValue($object, $value);
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterReflectionProperty->getName();

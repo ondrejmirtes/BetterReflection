@@ -27,9 +27,13 @@ use function strtoupper;
 /** @internal */
 class CachingVisitor extends NodeVisitorAbstract
 {
+    private BuilderFactory $builderFactory;
     private const TRUE_FALSE_NULL = ['true', 'false', 'null'];
 
-    private Node\Stmt\Namespace_|null $currentNamespace = null;
+    /**
+     * @var \PhpParser\Node\Stmt\Namespace_|null
+     */
+    private $currentNamespace = null;
 
     /** @var array<string, array{0: Node\Stmt\ClassLike, 1: Node\Stmt\Namespace_|null}> */
     private array $classNodes = [];
@@ -40,11 +44,12 @@ class CachingVisitor extends NodeVisitorAbstract
     /** @var array<string, array{0: Node\Stmt\Const_|Node\Expr\FuncCall, 1: Node\Stmt\Namespace_|null}> */
     private array $constantNodes = [];
 
-    public function __construct(private BuilderFactory $builderFactory)
+    public function __construct(BuilderFactory $builderFactory)
     {
+        $this->builderFactory = $builderFactory;
     }
 
-    public function enterNode(Node $node): int|null
+    public function enterNode(Node $node): ?int
     {
         if ($node instanceof Node\Stmt\Namespace_) {
             $this->currentNamespace = $node;
@@ -121,7 +126,7 @@ class CachingVisitor extends NodeVisitorAbstract
             // No invalid definition in PhpStorm stubs
             try {
                 ConstantNodeChecker::assertValidDefineFunctionCall($node->expr);
-            } catch (InvalidConstantNode) {
+            } catch (InvalidConstantNode $exception) {
                 return null;
             }
 
@@ -195,8 +200,9 @@ class CachingVisitor extends NodeVisitorAbstract
 
     /**
      * Some constants have different values on different systems, some are not actual in stubs.
+     * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Const_ $node
      */
-    private function updateConstantValue(Node\Expr\FuncCall|Node\Const_ $node, string $constantName): void
+    private function updateConstantValue($node, string $constantName): void
     {
         // prevent autoloading while discovering class constants
         $parts = explode('::', $constantName, 2);

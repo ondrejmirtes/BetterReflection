@@ -12,6 +12,7 @@ use function strtolower;
 /** @psalm-immutable */
 final class ReflectionNamedType extends CoreReflectionNamedType
 {
+    private bool $allowsNull;
     /** @var non-empty-string */
     private string $nameType;
 
@@ -21,8 +22,9 @@ final class ReflectionNamedType extends CoreReflectionNamedType
     private string $toString;
 
     /** @param \Roave\BetterReflection\Reflection\ReflectionNamedType|non-empty-string $type */
-    public function __construct(BetterReflectionNamedType|string $type, private bool $allowsNull)
+    public function __construct($type, bool $allowsNull)
     {
+        $this->allowsNull = $allowsNull;
         if ($type instanceof BetterReflectionNamedType) {
             $nameType        = $type->getName();
             $this->nameType  = $nameType;
