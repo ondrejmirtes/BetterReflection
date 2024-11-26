@@ -113,18 +113,10 @@ class ReflectionMethodTest extends TestCase
 
     /** @param non-empty-string $methodName */
     #[DataProvider('visibilityProvider')]
-    public function testVisibilityOfMethods(
-        string $methodName,
-        bool $shouldBePublic,
-        bool $shouldBePrivate,
-        bool $shouldBeProtected,
-        bool $shouldBeFinal,
-        bool $shouldBeAbstract,
-        bool $shouldBeStatic,
-    ): void {
+    public function testVisibilityOfMethods(string $methodName, bool $shouldBePublic, bool $shouldBePrivate, bool $shouldBeProtected, bool $shouldBeFinal, bool $shouldBeAbstract, bool $shouldBeStatic) : void
+    {
         $classInfo        = $this->reflector->reflectClass(Methods::class);
         $reflectionMethod = $classInfo->getMethod($methodName);
-
         self::assertSame($shouldBePublic, $reflectionMethod->isPublic());
         self::assertSame($shouldBePrivate, $reflectionMethod->isPrivate());
         self::assertSame($shouldBeProtected, $reflectionMethod->isProtected());
@@ -329,7 +321,7 @@ class ReflectionMethodTest extends TestCase
 
     /** @param non-empty-string $method */
     #[DataProvider('prototypeProvider')]
-    public function testGetPrototype(string $class, string $method, string|null $expectedPrototype): void
+    public function testGetPrototype(string $class, string $method, ?string $expectedPrototype): void
     {
         $fixture   = __DIR__ . '/../Fixture/PrototypeTree.php';
         $reflector = new DefaultReflector(new SingleFileSourceLocator($fixture, $this->astLocator));
