@@ -588,14 +588,20 @@ class ReflectionProperty
         return $this->getHooks() !== [];
     }
 
-    public function hasHook(ReflectionPropertyHookType $hookType): bool
+    /**
+     * @param ReflectionPropertyHookType::* $hookType
+     */
+    public function hasHook(string $hookType): bool
     {
-        return isset($this->getHooks()[$hookType->value]);
+        return isset($this->getHooks()[$hookType]);
     }
 
-    public function getHook(ReflectionPropertyHookType $hookType): ReflectionMethod|null
+    /**
+     * @param @param ReflectionPropertyHookType::* $hookType
+     */
+    public function getHook(string $hookType): ReflectionMethod|null
     {
-        return $this->getHooks()[$hookType->value] ?? null;
+        return $this->getHooks()[$hookType] ?? null;
     }
 
     /** @return array{get?: ReflectionMethod, set?: ReflectionMethod} */
