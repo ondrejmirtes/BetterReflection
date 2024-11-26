@@ -365,12 +365,6 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->getType();
     }
 
-    /** @return never */
-    public function getRawValue(object $object): mixed
-    {
-        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
-    }
-
     public function setRawValue(object $object, mixed $value): void
     {
         if ($this->hasHooks()) {

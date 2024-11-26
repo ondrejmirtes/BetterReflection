@@ -38,7 +38,9 @@ use Throwable;
 use TypeError;
 
 use function array_combine;
+use function array_diff;
 use function array_map;
+use function array_values;
 use function get_class_methods;
 use function is_array;
 
@@ -48,7 +50,8 @@ class ReflectionPropertyTest extends TestCase
     /** @return array<string, array{0: string}> */
     public static function coreReflectionMethodNamesProvider(): array
     {
-        $methods = get_class_methods(CoreReflectionProperty::class);
+        // getRawValue() is left out of the adapter because its mixed return type is wrongly downgraded
+        $methods = array_values(array_diff(get_class_methods(CoreReflectionProperty::class), ['getRawValue']));
 
         return array_combine($methods, array_map(static fn (string $i): array => [$i], $methods));
     }
@@ -685,16 +688,6 @@ class ReflectionPropertyTest extends TestCase
 
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
         $reflectionPropertyAdapter->setRawValue(new stdClass(), null);
-    }
-
-    public function testGetRawValue(): void
-    {
-        self::expectException(NotImplementedBecauseItTriggersAutoloading::class);
-        self::expectExceptionMessage('Not implemented because it triggers autoloading');
-
-        $betterReflectionProperty  = self::createStub(BetterReflectionProperty::class);
-        $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
-        $reflectionPropertyAdapter->getRawValue(new stdClass());
     }
 
     public function testGetMangledNameForPublicProperty(): void
