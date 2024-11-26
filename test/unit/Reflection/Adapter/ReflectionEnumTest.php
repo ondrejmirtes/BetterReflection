@@ -133,36 +133,27 @@ class ReflectionEnumTest extends TestCase
         ];
     }
 
-    /** @param list<mixed> $args */
+    /** @param list<mixed> $args
+     * @param mixed $returnValue
+     * @param mixed $expectedReturnValue */
     #[DataProvider('methodExpectationProvider')]
-    public function testAdapterMethods(
-        string $methodName,
-        array $args,
-        mixed $returnValue,
-        string|null $expectedException,
-        mixed $expectedReturnValue,
-    ): void {
+    public function testAdapterMethods(string $methodName, array $args, $returnValue, ?string $expectedException, $expectedReturnValue) : void
+    {
         $reflectionStub = $this->createMock(BetterReflectionEnum::class);
-
         if ($expectedException === null) {
             $reflectionStub->expects($this->once())
                 ->method($methodName)
                 ->with(...$args)
                 ->willReturn($returnValue);
         }
-
         $adapter = new ReflectionEnumAdapter($reflectionStub);
-
         if ($expectedException !== null) {
             $this->expectException($expectedException);
         }
-
         $actualReturnValue = $adapter->{$methodName}(...$args);
-
         if ($expectedReturnValue === null) {
             return;
         }
-
         self::assertSame($expectedReturnValue, $actualReturnValue);
     }
 
