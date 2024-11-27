@@ -36,6 +36,11 @@ final class ReflectionEnumBackedCase extends CoreReflectionEnumBackedCase
         return $this->betterReflectionEnumCase->getName();
     }
 
+    public function getBetterReflection(): BetterReflectionEnumCase
+    {
+        return $this->betterReflectionEnumCase;
+    }
+
     public function hasType(): bool
     {
         return false;

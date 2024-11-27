@@ -58,6 +58,11 @@ final class ReflectionClass extends CoreReflectionClass
         unset($this->name);
     }
 
+    public function getBetterReflection(): BetterReflectionClass|BetterReflectionEnum
+    {
+        return $this->betterReflectionClass;
+    }
+
     /** @return non-empty-string */
     public function __toString(): string
     {

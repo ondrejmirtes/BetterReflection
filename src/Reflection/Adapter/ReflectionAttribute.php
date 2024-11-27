@@ -22,6 +22,11 @@ final class ReflectionAttribute extends CoreReflectionAttribute
         unset($this->name);
     }
 
+    public function getBetterReflection(): BetterReflectionAttribute
+    {
+        return $this->betterReflectionAttribute;
+    }
+
     /** @psalm-mutation-free */
     public function getName(): string
     {

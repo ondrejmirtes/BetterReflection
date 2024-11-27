@@ -47,6 +47,11 @@ final class ReflectionParameter extends CoreReflectionParameter
         return $this->betterReflectionParameter->getName();
     }
 
+    public function getBetterReflection(): BetterReflectionParameter
+    {
+        return $this->betterReflectionParameter;
+    }
+
     public function getDocComment(): string|false
     {
         return $this->betterReflectionParameter->getDocComment() ?? false;
