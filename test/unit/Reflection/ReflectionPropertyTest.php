@@ -322,7 +322,7 @@ class ReflectionPropertyTest extends TestCase
     public function testToString(): void
     {
         $classInfo = $this->reflector->reflectClass(ExampleClass::class);
-        self::assertSame('Property [ <default> public $publicProperty ]', (string) $classInfo->getProperty('publicProperty'));
+        self::assertSame("/**\n     * @var string\n     */\nProperty [ <default> public \$publicProperty ]", (string) $classInfo->getProperty('publicProperty'));
     }
 
     /** @return list<array{0: non-empty-string, 1: bool, 2: mixed, 3: class-string|null}> */

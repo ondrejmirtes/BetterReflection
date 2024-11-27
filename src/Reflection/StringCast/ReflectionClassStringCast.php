@@ -177,7 +177,7 @@ final class ReflectionClassStringCast
             return '';
         }
 
-        return self::itemsToString(array_map(static fn (ReflectionProperty $propertyReflection): string => ReflectionPropertyStringCast::toString($propertyReflection), $properties));
+        return self::itemsToString(array_map(static fn (ReflectionProperty $propertyReflection): string => ReflectionPropertyStringCast::toString($propertyReflection, indentDocComment: false), $properties));
     }
 
     /**

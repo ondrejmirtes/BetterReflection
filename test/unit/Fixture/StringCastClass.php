@@ -41,6 +41,11 @@ abstract class StringCastClass extends StringCastClassParent implements StringCa
 
     public readonly int $readOnlyProperty;
 
+    /**
+     * @var string
+     */
+    public $propertyWithDocComment;
+
     public function __construct()
     {
     }

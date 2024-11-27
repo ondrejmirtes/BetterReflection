@@ -14,4 +14,9 @@ class StringCastProperties
     public ?int $nullableTypeProperty = null;
 
     public readonly int $readOnlyProperty;
+
+    /**
+     * @var string
+     */
+    public $propertyWithDocComment;
 }

@@ -38,6 +38,7 @@ class ReflectionPropertyStringCastTest extends TestCase
             ['unionTypeProperty', 'Property [ <default> public int|bool $unionTypeProperty ]'],
             ['nullableTypeProperty', 'Property [ <default> public ?int $nullableTypeProperty ]'],
             ['readOnlyProperty', 'Property [ <default> public readonly int $readOnlyProperty ]'],
+            ['propertyWithDocComment', "/**\n     * @var string\n     */\nProperty [ <default> public \$propertyWithDocComment ]"],
         ];
     }
 

@@ -22,11 +22,21 @@ Class [ <user> class Roave\BetterReflectionTest\Fixture\ExampleClass ] {
   }
 
   - Properties [7] {
+    /**
+     * @var int|float|\stdClass
+     */
     Property [ <default> private $privateProperty ]
+    /**
+     * @var bool|bool[]|bool[][]
+     */
     Property [ <default> protected $protectedProperty ]
+    /**
+     * @var string
+     */
     Property [ <default> public $publicProperty ]
     Property [ <default> public readonly int $readOnlyProperty ]
     Property [ <default> public int $finalPublicProperty ]
+    /** Some doccomment */
     Property [ <default> private ?int $promotedProperty ]
     Property [ <default> private $promotedProperty2 ]
   }
