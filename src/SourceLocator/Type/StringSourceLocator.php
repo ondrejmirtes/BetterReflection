@@ -19,9 +19,14 @@ use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
  */
 class StringSourceLocator extends AbstractSourceLocator
 {
+    /**
+     * @var non-empty-string
+     */
+    private string $source;
     /** @param non-empty-string $source */
-    public function __construct(private string $source, Locator $astLocator)
+    public function __construct(string $source, Locator $astLocator)
     {
+        $this->source = $source;
         parent::__construct($astLocator);
     }
 
@@ -31,7 +36,7 @@ class StringSourceLocator extends AbstractSourceLocator
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    protected function createLocatedSource(Identifier $identifier): LocatedSource|null
+    protected function createLocatedSource(Identifier $identifier): ?\Roave\BetterReflection\SourceLocator\Located\LocatedSource
     {
         return new LocatedSource(
             $this->source,
