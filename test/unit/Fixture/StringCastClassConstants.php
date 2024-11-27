@@ -9,4 +9,9 @@ class StringCastConstants
     private const PRIVATE_CONSTANT = 'string';
     const NO_VISIBILITY_CONSTANT = [];
     final public const FINAL_CONSTANT = 'final';
+
+    /**
+     * @var string
+     */
+    const WITH_DOC_COMMENT_CONSTANT = 'string';
 }

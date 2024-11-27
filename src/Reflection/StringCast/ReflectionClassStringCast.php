@@ -160,8 +160,8 @@ final class ReflectionClassStringCast
             return '';
         }
 
-        $items = array_map(static fn (ReflectionEnumCase $enumCaseReflection): string => trim(ReflectionEnumCaseStringCast::toString($enumCaseReflection)), $enumCases)
-            + array_map(static fn (ReflectionClassConstant $constantReflection): string => trim(ReflectionClassConstantStringCast::toString($constantReflection)), $constants);
+        $items = array_map(static fn (ReflectionEnumCase $enumCaseReflection): string => trim(ReflectionEnumCaseStringCast::toString($enumCaseReflection, indentDocComment: false)), $enumCases)
+            + array_map(static fn (ReflectionClassConstant $constantReflection): string => trim(ReflectionClassConstantStringCast::toString($constantReflection, indentDocComment: false)), $constants);
 
         return self::itemsToString($items);
     }

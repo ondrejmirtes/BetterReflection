@@ -30,6 +30,11 @@ abstract class StringCastClass extends StringCastClassParent implements StringCa
     private const PRIVATE_CONSTANT = 'string';
     const NO_VISIBILITY_CONSTANT = [];
 
+    /**
+     * @var string
+     */
+    const WITH_DOC_COMMENT_CONSTANT = 'string';
+
     private $privateProperty = 'string';
     protected $protectedProperty = 0;
     public $publicProperty = true;

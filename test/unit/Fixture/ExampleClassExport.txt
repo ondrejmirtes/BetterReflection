@@ -3,6 +3,9 @@ Class [ <user> class Roave\BetterReflectionTest\Fixture\ExampleClass ] {
 
   - Constants [8] {
     Constant [ public integer MY_CONST_1 ] { 123 }
+    /**
+     * This comment for constant should be used.
+     */
     Constant [ public integer MY_CONST_2 ] { 234 }
     Constant [ public integer MY_CONST_3 ] { 345 }
     Constant [ protected integer MY_CONST_4 ] { 456 }

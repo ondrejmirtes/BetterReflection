@@ -1,8 +1,12 @@
 Class [ <user> final class Roave\BetterReflectionTest\Fixture\StringCastPureEnum implements UnitEnum ] {
-  @@ %s/Fixture/StringCastPureEnum.php 5-10
+  @@ %s/Fixture/StringCastPureEnum.php 5-15
 
-  - Constants [2] {
+  - Constants [3] {
     Constant [ public Roave\BetterReflectionTest\Fixture\StringCastPureEnum ENUM_CASE ] { Object }
+    /**
+     * Something
+     */
+    Constant [ public Roave\BetterReflectionTest\Fixture\StringCastPureEnum ENUM_CASE_WITH_DOC_COMMENT ] { Object }
     Constant [ public string CONSTANT ] { constant }
   }
 

@@ -114,9 +114,9 @@ class ReflectionEnumCaseTest extends TestCase
     public static function dataLinesAndColumns(): array
     {
         return [
-            [PureEnum::class, 'ONE', 7, 7, 5, 13],
-            [IntEnum::class, 'TWO', 19, 19, 5, 17],
-            [StringEnum::class, 'THREE', 34, 35, 5, 18],
+            [PureEnum::class, 'ONE', 11, 11, 5, 13],
+            [IntEnum::class, 'TWO', 23, 23, 5, 17],
+            [StringEnum::class, 'THREE', 38, 39, 5, 18],
         ];
     }
 
@@ -251,6 +251,6 @@ class ReflectionEnumCaseTest extends TestCase
 
         self::assertInstanceOf(ReflectionEnum::class, $enumReflection);
 
-        self::assertSame("Constant [ public Roave\BetterReflectionTest\Fixture\PureEnum ONE ] { Object }\n", (string) $enumReflection->getCase('ONE'));
+        self::assertSame("/**\n     * One\n     */\nConstant [ public Roave\BetterReflectionTest\Fixture\PureEnum ONE ] { Object }\n", (string) $enumReflection->getCase('ONE'));
     }
 }

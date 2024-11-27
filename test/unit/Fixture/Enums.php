@@ -4,6 +4,10 @@ namespace Roave\BetterReflectionTest\Fixture;
 
 enum PureEnum implements InterfaceForEnum
 {
+
+    /**
+     * One
+     */
     case ONE;
     case TWO;
     case THREE;

@@ -35,6 +35,7 @@ class ReflectionClassConstantStringCastTest extends TestCase
             ['PRIVATE_CONSTANT', "Constant [ private string PRIVATE_CONSTANT ] { string }\n"],
             ['NO_VISIBILITY_CONSTANT', "Constant [ public array NO_VISIBILITY_CONSTANT ] { Array }\n"],
             ['FINAL_CONSTANT', "Constant [ final public string FINAL_CONSTANT ] { final }\n"],
+            ['WITH_DOC_COMMENT_CONSTANT', "/**\n     * @var string\n     */\nConstant [ public string WITH_DOC_COMMENT_CONSTANT ] { string }\n"],
         ];
     }
 

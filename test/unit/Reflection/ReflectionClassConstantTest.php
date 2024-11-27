@@ -100,7 +100,7 @@ class ReflectionClassConstantTest extends TestCase
 
     public function testToString(): void
     {
-        self::assertSame("Constant [ public integer MY_CONST_1 ] { 123 }\n", (string) $this->getExampleConstant('MY_CONST_1'));
+        self::assertSame("/**\n     * This comment for constant should be used.\n     */\nConstant [ public integer MY_CONST_2 ] { 234 }\n", (string) $this->getExampleConstant('MY_CONST_2'));
     }
 
     /** @param non-empty-string $const */
