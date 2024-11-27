@@ -46,6 +46,11 @@ final class ReflectionObject extends CoreReflectionObject
         return $this->betterReflectionObject->getName();
     }
 
+    public function getBetterReflection(): BetterReflectionObject
+    {
+        return $this->betterReflectionObject;
+    }
+
     public function isInternal(): bool
     {
         return $this->betterReflectionObject->isInternal();
