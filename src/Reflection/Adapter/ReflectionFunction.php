@@ -36,6 +36,11 @@ final class ReflectionFunction extends CoreReflectionFunction
         return $this->betterReflectionFunction->__toString();
     }
 
+    public function getBetterReflection(): BetterReflectionFunction
+    {
+        return $this->betterReflectionFunction;
+    }
+
     public function inNamespace(): bool
     {
         return $this->betterReflectionFunction->inNamespace();
