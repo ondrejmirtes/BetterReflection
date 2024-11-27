@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection\Adapter;
 
 use Attribute;
+use OutOfBoundsException;
 use ReflectionAttribute as CoreReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+
+use function sprintf;
 
 /** @template-extends CoreReflectionAttribute<object> */
 final class ReflectionAttribute extends CoreReflectionAttribute
 {
     public function __construct(private BetterReflectionAttribute $betterReflectionAttribute)
     {
+        unset($this->name);
     }
 
     /** @psalm-mutation-free */
@@ -53,5 +57,14 @@ final class ReflectionAttribute extends CoreReflectionAttribute
     public function __toString(): string
     {
         return $this->betterReflectionAttribute->__toString();
+    }
+
+    public function __get(string $name): mixed
+    {
+        if ($name === 'name') {
+            return $this->betterReflectionAttribute->getName();
+        }
+
+        throw new OutOfBoundsException(sprintf('Property %s::$%s does not exist.', self::class, $name));
     }
 }
