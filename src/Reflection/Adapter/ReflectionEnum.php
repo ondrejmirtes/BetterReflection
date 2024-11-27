@@ -83,6 +83,11 @@ final class ReflectionEnum extends CoreReflectionEnum
         return $this->betterReflectionEnum->getName();
     }
 
+    public function getBetterReflection(): BetterReflectionEnum
+    {
+        return $this->betterReflectionEnum;
+    }
+
     public function isAnonymous(): bool
     {
         return $this->betterReflectionEnum->isAnonymous();
