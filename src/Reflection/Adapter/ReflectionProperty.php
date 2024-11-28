@@ -114,7 +114,7 @@ final class ReflectionProperty extends CoreReflectionProperty
         }
     }
 
-    public function setRawValueWithoutLazyInitialization(object $object, mixed $value): never
+    public function setRawValueWithoutLazyInitialization(object $object, mixed $value): void
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
@@ -125,7 +125,7 @@ final class ReflectionProperty extends CoreReflectionProperty
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
-    public function skipLazyInitialization(object $object): never
+    public function skipLazyInitialization(object $object): void
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
