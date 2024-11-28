@@ -15,17 +15,19 @@ use function sprintf;
 
 final class MemoizingSourceLocator implements SourceLocator
 {
+    private SourceLocator $wrappedSourceLocator;
     /** @var array<string, Reflection|null> indexed by reflector key and identifier cache key */
     private array $cacheByIdentifierKeyAndOid = [];
 
     /** @var array<string, list<Reflection>> indexed by reflector key and identifier type cache key */
     private array $cacheByIdentifierTypeKeyAndOid = [];
 
-    public function __construct(private SourceLocator $wrappedSourceLocator)
+    public function __construct(SourceLocator $wrappedSourceLocator)
     {
+        $this->wrappedSourceLocator = $wrappedSourceLocator;
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         $cacheKey = sprintf('%s_%s', $this->reflectorCacheKey($reflector), $this->identifierToCacheKey($identifier));
 
@@ -52,7 +54,7 @@ final class MemoizingSourceLocator implements SourceLocator
 
     private function reflectorCacheKey(Reflector $reflector): string
     {
-        return sprintf('type:%s#oid:%d', $reflector::class, spl_object_id($reflector));
+        return sprintf('type:%s#oid:%d', get_class($reflector), spl_object_id($reflector));
     }
 
     private function identifierToCacheKey(Identifier $identifier): string

@@ -48,9 +48,10 @@ class ReflectionIntersectionTypeTest extends TestCase
         ];
     }
 
-    /** @param list<mixed> $args */
+    /** @param list<mixed> $args
+     * @param mixed $returnValue */
     #[DataProvider('methodExpectationProvider')]
-    public function testAdapterMethods(string $methodName, string|null $expectedException, mixed $returnValue, array $args): void
+    public function testAdapterMethods(string $methodName, ?string $expectedException, $returnValue, array $args): void
     {
         $reflectionStub = $this->createMock(BetterReflectionIntersectionType::class);
 

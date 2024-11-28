@@ -110,36 +110,27 @@ class ReflectionClassTest extends TestCase
         ];
     }
 
-    /** @param list<mixed> $args */
+    /** @param list<mixed> $args
+     * @param mixed $returnValue
+     * @param mixed $expectedReturnValue */
     #[DataProvider('methodExpectationProvider')]
-    public function testAdapterMethods(
-        string $methodName,
-        array $args,
-        mixed $returnValue,
-        string|null $expectedException,
-        mixed $expectedReturnValue,
-    ): void {
+    public function testAdapterMethods(string $methodName, array $args, $returnValue, ?string $expectedException, $expectedReturnValue) : void
+    {
         $reflectionStub = $this->createMock(BetterReflectionClass::class);
-
         if ($expectedException === null) {
             $reflectionStub->expects($this->once())
                 ->method($methodName)
                 ->with(...$args)
                 ->willReturn($returnValue);
         }
-
         $adapter = new ReflectionClassAdapter($reflectionStub);
-
         if ($expectedException !== null) {
             $this->expectException($expectedException);
         }
-
         $actualReturnValue = $adapter->{$methodName}(...$args);
-
         if ($expectedReturnValue === null) {
             return;
         }
-
         self::assertSame($expectedReturnValue, $actualReturnValue);
     }
 
@@ -998,7 +989,7 @@ class ReflectionClassTest extends TestCase
             ->willReturn($betterReflectionAttributes);
 
         $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionClass);
-        $attributes             = $reflectionClassAdapter->getAttributes();
+        $attributes             = method_exists($reflectionClassAdapter, 'getAttributes') ? $reflectionClassAdapter->getAttributes() : [];
 
         self::assertCount(2, $attributes);
         self::assertSame('SomeAttribute', $attributes[0]->getName());
@@ -1033,7 +1024,7 @@ class ReflectionClassTest extends TestCase
             ->willReturn($betterReflectionAttributes);
 
         $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionClass);
-        $attributes             = $reflectionClassAdapter->getAttributes($someAttributeClassName);
+        $attributes             = method_exists($reflectionClassAdapter, 'getAttributes') ? $reflectionClassAdapter->getAttributes($someAttributeClassName) : [];
 
         self::assertCount(1, $attributes);
         self::assertSame($someAttributeClassName, $attributes[0]->getName());
@@ -1135,9 +1126,9 @@ class ReflectionClassTest extends TestCase
 
         $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionClass);
 
-        self::assertCount(1, $reflectionClassAdapter->getAttributes($className, ReflectionAttributeAdapter::IS_INSTANCEOF));
-        self::assertCount(2, $reflectionClassAdapter->getAttributes($parentClassName, ReflectionAttributeAdapter::IS_INSTANCEOF));
-        self::assertCount(2, $reflectionClassAdapter->getAttributes($interfaceName, ReflectionAttributeAdapter::IS_INSTANCEOF));
+        self::assertCount(1, method_exists($reflectionClassAdapter, 'getAttributes') ? $reflectionClassAdapter->getAttributes($className, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
+        self::assertCount(2, method_exists($reflectionClassAdapter, 'getAttributes') ? $reflectionClassAdapter->getAttributes($parentClassName, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
+        self::assertCount(2, method_exists($reflectionClassAdapter, 'getAttributes') ? $reflectionClassAdapter->getAttributes($interfaceName, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
     }
 
     public function testGetAttributesThrowsExceptionForInvalidFlags(): void
@@ -1146,7 +1137,7 @@ class ReflectionClassTest extends TestCase
         $reflectionClassAdapter = new ReflectionClassAdapter($betterReflectionClass);
 
         $this->expectException(Error::class);
-        $reflectionClassAdapter->getAttributes(null, 123);
+        method_exists($reflectionClassAdapter, 'getAttributes') ? $reflectionClassAdapter->getAttributes(null, 123) : [];
     }
 
     public function testHasConstantWithEnumCase(): void
