@@ -55,12 +55,6 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionClass.php
 
 		-
-			message: '#^Method Roave\\BetterReflection\\Reflection\\Adapter\\ReflectionClass\:\:newInstanceWithoutConstructor\(\) should never return but return statement found\.$#'
-			identifier: return.never
-			count: 1
-			path: src/Reflection/Adapter/ReflectionClass.php
-
-		-
 			message: '#^Parameter \#1 \$args of method ReflectionClass\<object\>\:\:newInstanceArgs\(\) expects array\<int\|string, mixed\>, array\<int\|string, mixed\>\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -371,12 +365,6 @@ parameters:
 			identifier: staticMethod.impossibleType
 			count: 1
 			path: test/unit/Reflection/Adapter/ReflectionClassConstantTest.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: test/unit/Reflection/Adapter/ReflectionClassTest.php
 
 		-
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
