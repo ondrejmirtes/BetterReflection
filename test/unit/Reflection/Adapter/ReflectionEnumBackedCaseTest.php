@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionEnumBackedCase as CoreReflectionEnumBackedCase;
-use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
+use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplementedBecauseItTriggersAutoloading;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionEnum as ReflectionEnumAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionEnumBackedCase as ReflectionEnumBackedCaseAdapter;
@@ -51,7 +51,7 @@ class ReflectionEnumBackedCaseTest extends TestCase
             // Inherited
             ['__toString', null, '', []],
             ['getName', null, '', []],
-            ['getValue', NotImplemented::class, null, []],
+            ['getValue', NotImplementedBecauseItTriggersAutoloading::class, null, []],
             ['getDocComment', null, null, []],
             ['getAttributes', null, [], []],
             ['isDeprecated', null, true, []],

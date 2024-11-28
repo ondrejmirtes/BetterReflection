@@ -50,7 +50,7 @@ final class ReflectionAttribute extends CoreReflectionAttribute
 
     public function newInstance(): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @return non-empty-string */

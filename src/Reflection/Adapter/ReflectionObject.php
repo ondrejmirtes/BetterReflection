@@ -383,61 +383,61 @@ final class ReflectionObject extends CoreReflectionObject
 
     public function newInstance(mixed ...$args): ReflectionObject
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function newInstanceWithoutConstructor(): ReflectionObject
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function newInstanceArgs(array|null $args = null): ReflectionObject
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @param int-mask-of<ReflectionClass::SKIP_*> $options */
     public function newLazyGhost(callable $initializer, int $options = 0): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @param int-mask-of<ReflectionClass::SKIP_*> $options */
     public function newLazyProxy(callable $factory, int $options = 0): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function markLazyObjectAsInitialized(object $object): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function getLazyInitializer(object $object): callable|null
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function initializeLazyObject(object $object): object
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function isUninitializedLazyObject(object $object): bool
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @param int-mask-of<ReflectionClass::SKIP_*> $options */
     public function resetAsLazyGhost(object $object, callable $initializer, int $options = 0): void
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @param int-mask-of<ReflectionClass::SKIP_*> $options */
     public function resetAsLazyProxy(object $object, callable $factory, int $options = 0): void
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @psalm-mutation-free */

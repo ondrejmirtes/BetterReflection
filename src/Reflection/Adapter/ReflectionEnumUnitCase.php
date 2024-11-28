@@ -47,7 +47,7 @@ final class ReflectionEnumUnitCase extends CoreReflectionEnumUnitCase
 
     public function getValue(): UnitEnum
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function isPublic(): bool

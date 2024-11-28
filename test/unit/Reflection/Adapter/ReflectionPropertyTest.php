@@ -14,7 +14,7 @@ use PropertyHookType;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionException as CoreReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
-use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
+use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplementedBecauseItTriggersAutoloading;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType as ReflectionNamedTypeAdapter;
@@ -476,8 +476,8 @@ class ReflectionPropertyTest extends TestCase
 
     public function testSetRawValueWithoutLazyInitialization(): void
     {
-        self::expectException(NotImplemented::class);
-        self::expectExceptionMessage('Not implemented');
+        self::expectException(NotImplementedBecauseItTriggersAutoloading::class);
+        self::expectExceptionMessage('Not implemented because it triggers autoloading');
 
         $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
@@ -486,8 +486,8 @@ class ReflectionPropertyTest extends TestCase
 
     public function testIsLazy(): void
     {
-        self::expectException(NotImplemented::class);
-        self::expectExceptionMessage('Not implemented');
+        self::expectException(NotImplementedBecauseItTriggersAutoloading::class);
+        self::expectExceptionMessage('Not implemented because it triggers autoloading');
 
         $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
@@ -496,8 +496,8 @@ class ReflectionPropertyTest extends TestCase
 
     public function testSkipLazyInitialization(): void
     {
-        self::expectException(NotImplemented::class);
-        self::expectExceptionMessage('Not implemented');
+        self::expectException(NotImplementedBecauseItTriggersAutoloading::class);
+        self::expectExceptionMessage('Not implemented because it triggers autoloading');
 
         $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);
@@ -614,8 +614,8 @@ class ReflectionPropertyTest extends TestCase
 
     public function testSetRawValueWhenNoHooks(): void
     {
-        self::expectException(NotImplemented::class);
-        self::expectExceptionMessage('Not implemented');
+        self::expectException(NotImplementedBecauseItTriggersAutoloading::class);
+        self::expectExceptionMessage('Not implemented because it triggers autoloading');
 
         $betterReflectionProperty = $this->createMock(BetterReflectionProperty::class);
         $betterReflectionProperty
@@ -628,8 +628,8 @@ class ReflectionPropertyTest extends TestCase
 
     public function testGetRawValue(): void
     {
-        self::expectException(NotImplemented::class);
-        self::expectExceptionMessage('Not implemented');
+        self::expectException(NotImplementedBecauseItTriggersAutoloading::class);
+        self::expectExceptionMessage('Not implemented because it triggers autoloading');
 
         $betterReflectionProperty  = $this->createMock(BetterReflectionProperty::class);
         $reflectionPropertyAdapter = new ReflectionPropertyAdapter($betterReflectionProperty);

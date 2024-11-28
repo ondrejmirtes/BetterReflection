@@ -107,17 +107,17 @@ final class ReflectionProperty extends CoreReflectionProperty
 
     public function setRawValueWithoutLazyInitialization(object $object, mixed $value): void
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function isLazy(object $object): bool
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function skipLazyInitialization(object $object): void
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @psalm-mutation-free */
@@ -327,13 +327,13 @@ final class ReflectionProperty extends CoreReflectionProperty
 
     public function getRawValue(object $object): mixed
     {
-        throw new Exception\NotImplemented('Not implemented');
+        throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     public function setRawValue(object $object, mixed $value): void
     {
         if ($this->hasHooks()) {
-            throw new Exception\NotImplemented('Not implemented');
+            throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
         }
 
         $this->setValue($object, $value);
