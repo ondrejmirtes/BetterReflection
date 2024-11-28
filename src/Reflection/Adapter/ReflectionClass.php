@@ -577,13 +577,13 @@ final class ReflectionClass extends CoreReflectionClass
     }
 
     /** @param int-mask-of<self::SKIP_*> $options */
-    public function resetAsLazyGhost(object $object, callable $initializer, int $options = 0): never
+    public function resetAsLazyGhost(object $object, callable $initializer, int $options = 0): void
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
     /** @param int-mask-of<self::SKIP_*> $options */
-    public function resetAsLazyProxy(object $object, callable $factory, int $options = 0): never
+    public function resetAsLazyProxy(object $object, callable $factory, int $options = 0): void
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
