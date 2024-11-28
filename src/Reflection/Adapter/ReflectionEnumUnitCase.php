@@ -45,6 +45,7 @@ final class ReflectionEnumUnitCase extends CoreReflectionEnumUnitCase
         return null;
     }
 
+    /** @return never */
     public function getValue(): UnitEnum
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();

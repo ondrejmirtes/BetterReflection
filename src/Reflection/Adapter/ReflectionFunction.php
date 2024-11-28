@@ -244,7 +244,11 @@ final class ReflectionFunction extends CoreReflectionFunction
         return $this->betterReflectionFunction->getClosure();
     }
 
-    /** @return mixed[] */
+    /**
+     * @return never
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
+     */
     public function getClosureUsedVariables(): array
     {
         throw new Exception\NotImplemented('Not implemented');

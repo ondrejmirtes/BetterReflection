@@ -401,7 +401,11 @@ final class ReflectionMethod extends CoreReflectionMethod
         return ReflectionType::fromTypeOrNull($this->betterReflectionMethod->getTentativeReturnType());
     }
 
-    /** @return mixed[] */
+    /**
+     * @return never
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
+     */
     public function getClosureUsedVariables(): array
     {
         throw new Exception\NotImplemented('Not implemented');

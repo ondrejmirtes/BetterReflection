@@ -48,6 +48,7 @@ final class ReflectionAttribute extends CoreReflectionAttribute
         return $this->betterReflectionAttribute->getArguments();
     }
 
+    /** @return never */
     public function newInstance(): object
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();

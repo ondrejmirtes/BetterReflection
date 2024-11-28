@@ -105,17 +105,18 @@ final class ReflectionProperty extends CoreReflectionProperty
         }
     }
 
-    public function setRawValueWithoutLazyInitialization(object $object, mixed $value): void
+    public function setRawValueWithoutLazyInitialization(object $object, mixed $value): never
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
+    /** @return never */
     public function isLazy(object $object): bool
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
 
-    public function skipLazyInitialization(object $object): void
+    public function skipLazyInitialization(object $object): never
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
     }
@@ -325,6 +326,7 @@ final class ReflectionProperty extends CoreReflectionProperty
         return $this->getType();
     }
 
+    /** @return never */
     public function getRawValue(object $object): mixed
     {
         throw Exception\NotImplementedBecauseItTriggersAutoloading::create();
