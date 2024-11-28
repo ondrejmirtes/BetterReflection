@@ -6,7 +6,6 @@ namespace Roave\BetterReflection\Reflection\StringCast;
 
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 
-use function preg_replace;
 use function sprintf;
 
 /** @internal */
@@ -29,7 +28,7 @@ final class ReflectionPropertyStringCast
 
         return sprintf(
             '%sProperty [%s %s%s%s%s $%s ]',
-            self::docCommentToString($propertyReflection, $indentDocComment),
+            ReflectionStringCastHelper::docCommentToString($propertyReflection, $indentDocComment),
             $stateModifier,
             self::visibilityToString($propertyReflection),
             $propertyReflection->isStatic() ? ' static' : '',
@@ -37,18 +36,6 @@ final class ReflectionPropertyStringCast
             $type !== null ? sprintf(' %s', ReflectionTypeStringCast::toString($type)) : '',
             $propertyReflection->getName(),
         );
-    }
-
-    /** @psalm-pure */
-    private static function docCommentToString(ReflectionProperty $propertyReflection, bool $indent): string
-    {
-        $docComment = $propertyReflection->getDocComment();
-
-        if ($docComment === null) {
-            return '';
-        }
-
-        return ($indent ? preg_replace('/(\n)(?!\n)/', '\1    ', $docComment) : $docComment) . "\n";
     }
 
     /** @psalm-pure */

@@ -7,7 +7,6 @@ namespace Roave\BetterReflection\Reflection\StringCast;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase;
 
 use function gettype;
-use function preg_replace;
 use function sprintf;
 
 /** @internal */
@@ -27,22 +26,10 @@ final class ReflectionEnumCaseStringCast
 
         return sprintf(
             "%sConstant [ public %s %s ] { %s }\n",
-            self::docCommentToString($enumCaseReflection, $indentDocComment),
+            ReflectionStringCastHelper::docCommentToString($enumCaseReflection, $indentDocComment),
             $type,
             $enumCaseReflection->getName(),
             $value,
         );
-    }
-
-    /** @psalm-pure */
-    private static function docCommentToString(ReflectionEnumCase $enumCaseReflection, bool $indent): string
-    {
-        $docComment = $enumCaseReflection->getDocComment();
-
-        if ($docComment === null) {
-            return '';
-        }
-
-        return ($indent ? preg_replace('/(\n)(?!\n)/', '\1    ', $docComment) : $docComment) . "\n";
     }
 }

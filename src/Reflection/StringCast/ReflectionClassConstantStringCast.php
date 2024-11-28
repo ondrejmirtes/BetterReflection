@@ -8,7 +8,6 @@ use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 
 use function gettype;
 use function is_array;
-use function preg_replace;
 use function sprintf;
 
 /** @internal */
@@ -26,25 +25,13 @@ final class ReflectionClassConstantStringCast
 
         return sprintf(
             "%sConstant [ %s%s %s %s ] { %s }\n",
-            self::docCommentToString($constantReflection, $indentDocComment),
+            ReflectionStringCastHelper::docCommentToString($constantReflection, $indentDocComment),
             $constantReflection->isFinal() ? 'final ' : '',
             self::visibilityToString($constantReflection),
             gettype($value),
             $constantReflection->getName(),
             is_array($value) ? 'Array' : (string) $value,
         );
-    }
-
-    /** @psalm-pure */
-    private static function docCommentToString(ReflectionClassConstant $constantReflection, bool $indent): string
-    {
-        $docComment = $constantReflection->getDocComment();
-
-        if ($docComment === null) {
-            return '';
-        }
-
-        return ($indent ? preg_replace('/(\n)(?!\n)/', '\1    ', $docComment) : $docComment) . "\n";
     }
 
     /** @psalm-pure */
