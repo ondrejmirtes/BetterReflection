@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type;
+namespace PHPStan\BetterReflection\SourceLocator\Type;
 
 use Iterator;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\Reflection;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\Reflection;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
 use SplFileInfo;
 
 use function array_filter;
@@ -29,7 +29,7 @@ class FileIteratorSourceLocator implements SourceLocator
 {
     private Locator $astLocator;
     /**
-     * @var \Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator|null
+     * @var \PHPStan\BetterReflection\SourceLocator\Type\AggregateSourceLocator|null
      */
     private $aggregateSourceLocator = null;
 
@@ -60,7 +60,7 @@ class FileIteratorSourceLocator implements SourceLocator
         // @infection-ignore-all Coalesce: There's no difference, it's just optimization
         return $this->aggregateSourceLocator
             ?? $this->aggregateSourceLocator = new AggregateSourceLocator(array_values(array_filter(array_map(
-                function (SplFileInfo $item): ?\Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator {
+                function (SplFileInfo $item): ?\PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator {
                     $realPath = $item->getRealPath();
 
                     if (! ($item->isFile() && pathinfo($realPath, PATHINFO_EXTENSION) === 'php')) {
@@ -78,7 +78,7 @@ class FileIteratorSourceLocator implements SourceLocator
      *
      * @throws InvalidFileLocation
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\PHPStan\BetterReflection\Reflection\Reflection
     {
         return $this->getAggregatedSourceLocator()->locateIdentifier($reflector, $identifier);
     }
