@@ -1,11 +1,11 @@
 {
-    "name": "roave/better-reflection",
+    "name": "ondrejmirtes/better-reflection",
     "description": "Better Reflection - an improved code reflection API",
     "license": "MIT",
     "require": {
-        "php": "~8.2.0 || ~8.3.2 || ~8.4.1",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "jetbrains/phpstorm-stubs": "2024.3",
+        "jetbrains/phpstorm-stubs": "dev-master#b61d4a5f40c3940be440d85355fef4e2416b8527",
         "nikic/php-parser": "^5.3.1"
     },
     "authors": [
@@ -32,12 +32,15 @@
 
     ],
     "require-dev": {
-        "phpbench/phpbench": "^1.3.1",
-        "phpunit/phpunit": "^11.5.1"
+        "doctrine/coding-standard": "^12.0.0",
+        "phpstan/phpstan": "^1.10.60",
+        "phpstan/phpstan-phpunit": "^1.3.16",
+        "phpunit/phpunit": "^11.5.1",
+        "rector/rector": "1.2.10"
     },
     "autoload": {
         "psr-4": {
-            "Roave\\BetterReflection\\": "src"
+            "PHPStan\\BetterReflection\\": "src"
         }
     },
     "autoload-dev": {
@@ -62,6 +65,9 @@
     "config": {
         "platform": {
             "php": "8.2.99"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "prefer-stable": true
