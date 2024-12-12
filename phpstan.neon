@@ -1,9 +1,13 @@
 includes:
     - tools/vendor/phpstan/phpstan-phpunit/extension.neon
     - tools/vendor/phpstan/phpstan-phpunit/rules.neon
+    - phpstan-baseline.neon
 
 parameters:
     level: 10
+    phpVersion:
+        min: 80400
+        max: 80699
 
     paths:
         - src

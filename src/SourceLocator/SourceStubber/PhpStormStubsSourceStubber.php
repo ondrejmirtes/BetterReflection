@@ -580,6 +580,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             // If the type is tentative in stubs, we should remove the type for PHP < 8.1
 
             if ($this->phpVersion >= 80100) {
+                // Some tentative types are described only by #[LanguageLevelTypeAware]
+                $function->returnType ??= $this->getStmtType($function);
                 $this->addAnnotationToDocComment($function, AnnotationHelper::TENTATIVE_RETURN_TYPE_ANNOTATION);
             } else {
                 $function->returnType = null;
