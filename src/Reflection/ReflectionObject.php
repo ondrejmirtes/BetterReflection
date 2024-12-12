@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use InvalidArgumentException;
 use PhpParser\Builder\Property as PropertyNodeBuilder;
@@ -10,14 +10,14 @@ use PhpParser\Node\Stmt\Property as PropertyNode;
 use ReflectionException;
 use ReflectionObject as CoreReflectionObject;
 use ReflectionProperty as CoreReflectionProperty;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
+use PHPStan\BetterReflection\BetterReflection;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\AnonymousClassObjectSourceLocator;
 
 use function array_filter;
 use function array_map;
@@ -172,7 +172,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @param non-empty-string $methodName */
-    public function getMethod(string $methodName): ?\Roave\BetterReflection\Reflection\ReflectionMethod
+    public function getMethod(string $methodName): ?\PHPStan\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->reflectionClass->getMethod($methodName);
     }
@@ -204,12 +204,12 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->hasConstant($name);
     }
 
-    public function getConstant(string $name): ?\Roave\BetterReflection\Reflection\ReflectionClassConstant
+    public function getConstant(string $name): ?\PHPStan\BetterReflection\Reflection\ReflectionClassConstant
     {
         return $this->reflectionClass->getConstant($name);
     }
 
-    public function getConstructor(): ?\Roave\BetterReflection\Reflection\ReflectionMethod
+    public function getConstructor(): ?\PHPStan\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->reflectionClass->getConstructor();
     }
@@ -236,7 +236,7 @@ class ReflectionObject extends ReflectionClass
         );
     }
 
-    public function getProperty(string $name): ?\Roave\BetterReflection\Reflection\ReflectionProperty
+    public function getProperty(string $name): ?\PHPStan\BetterReflection\Reflection\ReflectionProperty
     {
         $runtimeProperties = $this->getRuntimeProperties();
 
@@ -296,7 +296,7 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getEndColumn();
     }
 
-    public function getParentClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
+    public function getParentClass(): ?\PHPStan\BetterReflection\Reflection\ReflectionClass
     {
         return $this->reflectionClass->getParentClass();
     }
