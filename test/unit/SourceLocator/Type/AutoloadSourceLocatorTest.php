@@ -64,7 +64,10 @@ class AutoloadSourceLocatorTest extends TestCase
         $this->astLocator = $configuration->astLocator();
     }
 
-    private function getMockReflector(): Reflector&MockObject
+    /**
+     * @return (\PHPUnit\Framework\MockObject\MockObject & \Roave\BetterReflection\Reflector\Reflector)
+     */
+    private function getMockReflector()
     {
         return $this->createMock(Reflector::class);
     }
@@ -442,7 +445,7 @@ class AutoloadSourceLocatorTest extends TestCase
 
     public function testBrokenAutoloader(): void
     {
-        $getErrorHandler = static function (): callable|null {
+        $getErrorHandler = static function (): ?callable {
             $errorHandler = set_error_handler(static fn (): bool => true);
             restore_error_handler();
 
