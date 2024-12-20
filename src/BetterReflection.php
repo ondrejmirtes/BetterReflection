@@ -28,25 +28,55 @@ final class BetterReflection
 {
     public static int $phpVersion = PHP_VERSION_ID;
 
-    private static SourceLocator|null $sharedSourceLocator = null;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator|null
+     */
+    private static $sharedSourceLocator = null;
 
-    private SourceLocator|null $sourceLocator = null;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\SourceLocator|null
+     */
+    private $sourceLocator = null;
 
-    private static Reflector|null $sharedReflector = null;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector|null
+     */
+    private static $sharedReflector = null;
 
-    private Reflector|null $reflector = null;
+    /**
+     * @var \Roave\BetterReflection\Reflector\Reflector|null
+     */
+    private $reflector = null;
 
-    private static Parser|null $sharedPhpParser = null;
+    /**
+     * @var \PhpParser\Parser|null
+     */
+    private static $sharedPhpParser = null;
 
-    private Parser|null $phpParser = null;
+    /**
+     * @var \PhpParser\Parser|null
+     */
+    private $phpParser = null;
 
-    private AstLocator|null $astLocator = null;
+    /**
+     * @var AstLocator|null
+     */
+    private $astLocator = null;
 
-    private FindReflectionOnLine|null $findReflectionOnLine = null;
+    /**
+     * @var \Roave\BetterReflection\Util\FindReflectionOnLine|null
+     */
+    private $findReflectionOnLine = null;
 
-    private SourceStubber|null $sourceStubber = null;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber|null
+     */
+    private $sourceStubber = null;
 
-    private static SourceStubber|null $sharedSourceStubber = null;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber|null
+     */
+    private static $sharedSourceStubber = null;
 
     /**
      * @var Standard|null
@@ -58,14 +88,8 @@ final class BetterReflection
      */
     private $printer = null;
 
-    public static function populate(
-        int $phpVersion,
-        SourceLocator $sourceLocator,
-        Reflector $classReflector,
-        Parser $phpParser,
-        SourceStubber $sourceStubber,
-        Standard $printer,
-    ): void {
+    public static function populate(int $phpVersion, SourceLocator $sourceLocator, Reflector $classReflector, Parser $phpParser, SourceStubber $sourceStubber, Standard $printer): void
+    {
         self::$phpVersion          = $phpVersion;
         self::$sharedSourceLocator = $sourceLocator;
         self::$sharedReflector     = $classReflector;
