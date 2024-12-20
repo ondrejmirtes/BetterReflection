@@ -28,19 +28,16 @@ class ReflectionAttributeHelper
      * @return list<ReflectionAttribute>
      *
      * @psalm-pure
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionParameter $reflection
      */
-    public static function createAttributes(
-        Reflector $reflector,
-        ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionClassConstant|ReflectionEnumCase|ReflectionProperty|ReflectionParameter $reflection,
-        array $attrGroups,
-    ): array {
+    public static function createAttributes(Reflector $reflector, $reflection, array $attrGroups): array
+    {
         $repeated = [];
         foreach ($attrGroups as $attributesGroupNode) {
             foreach ($attributesGroupNode->attrs as $attributeNode) {
                 $repeated[$attributeNode->name->toLowerString()][] = $attributeNode;
             }
         }
-
         $attributes = [];
         foreach ($attrGroups as $attributesGroupNode) {
             foreach ($attributesGroupNode->attrs as $attributeNode) {
@@ -52,7 +49,6 @@ class ReflectionAttributeHelper
                 );
             }
         }
-
         return $attributes;
     }
 
