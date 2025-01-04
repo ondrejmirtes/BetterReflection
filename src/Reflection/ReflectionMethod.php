@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use Closure;
 use OutOfBoundsException;
@@ -10,15 +10,15 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod as MethodNode;
 use ReflectionException;
 use ReflectionMethod as CoreReflectionMethod;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
-use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
-use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
-use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionMethodStringCast;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\Util\ClassExistenceChecker;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
+use PHPStan\BetterReflection\Reflection\Exception\ClassDoesNotExist;
+use PHPStan\BetterReflection\Reflection\Exception\NoObjectProvided;
+use PHPStan\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionMethodStringCast;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Util\ClassExistenceChecker;
 
 use function array_map;
 use function assert;
@@ -42,7 +42,7 @@ class ReflectionMethod
      */
     private $aliasName;
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionProperty|null
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionProperty|null
      */
     private $hookProperty = null;
     use ReflectionFunctionAbstract;
@@ -56,7 +56,7 @@ class ReflectionMethod
      * @param non-empty-string|null $namespace
      * @param MethodNode|\PhpParser\Node\PropertyHook|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
      */
-    private function __construct(Reflector $reflector, $node, LocatedSource $locatedSource, string $name, ?string $namespace, ReflectionClass $declaringClass, ReflectionClass $implementingClass, ReflectionClass $currentClass, ?string $aliasName, ?\Roave\BetterReflection\Reflection\ReflectionProperty $hookProperty = null)
+    private function __construct(Reflector $reflector, $node, LocatedSource $locatedSource, string $name, ?string $namespace, ReflectionClass $declaringClass, ReflectionClass $implementingClass, ReflectionClass $currentClass, ?string $aliasName, ?\PHPStan\BetterReflection\Reflection\ReflectionProperty $hookProperty = null)
     {
         $this->reflector = $reflector;
         $this->locatedSource = $locatedSource;
@@ -447,7 +447,7 @@ class ReflectionMethod
         return $this->hookProperty !== null;
     }
 
-    public function getHookProperty(): ?\Roave\BetterReflection\Reflection\ReflectionProperty
+    public function getHookProperty(): ?\PHPStan\BetterReflection\Reflection\ReflectionProperty
     {
         return $this->hookProperty;
     }
