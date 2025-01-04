@@ -673,7 +673,7 @@ class ReflectionProperty
             ! ($modifiers & (ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY | ReflectionPropertyAdapter::IS_PRIVATE_SET_COMPATIBILITY))
             && ! $node->isPublicSet()
             && $node->isPublic()
-            && ($modifiers & CoreReflectionProperty::IS_READONLY)
+            && ($modifiers & ReflectionPropertyAdapter::IS_READONLY_COMPATIBILITY)
         ) {
             $modifiers += ReflectionPropertyAdapter::IS_PROTECTED_SET_COMPATIBILITY;
         }
