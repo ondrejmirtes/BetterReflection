@@ -679,6 +679,7 @@ class ReflectionProperty
         return isset($this->getHooks()[$hookType]);
     }
 
+    /** @param ReflectionPropertyHookType::* $hookType */
     public function getHook(string $hookType): ReflectionMethod|null
     {
         return $this->getHooks()[$hookType] ?? null;

@@ -109,6 +109,12 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionProperty.php
 
 		-
+			message: '#^Parameter \#1 \$hookType of method Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:getHook\(\) expects ''get''\|''set'', string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/Adapter/ReflectionProperty.php
+
+		-
 			message: '#^Parameter \#1 \$hookType of method Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:hasHook\(\) expects ''get''\|''set'', string given\.$#'
 			identifier: argument.type
 			count: 1
