@@ -597,7 +597,7 @@ class ReflectionProperty
     }
 
     /**
-     * @param @param ReflectionPropertyHookType::* $hookType
+     * @param ReflectionPropertyHookType::* $hookType
      */
     public function getHook(string $hookType): ReflectionMethod|null
     {
