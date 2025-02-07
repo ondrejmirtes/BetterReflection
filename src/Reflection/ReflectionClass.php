@@ -450,11 +450,18 @@ class ReflectionClass implements Reflection
         }
 
         if ($this->traitsData['aliases'] !== []) {
-            $traits = array_combine($this->traitClassNames, $this->getTraits());
+            $traits = [];
+            foreach ($this->getTraits() as $trait) {
+                $traits[$trait->getName()] = $trait;
+            }
 
             foreach ($this->traitsData['aliases'] as $traitClassName => $traitAliasDefinitions) {
                 foreach ($traitAliasDefinitions as $traitAliasDefinition) {
                     if ($lowerCasedMethodHash !== $traitAliasDefinition['hash']) {
+                        continue;
+                    }
+
+                    if (! array_key_exists($traitClassName, $traits)) {
                         continue;
                     }
 
@@ -1464,11 +1471,19 @@ class ReflectionClass implements Reflection
             return [];
         }
 
-        $traits       = array_combine($this->traitClassNames, $this->getTraits());
+        $traits = [];
+        foreach ($this->getTraits() as $trait) {
+            $traits[$trait->getName()] = $trait;
+        }
+
         $traitAliases = [];
 
         foreach ($this->traitsData['aliases'] as $traitClassName => $traitAliasDefinitions) {
             foreach ($traitAliasDefinitions as $traitAliasDefinition) {
+                if (! array_key_exists($traitClassName, $traits)) {
+                    continue;
+                }
+
                 if (! $traits[$traitClassName]->hasMethod($traitAliasDefinition['method'])) {
                     continue;
                 }
