@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use Closure;
 use Error;
@@ -13,24 +13,24 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FindingVisitor;
 use ReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
-use Roave\BetterReflection\NodeCompiler\CompiledValue;
-use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
-use Roave\BetterReflection\NodeCompiler\CompilerContext;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
-use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
-use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
-use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
-use Roave\BetterReflection\Reflection\Exception\CodeLocationMissing;
-use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
-use Roave\BetterReflection\Reflection\Exception\NotAnObject;
-use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionPropertyStringCast;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\Util\CalculateReflectionColumn;
-use Roave\BetterReflection\Util\ClassExistenceChecker;
-use Roave\BetterReflection\Util\Exception\NoNodePosition;
-use Roave\BetterReflection\Util\GetLastDocComment;
+use PHPStan\BetterReflection\NodeCompiler\CompiledValue;
+use PHPStan\BetterReflection\NodeCompiler\CompileNodeToValue;
+use PHPStan\BetterReflection\NodeCompiler\CompilerContext;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
+use PHPStan\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use PHPStan\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
+use PHPStan\BetterReflection\Reflection\Exception\ClassDoesNotExist;
+use PHPStan\BetterReflection\Reflection\Exception\CodeLocationMissing;
+use PHPStan\BetterReflection\Reflection\Exception\NoObjectProvided;
+use PHPStan\BetterReflection\Reflection\Exception\NotAnObject;
+use PHPStan\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionPropertyStringCast;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\Util\CalculateReflectionColumn;
+use PHPStan\BetterReflection\Util\ClassExistenceChecker;
+use PHPStan\BetterReflection\Util\Exception\NoNodePosition;
+use PHPStan\BetterReflection\Util\GetLastDocComment;
 
 use function array_map;
 use function assert;
@@ -54,7 +54,7 @@ class ReflectionProperty
     private int $modifiers;
 
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     private $type;
 
@@ -97,7 +97,7 @@ class ReflectionProperty
     private $cachedVirtual = null;
 
     /** @psalm-allow-private-mutation
-     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+     * @var \PHPStan\BetterReflection\NodeCompiler\CompiledValue|null */
     private $compiledDefaultValue = null;
 
     private function __construct(Reflector $reflector, PropertyNode $node, Node\PropertyItem $propertyNode, ReflectionClass $declaringClass, ReflectionClass $implementingClass, bool $isPromoted, bool $declaredAtCompileTime)
@@ -546,7 +546,7 @@ class ReflectionProperty
     }
 
     /**
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     private function createType(PropertyNode $node)
     {
@@ -566,7 +566,7 @@ class ReflectionProperty
      * this property
      *
      * (note: this has nothing to do with DocBlocks).
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     public function getType()
     {
@@ -606,7 +606,7 @@ class ReflectionProperty
     /**
      * @param ReflectionPropertyHookType::* $hookType
      */
-    public function getHook(string $hookType): ?\Roave\BetterReflection\Reflection\ReflectionMethod
+    public function getHook(string $hookType): ?\PHPStan\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->getHooks()[$hookType] ?? null;
     }
@@ -808,7 +808,7 @@ class ReflectionProperty
         return $hooks;
     }
 
-    private function getParentProperty(): ?\Roave\BetterReflection\Reflection\ReflectionProperty
+    private function getParentProperty(): ?\PHPStan\BetterReflection\Reflection\ReflectionProperty
     {
         return ($nullsafeVariable3 = $this->getDeclaringClass()->getParentClass()) ? $nullsafeVariable3->getProperty($this->name) : null;
     }

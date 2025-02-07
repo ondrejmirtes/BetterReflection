@@ -12,16 +12,16 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionObject;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Located\AliasLocatedSource;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Located\AliasLocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Type\AutoloadSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\AutoloadableAlias;
 use Roave\BetterReflectionTest\Fixture\AutoloadableByAlias;
@@ -65,7 +65,7 @@ class AutoloadSourceLocatorTest extends TestCase
     }
 
     /**
-     * @return (\PHPUnit\Framework\MockObject\MockObject & \Roave\BetterReflection\Reflector\Reflector)
+     * @return (\PHPUnit\Framework\MockObject\MockObject & \PHPStan\BetterReflection\Reflector\Reflector)
      */
     private function getMockReflector()
     {
