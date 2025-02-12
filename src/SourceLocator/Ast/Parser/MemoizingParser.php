@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Ast\Parser;
+namespace PHPStan\BetterReflection\SourceLocator\Ast\Parser;
 
 use PhpParser\ErrorHandler;
 use PhpParser\Node;
