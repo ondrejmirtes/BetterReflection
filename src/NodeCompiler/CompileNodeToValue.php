@@ -52,7 +52,7 @@ class CompileNodeToValue
             $constantName = $this->resolveClassConstantName($node, $context);
         }
 
-        $constExprEvaluator = new ConstExprEvaluator(function (Node\Expr $node) use ($context, $constantName): mixed {
+        $constExprEvaluator = new ConstExprEvaluator(function (Node\Expr $node) use ($context, $constantName) {
             if ($node instanceof Node\Expr\ConstFetch) {
                 return $this->getConstantValue($node, $constantName, $context);
             }
@@ -111,7 +111,7 @@ class CompileNodeToValue
             }
 
             if ($node instanceof Node\Scalar\MagicConst\Function_) {
-                return $context->getFunction()?->getName() ?? '';
+                return (($nullsafeVariable1 = $context->getFunction()) ? $nullsafeVariable1->getName() : null) ?? '';
             }
 
             if ($node instanceof Node\Scalar\MagicConst\Trait_) {
@@ -175,7 +175,10 @@ class CompileNodeToValue
         return new CompiledValue($value, $constantName);
     }
 
-    private function getEnumPropertyValue(Node\Expr\PropertyFetch $node, CompilerContext $context): mixed
+    /**
+     * @return mixed
+     */
+    private function getEnumPropertyValue(Node\Expr\PropertyFetch $node, CompilerContext $context)
     {
         assert($node->var instanceof Node\Expr\ClassConstFetch);
         assert($node->var->class instanceof Node\Name);
@@ -199,11 +202,14 @@ class CompileNodeToValue
 
         assert($node->name instanceof Node\Identifier);
 
-        return match ($node->name->toString()) {
-            'value' => $case->getValue(),
-            'name' => $case->getName(),
-            default => throw Exception\UnableToCompileNode::becauseOfInvalidEnumCasePropertyFetch($context, $class, $node),
-        };
+        switch ($node->name->toString()) {
+            case 'value':
+                return $case->getValue();
+            case 'name':
+                return $case->getName();
+            default:
+                throw Exception\UnableToCompileNode::becauseOfInvalidEnumCasePropertyFetch($context, $class, $node);
+        }
     }
 
     private function resolveConstantName(Node\Expr\ConstFetch $constNode, CompilerContext $context): string
@@ -236,12 +242,15 @@ class CompileNodeToValue
             $context->getReflector()->reflectConstant($constantName);
 
             return true;
-        } catch (IdentifierNotFound) {
+        } catch (IdentifierNotFound $exception) {
             return false;
         }
     }
 
-    private function getConstantValue(Node\Expr\ConstFetch $node, string|null $constantName, CompilerContext $context): mixed
+    /**
+     * @return mixed
+     */
+    private function getConstantValue(Node\Expr\ConstFetch $node, ?string $constantName, CompilerContext $context)
     {
         // It's not resolved when constant value is expression
         // @infection-ignore-all Assignment, AssignCoalesce: There's no difference, ??= is just optimization
@@ -264,7 +273,10 @@ class CompileNodeToValue
         return sprintf('%s::%s', $this->resolveClassName($className, $context), $constantName);
     }
 
-    private function getClassConstantValue(Node\Expr\ClassConstFetch $node, string|null $classConstantName, CompilerContext $context): mixed
+    /**
+     * @return mixed
+     */
+    private function getClassConstantValue(Node\Expr\ClassConstFetch $node, ?string $classConstantName, CompilerContext $context)
     {
         // It's not resolved when constant value is expression
         // @infection-ignore-all Assignment, AssignCoalesce: There's no difference, ??= is just optimization
@@ -360,7 +372,7 @@ class CompileNodeToValue
      */
     private function compileClassConstant(CompilerContext $context): string
     {
-        return $context->getClass()?->getName() ?? '';
+        return (($nullsafeVariable2 = $context->getClass()) ? $nullsafeVariable2->getName() : null) ?? '';
     }
 
     private function resolveClassName(string $className, CompilerContext $context): string

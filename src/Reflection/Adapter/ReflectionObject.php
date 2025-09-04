@@ -29,8 +29,10 @@ use function strtolower;
 /** @psalm-suppress PropertyNotSetInConstructor */
 final class ReflectionObject extends CoreReflectionObject
 {
-    public function __construct(private BetterReflectionObject $betterReflectionObject)
+    private BetterReflectionObject $betterReflectionObject;
+    public function __construct(BetterReflectionObject $betterReflectionObject)
     {
+        $this->betterReflectionObject = $betterReflectionObject;
         /** @phpstan-ignore unset.readOnlyPropertyByPhpDoc */
         unset($this->name);
     }
@@ -112,7 +114,7 @@ final class ReflectionObject extends CoreReflectionObject
         return $this->betterReflectionObject->getDocComment() ?? false;
     }
 
-    public function getConstructor(): ReflectionMethod|null
+    public function getConstructor(): ?\Roave\BetterReflection\Reflection\Adapter\ReflectionMethod
     {
         $constructor = $this->betterReflectionObject->getConstructor();
 
@@ -233,10 +235,10 @@ final class ReflectionObject extends CoreReflectionObject
      *
      * @return array<non-empty-string, mixed>
      */
-    public function getConstants(int|null $filter = null): array
+    public function getConstants(?int $filter = null): array
     {
         return array_map(
-            static fn (BetterReflectionClassConstant $betterConstant): mixed => $betterConstant->getValue(),
+            static fn (BetterReflectionClassConstant $betterConstant) => $betterConstant->getValue(),
             $this->betterReflectionObject->getConstants($filter ?? 0),
         );
     }
@@ -284,7 +286,7 @@ final class ReflectionObject extends CoreReflectionObject
      *
      * @return list<ReflectionClassConstant>
      */
-    public function getReflectionConstants(int|null $filter = null): array
+    public function getReflectionConstants(?int $filter = null): array
     {
         return array_values(array_map(
             static fn (BetterReflectionClassConstant $betterConstant): ReflectionClassConstant => new ReflectionClassConstant($betterConstant),
@@ -617,7 +619,7 @@ final class ReflectionObject extends CoreReflectionObject
      *
      * @return list<ReflectionAttribute|FakeReflectionAttribute>
      */
-    public function getAttributes(string|null $name = null, int $flags = 0): array
+    public function getAttributes(?string $name = null, int $flags = 0): array
     {
         if ($flags !== 0 && $flags !== ReflectionAttribute::IS_INSTANCEOF) {
             throw new ValueError('Argument #2 ($flags) must be a valid attribute filter flag');
@@ -631,7 +633,7 @@ final class ReflectionObject extends CoreReflectionObject
             $attributes = $this->betterReflectionObject->getAttributes();
         }
 
-        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
+        return array_map(static fn (BetterReflectionAttribute $betterReflectionAttribute) => ReflectionAttributeFactory::create($betterReflectionAttribute), $attributes);
     }
 
     public function isEnum(): bool
@@ -639,7 +641,10 @@ final class ReflectionObject extends CoreReflectionObject
         return $this->betterReflectionObject->isEnum();
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterReflectionObject->getName();
