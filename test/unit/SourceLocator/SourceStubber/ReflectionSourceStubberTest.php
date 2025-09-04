@@ -15,16 +15,16 @@ use ReflectionException;
 use ReflectionFunction as CoreReflectionFunction;
 use ReflectionMethod as CoreReflectionMethod;
 use ReflectionParameter as CoreReflectionParameter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionType;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
-use Roave\BetterReflection\Reflection\ReflectionEnum;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionParameter;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionType;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionEnum;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\ReflectionSourceStubber;
+use PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributesForSourceStubber;
 use Roave\BetterReflectionTest\Fixture\ClassWithAttributesWithArgumentsForSourceStubber;
@@ -282,7 +282,7 @@ class ReflectionSourceStubberTest extends TestCase
 
     /**
      * @param CoreReflectionClass|CoreReflectionEnum $original
-     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionEnum $stubbed
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionClass|\PHPStan\BetterReflection\Reflection\ReflectionEnum $stubbed
      */
     private function assertSameClassAttributes($original, $stubbed): void
     {
