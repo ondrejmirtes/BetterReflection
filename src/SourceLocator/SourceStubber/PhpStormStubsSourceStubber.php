@@ -406,6 +406,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                     && $className !== 'SensitiveParameter'
                     && $className !== 'Override'
                     && $className !== 'Deprecated'
+                    && $className !== 'NoDiscard'
+                    && $className !== 'DelayedTargetValidation'
                     && ! $this->isSupportedInPhpVersion($classNode)
                 ) {
                     continue;
