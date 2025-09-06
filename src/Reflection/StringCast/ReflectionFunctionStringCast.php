@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\StringCast;
+namespace PHPStan\BetterReflection\Reflection\StringCast;
 
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflection\ReflectionParameter;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter;
 
 use function array_reduce;
 use function assert;
