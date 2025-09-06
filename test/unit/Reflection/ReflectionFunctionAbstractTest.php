@@ -469,7 +469,7 @@ class ReflectionFunctionAbstractTest extends TestCase
     }
 
     #[DataProvider('returnTypeFunctionProvider')]
-    public function testGetReturnTypeWithDeclaredType(string $functionToReflect, string|null $expectedType): void
+    public function testGetReturnTypeWithDeclaredType(string $functionToReflect, ?string $expectedType): void
     {
         $functionInfo = (new DefaultReflector(
             new SingleFileSourceLocator(__DIR__ . '/../Fixture/ReturnTypeDeclarations.php', $this->astLocator),
