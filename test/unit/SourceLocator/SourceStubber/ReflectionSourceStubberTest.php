@@ -280,7 +280,11 @@ class ReflectionSourceStubberTest extends TestCase
         self::assertSame($originalInterfacesNames, $stubbedInterfacesNames);
     }
 
-    private function assertSameClassAttributes(CoreReflectionClass|CoreReflectionEnum $original, ReflectionClass|ReflectionEnum $stubbed): void
+    /**
+     * @param CoreReflectionClass|CoreReflectionEnum $original
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionEnum $stubbed
+     */
+    private function assertSameClassAttributes($original, $stubbed): void
     {
         self::assertSame($original->getName(), $stubbed->getName());
 
@@ -397,24 +401,17 @@ class ReflectionSourceStubberTest extends TestCase
         );
     }
 
-    private function assertSameParameterAttributes(
-        CoreReflectionMethod $originalMethod,
-        CoreReflectionParameter $original,
-        ReflectionParameter $stubbed,
-    ): void {
+    private function assertSameParameterAttributes(CoreReflectionMethod $originalMethod, CoreReflectionParameter $original, ReflectionParameter $stubbed): void
+    {
         $methodName    = $original->getDeclaringClass()->getName() . '#' . $originalMethod->getName();
         $parameterName = $methodName . '.' . $original->getName();
-
         self::assertSame($original->getName(), $stubbed->getName(), $parameterName);
-
         if ($original->isDefaultValueAvailable()) {
             self::assertSame($original->getDefaultValue(), $stubbed->getDefaultValue(), $parameterName);
         } else {
             self::assertSame($original->isDefaultValueAvailable(), $stubbed->isDefaultValueAvailable(), $parameterName);
         }
-
         //self::assertSame($original->allowsNull(), $stubbed->allowsNull()); @TODO WTF?
-
         self::assertSame($original->canBePassedByValue(), $stubbed->canBePassedByValue(), $parameterName);
         self::assertSame($original->isOptional(), $stubbed->isOptional(), $parameterName);
         self::assertSame($original->isPassedByReference(), $stubbed->isPassedByReference(), $parameterName);
@@ -541,8 +538,11 @@ class ReflectionSourceStubberTest extends TestCase
         return $provider;
     }
 
+    /**
+     * @param mixed $constantValue
+     */
     #[DataProvider('internalConstantsProvider')]
-    public function testInternalConstants(string $constantName, mixed $constantValue, string $extensionName): void
+    public function testInternalConstants(string $constantName, $constantValue, string $extensionName): void
     {
         $constantReflection = $this->reflector->reflectConstant($constantName);
 
@@ -581,8 +581,8 @@ class ReflectionSourceStubberTest extends TestCase
 
     public function testClosureWithNewInInitializer(): void
     {
-        $closure = function ($test = new \stdClass()): void {
-
+        $closure = function ($test = null) : void {
+            $test ??= new \stdClass();
         };
         $stub = $this->stubber->generateFunctionStubFromReflection(new CoreReflectionFunction($closure));
         self::assertStringContainsString('$test = new \stdClass()', $stub->getStub());

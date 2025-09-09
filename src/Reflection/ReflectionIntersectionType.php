@@ -18,25 +18,24 @@ class ReflectionIntersectionType extends ReflectionType
     /** @var non-empty-list<ReflectionNamedType> */
     private array $types;
 
-    /** @internal */
-    public function __construct(
-        Reflector $reflector,
-        ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        IntersectionType $type,
-    ) {
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner */
+    public function __construct(Reflector $reflector, $owner, IntersectionType $type)
+    {
         /** @var non-empty-list<ReflectionNamedType> $types */
-        $types = array_map(static function (Node\Identifier|Node\Name $type) use ($reflector, $owner): ReflectionNamedType {
+        $types = array_map(static function ($type) use ($reflector, $owner): ReflectionNamedType {
             $type = ReflectionType::createFromNode($reflector, $owner, $type);
             assert($type instanceof ReflectionNamedType);
 
             return $type;
         }, $type->types);
-
         $this->types = $types;
     }
 
-    /** @internal */
-    public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @return static */
+    public function withOwner($owner)
     {
         $clone = clone $this;
 
@@ -51,7 +50,10 @@ class ReflectionIntersectionType extends ReflectionType
         return $this->types;
     }
 
-    public function allowsNull(): false
+    /**
+     * @return false
+     */
+    public function allowsNull(): bool
     {
         return false;
     }

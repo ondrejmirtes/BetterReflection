@@ -129,17 +129,10 @@ class MemoizingSourceLocatorTest extends TestCase
             ->expects(self::exactly(4))
             ->method('locateIdentifiersByType')
             ->with(self::logicalOr($this->reflector1, $this->reflector2))
-            ->willReturnCallback(function (
-                Reflector $reflector,
-                IdentifierType $identifierType,
-            ) use (
-                $symbols1,
-                $symbols2,
-            ): array {
+            ->willReturnCallback(function (Reflector $reflector, IdentifierType $identifierType) use ($symbols1, $symbols2) : array {
                 if ($reflector === $this->reflector1) {
                     return $symbols1[$identifierType->getName()];
                 }
-
                 return $symbols2[$identifierType->getName()];
             });
 
@@ -169,13 +162,9 @@ class MemoizingSourceLocatorTest extends TestCase
      * @param list<Identifier> $identifiers
      * @param list<Reflector>  $reflectors
      */
-    private function assertMemoization(
-        array $identifiers,
-        int $expectedFetchOperationsCount,
-        array $reflectors,
-    ): void {
+    private function assertMemoization(array $identifiers, int $expectedFetchOperationsCount, array $reflectors): void
+    {
         $fetchedSymbolsCount = [];
-
         $this
             ->wrappedLocator
             ->expects(self::exactly($expectedFetchOperationsCount))
@@ -184,35 +173,23 @@ class MemoizingSourceLocatorTest extends TestCase
                 self::logicalOr(...$reflectors),
                 self::callback(static fn (Identifier $identifier): bool => in_array($identifier, $identifiers, true)),
             )
-            ->willReturnCallback(function (
-                Reflector $reflector,
-                Identifier $identifier,
-            ) use (
-                &$fetchedSymbolsCount,
-            ): Reflection|null {
+            ->willReturnCallback(function (Reflector $reflector, Identifier $identifier) use (&$fetchedSymbolsCount) : ?\Roave\BetterReflection\Reflection\Reflection {
                 $identifierId = spl_object_id($identifier);
                 $reflectorId  = spl_object_id($reflector);
                 $hash         = $reflectorId . $identifierId;
-
                 $fetchedSymbolsCount[$hash] = ($fetchedSymbolsCount[$hash] ?? 0) + 1;
-
                 return [
                     $this->createMock(Reflection::class),
                     null,
                 ][random_int(0, 1)];
             });
-
         $memoizedSymbols = $this->locateIdentifiers($reflectors, $identifiers);
         $cachedSymbols   = $this->locateIdentifiers($reflectors, $identifiers);
-
         self::assertCount($expectedFetchOperationsCount, $memoizedSymbols);
-
         foreach ($fetchedSymbolsCount as $fetchedSymbolCount) {
             self::assertSame(1, $fetchedSymbolCount, 'Each fetch is unique');
         }
-
         self::assertSame($memoizedSymbols, $cachedSymbols);
-
         $memoizedSymbolsIds = array_map('spl_object_id', array_filter($memoizedSymbols));
         self::assertCount(count($memoizedSymbolsIds), array_unique($memoizedSymbolsIds), 'No duplicate symbols');
     }
