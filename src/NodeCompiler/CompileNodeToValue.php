@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflection\NodeCompiler;
 
+use Attribute;
 use PhpParser\ConstExprEvaluator;
 use PhpParser\Node;
 use Roave\BetterReflection\Reflection\ReflectionClass;
@@ -294,6 +295,9 @@ class CompileNodeToValue
         $reflectionConstant = $classReflection->getConstant($constantName);
 
         if (! $reflectionConstant instanceof ReflectionClassConstant) {
+            if ($classReflection->getName() === Attribute::class && $constantName === 'TARGET_CONSTANT') {
+                return 1 << 16;
+            }
             throw Exception\UnableToCompileNode::becauseOfNotFoundClassConstantReference($context, $classReflection, $node);
         }
 
