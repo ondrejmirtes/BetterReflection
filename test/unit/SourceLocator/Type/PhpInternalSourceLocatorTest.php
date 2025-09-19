@@ -53,7 +53,10 @@ class PhpInternalSourceLocatorTest extends TestCase
         );
     }
 
-    private function getMockReflector(): Reflector&MockObject
+    /**
+     * @return (\PHPUnit\Framework\MockObject\MockObject & \Roave\BetterReflection\Reflector\Reflector)
+     */
+    private function getMockReflector()
     {
         return $this->createMock(Reflector::class);
     }

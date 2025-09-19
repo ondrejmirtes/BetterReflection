@@ -67,7 +67,7 @@ class AnonymousClassObjectSourceLocatorTest extends TestCase
         $reflection = (new AnonymousClassObjectSourceLocator($class, $this->parser))->locateIdentifier(
             $this->reflector,
             new Identifier(
-                $class::class,
+                get_class($class),
                 new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
             ),
         );
@@ -87,7 +87,7 @@ class AnonymousClassObjectSourceLocatorTest extends TestCase
         $reflection = (new AnonymousClassObjectSourceLocator($class, $this->parser))->locateIdentifier(
             $this->reflector,
             new Identifier(
-                $class::class,
+                get_class($class),
                 new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
             ),
         );
@@ -194,7 +194,7 @@ class AnonymousClassObjectSourceLocatorTest extends TestCase
         (new AnonymousClassObjectSourceLocator($class, $this->parser))->locateIdentifier(
             $this->reflector,
             new Identifier(
-                $class::class,
+                get_class($class),
                 new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
             ),
         );
@@ -221,7 +221,7 @@ class AnonymousClassObjectSourceLocatorTest extends TestCase
         (new AnonymousClassObjectSourceLocator($class, $this->parser))->locateIdentifier(
             $this->reflector,
             new Identifier(
-                $class::class,
+                get_class($class),
                 new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
             ),
         );
@@ -237,7 +237,7 @@ class AnonymousClassObjectSourceLocatorTest extends TestCase
         $reflection = $sourceLocator->locateIdentifier(
             $reflector,
             new Identifier(
-                $class::class,
+                get_class($class),
                 new IdentifierType(IdentifierType::IDENTIFIER_CLASS),
             ),
         );
