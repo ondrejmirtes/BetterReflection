@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use ReflectionNamedType as CoreReflectionNamedType;
-use Roave\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
 
 use function strtolower;
 
@@ -13,7 +13,7 @@ use function strtolower;
 final class ReflectionNamedType extends CoreReflectionNamedType
 {
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|non-empty-string
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionNamedType|non-empty-string
      */
     private $type;
     private bool $allowsNull = false;
@@ -25,7 +25,7 @@ final class ReflectionNamedType extends CoreReflectionNamedType
     /** @var non-empty-string */
     private string $toString;
 
-    /** @param \Roave\BetterReflection\Reflection\ReflectionNamedType|non-empty-string $type */
+    /** @param \PHPStan\BetterReflection\Reflection\ReflectionNamedType|non-empty-string $type */
     public function __construct($type, bool $allowsNull = false)
     {
         $this->type = $type;

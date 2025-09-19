@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use LogicException;
 use PhpParser\Node;
@@ -10,8 +10,8 @@ use PhpParser\Node\Stmt\Class_ as ClassNode;
 use PhpParser\Node\Stmt\Enum_ as EnumNode;
 use PhpParser\Node\Stmt\Interface_ as InterfaceNode;
 use PhpParser\Node\Stmt\Trait_ as TraitNode;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
 
 use function array_combine;
 use function array_filter;
@@ -24,7 +24,7 @@ class ReflectionEnum extends ReflectionClass
 {
     private Reflector $reflector;
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|null
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionNamedType|null
      */
     private $backingType;
 
@@ -63,7 +63,7 @@ class ReflectionEnum extends ReflectionClass
     }
 
     /** @param non-empty-string $name */
-    public function getCase(string $name): ?\Roave\BetterReflection\Reflection\ReflectionEnumCase
+    public function getCase(string $name): ?\PHPStan\BetterReflection\Reflection\ReflectionEnumCase
     {
         return $this->cases[$name] ?? null;
     }
@@ -99,7 +99,7 @@ class ReflectionEnum extends ReflectionClass
         return $this->backingType;
     }
 
-    private function createBackingType(EnumNode $node): ?\Roave\BetterReflection\Reflection\ReflectionNamedType
+    private function createBackingType(EnumNode $node): ?\PHPStan\BetterReflection\Reflection\ReflectionNamedType
     {
         if ($node->scalarType === null) {
             return null;
