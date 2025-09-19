@@ -370,6 +370,18 @@ class ReflectionEnumBackedCaseTest extends TestCase
         self::assertSame(123, $reflectionEnumBackedCaseAdapter->getBackingValue());
     }
 
+    public function testHasBackingType(): void
+    {
+        $betterReflectionEnumCase = $this->createMock(BetterReflectionEnumCase::class);
+        $betterReflectionEnumCase
+            ->method('hasValueExpression')
+            ->willReturn(true);
+
+        $reflectionEnumBackedCaseAdapter = new ReflectionEnumBackedCaseAdapter($betterReflectionEnumCase);
+
+        self::assertTrue($reflectionEnumBackedCaseAdapter->hasBackingValue());
+    }
+
     public function testPropertyName(): void
     {
         $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
