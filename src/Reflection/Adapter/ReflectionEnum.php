@@ -49,7 +49,7 @@ final class ReflectionEnum extends CoreReflectionEnum
             $mappedCases = [];
 
             foreach ($enum->getCases() as $case) {
-                if ($case->hasValueExpression()) {
+                if ($enum->isBacked()) {
                     $mappedCases[] = new ReflectionEnumBackedCase($case);
                 } else {
                     $mappedCases[] = new ReflectionEnumUnitCase($case);
@@ -609,7 +609,7 @@ final class ReflectionEnum extends CoreReflectionEnum
             throw new CoreReflectionException(sprintf('Case %s::%s does not exist', $this->betterReflectionEnum->getName(), $name));
         }
 
-        if ($case->hasValueExpression()) {
+        if ($this->betterReflectionEnum->isBacked()) {
             return new ReflectionEnumBackedCase($case);
         }
 

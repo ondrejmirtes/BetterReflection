@@ -21,8 +21,8 @@ final class ReflectionEnumCaseStringCast
     {
         $enumReflection = $enumCaseReflection->getDeclaringEnum();
 
-        $value = $enumCaseReflection->hasValueExpression() ? $enumCaseReflection->getValue() : 'Object';
-        $type  = $enumCaseReflection->hasValueExpression() ? gettype($value) : $enumReflection->getName();
+        $value = $enumReflection->isBacked() ? $enumCaseReflection->getValue() : 'Object';
+        $type  = $enumReflection->isBacked() ? gettype($value) : $enumReflection->getName();
 
         return sprintf(
             "%sConstant [ public %s %s ] { %s }\n",

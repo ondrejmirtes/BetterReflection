@@ -743,11 +743,11 @@ class ReflectionEnumTest extends TestCase
     public function testGetCaseForBackedEnum(): void
     {
         $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
-        $betterReflectionEnumCase
-            ->method('hasValueExpression')
-            ->willReturn(true);
 
         $betterReflectionEnum = self::createStub(BetterReflectionEnum::class);
+        $betterReflectionEnum
+            ->method('isBacked')
+            ->willReturn(true);
         $betterReflectionEnum
             ->method('getCase')
             ->willReturn($betterReflectionEnumCase);
@@ -760,11 +760,11 @@ class ReflectionEnumTest extends TestCase
     public function testGetCasesForPureEnum(): void
     {
         $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
-        $betterReflectionEnumCase
-            ->method('hasValueExpression')
-            ->willReturn(false);
 
         $betterReflectionEnum = self::createStub(BetterReflectionEnum::class);
+        $betterReflectionEnum
+            ->method('isBacked')
+            ->willReturn(false);
         $betterReflectionEnum
             ->method('getCases')
             ->willReturn([$betterReflectionEnumCase]);
@@ -777,11 +777,11 @@ class ReflectionEnumTest extends TestCase
     public function testGetCasesForBackedEnum(): void
     {
         $betterReflectionEnumCase = self::createStub(BetterReflectionEnumCase::class);
-        $betterReflectionEnumCase
-            ->method('hasValueExpression')
-            ->willReturn(true);
 
         $betterReflectionEnum = self::createStub(BetterReflectionEnum::class);
+        $betterReflectionEnum
+            ->method('isBacked')
+            ->willReturn(true);
         $betterReflectionEnum
             ->method('getCases')
             ->willReturn([$betterReflectionEnumCase]);
