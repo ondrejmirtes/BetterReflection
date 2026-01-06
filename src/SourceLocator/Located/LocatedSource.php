@@ -6,9 +6,11 @@ namespace Roave\BetterReflection\SourceLocator\Located;
 
 use InvalidArgumentException;
 use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use Roave\BetterReflection\SourceLocator\FileChecker;
 use Roave\BetterReflection\Util\FileHelper;
 
 use function assert;
+use function get_class;
 
 /**
  * Value object containing source code that has been located.
@@ -78,5 +80,37 @@ class LocatedSource
     public function getAliasName(): string|null
     {
         return null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        assert($this->filename !== null);
+
+        return [
+            'class' => get_class($this),
+            'data' => [
+                'name' => $this->name,
+                'filename' => $this->filename,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function importFromCache(array $data): self
+    {
+        $class = $data['class'];
+        if ($class === self::class) {
+            FileChecker::assertReadableFile($data['data']['filename']);
+            $fileContents = file_get_contents($data['data']['filename']);
+            assert($fileContents !== false);
+            return new self($fileContents, $data['data']['name'], $data['data']['filename']);
+        }
+
+        return $class::importFromCache($data);
     }
 }
