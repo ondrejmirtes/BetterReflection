@@ -6,6 +6,7 @@ namespace Roave\BetterReflection\Reflection;
 
 use Closure;
 use PhpParser\Node;
+use ReflectionClass as CoreReflectionClass;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
 use Roave\BetterReflection\Reflection\Exception\FunctionDoesNotExist;
@@ -17,6 +18,7 @@ use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator;
 use Roave\BetterReflection\SourceLocator\Type\ClosureSourceLocator;
 
+use function array_merge;
 use function assert;
 use function function_exists;
 
@@ -48,6 +50,34 @@ class ReflectionFunction implements Reflection
 
         $this->isStatic  = $isClosure && $node->static;
         $this->isClosure = $isClosure;
+    }
+
+    // In ReflectionFunction:
+
+    /** @return array<string, mixed> */
+    public function exportToCache(): array
+    {
+        return array_merge($this->exportFunctionAbstractToCache(), [
+            'isStatic' => $this->isStatic,
+            'namespace' => $this->namespace,
+            'locatedSource' => $this->locatedSource->exportToCache(),
+        ]);
+    }
+
+    /** @param array<string, mixed> $data */
+    public static function importFromCache(Reflector $reflector, array $data): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        $ref        = $reflection->newInstanceWithoutConstructor();
+        assert($ref instanceof self);
+        $ref->reflector     = $reflector;
+        $ref->locatedSource = LocatedSource::importFromCache($data['locatedSource']);
+        $ref->namespace     = $data['namespace'];
+        $ref->isStatic      = $data['isStatic'];
+
+        self::importFunctionAbstractFromCache($ref, $reflector, $data);
+
+        return $ref;
     }
 
     /** @throws IdentifierNotFound */

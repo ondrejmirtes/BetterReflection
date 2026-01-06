@@ -20,6 +20,8 @@ use Roave\BetterReflectionTest\Fixture\IntEnum;
 use Roave\BetterReflectionTest\Fixture\PureEnum;
 use Roave\BetterReflectionTest\Fixture\StringEnum;
 
+use function var_export;
+
 #[CoversClass(ReflectionEnum::class)]
 class ReflectionEnumTest extends TestCase
 {
@@ -155,5 +157,16 @@ class ReflectionEnumTest extends TestCase
 
         $this->expectException(LogicException::class);
         $enumReflection->getBackingType();
+    }
+
+    public function testCaching(): void
+    {
+        $reflection = $this->reflector->reflectClass(IntEnum::class);
+        $data       = $reflection->exportToCache();
+
+        $importedReflection = ReflectionEnum::importFromCache($this->reflector, eval('return ' . var_export($data, true) . ';'));
+
+        // The imported reflection may hold lazily-restored state, so it is compared through what it exports
+        self::assertSame($data, $importedReflection->exportToCache());
     }
 }

@@ -25,6 +25,7 @@ use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\Attr;
 
 use function sprintf;
+use function var_export;
 
 use const E_ALL;
 
@@ -385,5 +386,17 @@ class ReflectionConstantTest extends TestCase
         $attributes         = $constantReflection->getAttributesByInstance(Attr::class);
 
         self::assertCount(2, $attributes);
+    }
+
+    public function testCaching(): void
+    {
+        $reflector  = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Attributes.php', $this->astLocator));
+        $reflection = $reflector->reflectConstant('Roave\BetterReflectionTest\Fixture\SOME_CONSTANT');
+        $data       = $reflection->exportToCache();
+
+        $importedReflection = ReflectionConstant::importFromCache($reflector, eval('return ' . var_export($data, true) . ';'));
+
+        // The imported reflection may hold lazily-restored state, so it is compared through what it exports
+        self::assertSame($data, $importedReflection->exportToCache());
     }
 }

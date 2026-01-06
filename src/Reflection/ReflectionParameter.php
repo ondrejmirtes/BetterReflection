@@ -10,6 +10,8 @@ use OutOfBoundsException;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Param as ParamNode;
+use ReflectionClass as CoreReflectionClass;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -24,6 +26,7 @@ use Roave\BetterReflection\Util\GetLastDocComment;
 
 use function array_map;
 use function assert;
+use function get_class;
 use function is_string;
 use function preg_match;
 use function sprintf;
@@ -117,6 +120,74 @@ class ReflectionParameter
         } catch (NoNodePosition) {
             $this->endColumn = null;
         }
+    }
+
+    /** @return array<string, mixed> */
+    public function exportToCache(): array
+    {
+        $br = new BetterReflection();
+
+        return [
+            'name' => $this->name,
+            'default' => $this->default !== null ? $br->printer()->prettyPrintExpr($this->default) : null,
+            'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
+            'isVariadic' => $this->isVariadic,
+            'byRef' => $this->byRef,
+            'isPromoted' => $this->isPromoted,
+            'docComment' => $this->docComment,
+            'attributes' => array_map(
+                static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
+                $this->attributes,
+            ),
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+            'parameterIndex' => $this->parameterIndex,
+            'isOptional' => $this->isOptional,
+        ];
+    }
+
+    /** @param array<string, mixed> $data */
+    public static function importFromCache(Reflector $reflector, array $data, ReflectionMethod|ReflectionFunction $function): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        $ref        = $reflection->newInstanceWithoutConstructor();
+        assert($ref instanceof self);
+        $ref->reflector      = $reflector;
+        $ref->function       = $function;
+        $ref->parameterIndex = $data['parameterIndex'];
+        $ref->isOptional     = $data['isOptional'];
+        $ref->name           = $data['name'];
+
+        if ($data['default'] !== null) {
+            $br           = new BetterReflection();
+            $ref->default = $br->phpParser()->parse('<?php ' . $data['default'] . ';')[0]->expr;
+        } else {
+            $ref->default = null;
+        }
+
+        if ($data['type'] !== null) {
+            $typeClass = $data['type']['class'];
+            $ref->type = $typeClass::importFromCache($reflector, $data['type']['data'], $ref);
+        } else {
+            $ref->type = null;
+        }
+
+        $ref->isVariadic  = $data['isVariadic'];
+        $ref->byRef       = $data['byRef'];
+        $ref->isPromoted  = $data['isPromoted'];
+        $ref->docComment  = $data['docComment'];
+        $ref->attributes  = array_map(
+            static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
+            $data['attributes'],
+        );
+        $ref->startLine   = $data['startLine'];
+        $ref->endLine     = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn   = $data['endColumn'];
+
+        return $ref;
     }
 
     /**

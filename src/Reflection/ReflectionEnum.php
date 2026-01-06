@@ -17,6 +17,7 @@ use function array_combine;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
+use function array_merge;
 use function assert;
 
 /** @psalm-immutable */
@@ -42,6 +43,37 @@ class ReflectionEnum extends ReflectionClass
 
         $this->backingType = $this->createBackingType($node);
         $this->cases       = $this->createCases($node);
+    }
+
+    /** @return array<string, mixed> */
+    public function exportToCache(): array
+    {
+        return array_merge(parent::exportToCache(), [
+            'backingType' => $this->backingType?->exportToCache(),
+            'cases' => array_map(
+                static fn (ReflectionEnumCase $case) => $case->exportToCache(),
+                $this->cases,
+            ),
+        ]);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return static
+     */
+    public static function importFromCache(Reflector $reflector, array $data): self
+    {
+        $ref              = parent::importFromCache($reflector, $data);
+        $ref->backingType = $data['backingType'] !== null
+            ? ReflectionNamedType::importFromCache($reflector, $data['backingType'], $ref)
+            : null;
+        $ref->cases       = array_map(
+            static fn ($caseData) => ReflectionEnumCase::importFromCache($reflector, $caseData, $ref),
+            $data['cases'],
+        );
+
+        return $ref;
     }
 
     /**

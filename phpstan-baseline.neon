@@ -121,8 +121,62 @@ parameters:
 			path: src/Reflection/Adapter/ReflectionProperty.php
 
 		-
+			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionAttribute and Roave\\BetterReflection\\Reflection\\ReflectionAttribute will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
 			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionParameter and Roave\\BetterReflection\\Reflection\\ReflectionParameter will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(string\)\: mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:\$arguments \(array\<int\|string, PhpParser\\Node\\Expr\>\) does not accept array\<mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:\$isRepeated \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionAttribute.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:\$name \(class\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionAttribute.php
 
@@ -133,8 +187,20 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
 			message: '#^Dead catch \- Roave\\BetterReflection\\Reflector\\Exception\\IdentifierNotFound is never thrown in the try block\.$#'
 			identifier: catch.neverThrown
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Instanceof between static\(Roave\\BetterReflection\\Reflection\\ReflectionClass\) and Roave\\BetterReflection\\Reflection\\ReflectionClass will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Reflection/ReflectionClass.php
 
@@ -145,7 +211,145 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 4
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$endColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$endLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$immediateConstants \(array\<non\-empty\-string, Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$immediateMethods \(array\<non\-empty\-string, Roave\\BetterReflection\\Reflection\\ReflectionMethod\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionMethod\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$immediateProperties \(array\<non\-empty\-string, Roave\\BetterReflection\\Reflection\\ReflectionProperty\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionProperty\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$implementsClassNames \(list\<class\-string\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$isBackedEnum \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$isEnum \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$isInterface \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$isTrait \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$modifiers \(0\|16\|32\|48\|64\|80\|96\|112\|65536\|65552\|65568\|65584\|65600\|65616\|65632\|65648\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$name \(class\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$namespace \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$parentClassName \(class\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$shortName \(non\-empty\-string\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionClass.php
@@ -157,7 +361,151 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$startColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$startLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$traitClassNames \(list\<class\-string\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:\$traitsData \(array\{aliases\: array\<class\-string, list\<array\{alias\: non\-empty\-string, method\: non\-empty\-string, hash\: non\-empty\-string\}\>\>, modifiers\: array\<non\-empty\-string, 0\|1\|2\|3\|4\|5\|6\|7\|16\|17\|18\|19\|20\|21\|22\|23\|32\|33\|34\|35\|36\|37\|38\|39\|48\|49\|50\|51\|52\|53\|54\|55\|64\|65\|66\|67\|68\|69\|70\|71\|80\|81\|82\|83\|84\|85\|86\|87\|96\|97\|98\|99\|100\|101\|102\|103\|112\|113\|114\|115\|116\|117\|118\|119\>, precedences\: array\<non\-empty\-string, non\-empty\-string\>, hashes\: array\<non\-empty\-string, non\-empty\-string\>\}\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClass.php
+
+		-
+			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Cannot access offset ''class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Cannot access offset ''data'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionClassConstant and Roave\\BetterReflection\\Reflection\\ReflectionClassConstant will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$declaringClass \(Roave\\BetterReflection\\Reflection\\ReflectionClass\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$declaringClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$endColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$endLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$implementingClass \(Roave\\BetterReflection\\Reflection\\ReflectionClass\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$implementingClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$modifiers \(0\|1\|2\|3\|4\|5\|6\|7\|32\|33\|34\|35\|36\|37\|38\|39\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionClassConstant.php
@@ -169,7 +517,121 @@ parameters:
 			path: src/Reflection/ReflectionClassConstant.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$startColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$startLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$type \(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$value \(PhpParser\\Node\\Expr\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
+			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionConstant and Roave\\BetterReflection\\Reflection\\ReflectionConstant will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$endColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$endLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$namespace \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$shortName \(non\-empty\-string\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionConstant.php
@@ -181,7 +643,121 @@ parameters:
 			path: src/Reflection/ReflectionConstant.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$startColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$startLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$value \(PhpParser\\Node\\Expr\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionEnum.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionEnum.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionNamedType\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionEnum.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnum\:\:\$cases \(array\<non\-empty\-string, Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnum.php
+
+		-
+			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionEnumCase and Roave\\BetterReflection\\Reflection\\ReflectionEnumCase will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$endColumn \(int\<1, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$endColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$endLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionEnumCase.php
@@ -193,7 +769,163 @@ parameters:
 			path: src/Reflection/ReflectionEnumCase.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$startColumn \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$startLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$value \(PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Cannot access offset ''class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Cannot access offset ''data'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionFunction and Roave\\BetterReflection\\Reflection\\ReflectionFunction will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$owner$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$couldThrow \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$endColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$endLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$isClosure \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$isGenerator \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$isStatic \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$namespace \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$parameters \(array\<non\-empty\-string, Roave\\BetterReflection\\Reflection\\ReflectionParameter\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionParameter\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$returnType \(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$returnsReference \(bool\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionFunction.php
@@ -205,7 +937,235 @@ parameters:
 			path: src/Reflection/ReflectionFunction.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$startColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$startLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionIntersectionType.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType and Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionIntersectionType.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: Roave\\BetterReflection\\Reflection\\ReflectionNamedType given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionIntersectionType.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionIntersectionType.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionNamedType\:\:importFromCache\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionIntersectionType.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\:\:\$types \(non\-empty\-list\<Roave\\BetterReflection\\Reflection\\ReflectionNamedType\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionNamedType\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionIntersectionType.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Cannot access offset ''class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Cannot access offset ''data'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Cannot call method getName\(\) on Roave\\BetterReflection\\Reflection\\ReflectionClass\|null\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionMethod and Roave\\BetterReflection\\Reflection\\ReflectionMethod will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$owner$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$aliasName \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$couldThrow \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$currentClass \(Roave\\BetterReflection\\Reflection\\ReflectionClass\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$currentClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$declaringClass \(Roave\\BetterReflection\\Reflection\\ReflectionClass\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$declaringClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$endColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$endLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$implementingClass \(Roave\\BetterReflection\\Reflection\\ReflectionClass\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$implementingClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$isClosure \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$isGenerator \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$modifiers \(0\|1\|2\|3\|4\|5\|6\|7\|16\|17\|18\|19\|20\|21\|22\|23\|32\|33\|34\|35\|36\|37\|38\|39\|48\|49\|50\|51\|52\|53\|54\|55\|64\|65\|66\|67\|68\|69\|70\|71\|80\|81\|82\|83\|84\|85\|86\|87\|96\|97\|98\|99\|100\|101\|102\|103\|112\|113\|114\|115\|116\|117\|118\|119\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$namespace \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$parameters \(array\<non\-empty\-string, Roave\\BetterReflection\\Reflection\\ReflectionParameter\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionParameter\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$returnType \(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$returnsReference \(bool\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionMethod.php
@@ -217,7 +1177,169 @@ parameters:
 			path: src/Reflection/ReflectionMethod.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$startColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$startLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionNamedType.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionNamedType and Roave\\BetterReflection\\Reflection\\ReflectionNamedType will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionNamedType.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionNamedType\:\:\$isIdentifier \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionNamedType.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionNamedType\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionNamedType.php
+
+		-
+			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Cannot access offset ''class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Cannot access offset ''data'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionParameter and Roave\\BetterReflection\\Reflection\\ReflectionParameter will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$byRef \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$default \(PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$endColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$endLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$isOptional \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$isPromoted \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$isVariadic \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$parameterIndex \(int\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionParameter.php
@@ -229,7 +1351,175 @@ parameters:
 			path: src/Reflection/ReflectionParameter.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$startColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$startLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$type \(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^@readonly property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$declaringClass is already assigned\.$#'
+			identifier: assign.readOnlyPropertyByPhpDoc
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^@readonly property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$implementingClass is already assigned\.$#'
+			identifier: assign.readOnlyPropertyByPhpDoc
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Cannot access offset ''class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Cannot access offset ''data'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionProperty and Roave\\BetterReflection\\Reflection\\ReflectionProperty will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$attributes \(list\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionAttribute\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$declaredAtCompileTime \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$declaringClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$default \(PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$docComment \(non\-empty\-string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$endColumn \(int\<1, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$endColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$endLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$immediateVirtual \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$implementingClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$isPromoted \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$modifiers \(int\<0, 6903\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$name \(non\-empty\-string\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionProperty.php
@@ -241,16 +1531,262 @@ parameters:
 			path: src/Reflection/ReflectionProperty.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$startColumn \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$startLine \(int\<1, max\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$type \(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
 			path: src/Reflection/ReflectionPropertyHookType.php
 
 		-
+			message: '#^Anonymous function should return Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
+			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionUnionType and Roave\\BetterReflection\\Reflection\\ReflectionUnionType will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: \(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionUnionType\:\:\$types \(non\-empty\-list\<Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\>\) does not accept array\<Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionUnionType.php
+
+		-
 			message: '#^Call to function is_object\(\) with array\<bool\|float\|int\|string\>\|bool\|float\|int\|string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
 			path: src/Reflection/StringCast/ReflectionConstantStringCast.php
+
+		-
+			message: '#^Cannot access offset ''aliasName'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''filename'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Parameter \#2 \$name of class Roave\\BetterReflection\\SourceLocator\\Located\\AliasLocatedSource constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Parameter \#4 \$aliasName of class Roave\\BetterReflection\\SourceLocator\\Located\\AliasLocatedSource constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/AliasLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''filename'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/AnonymousLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/AnonymousLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/AnonymousLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''filename'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/EvaledLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/SourceLocator/Located/EvaledLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/EvaledLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/EvaledLocatedSource.php
+
+		-
+			message: '#^Parameter \#2 \$name of class Roave\\BetterReflection\\SourceLocator\\Located\\EvaledLocatedSource constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/EvaledLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''aliasName'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''extensionName'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''filename'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Parameter \#2 \$name of class Roave\\BetterReflection\\SourceLocator\\Located\\InternalLocatedSource constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Parameter \#3 \$extensionName of class Roave\\BetterReflection\\SourceLocator\\Located\\InternalLocatedSource constructor expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Parameter \#5 \$aliasName of class Roave\\BetterReflection\\SourceLocator\\Located\\InternalLocatedSource constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''filename'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Cannot call static method importFromCache\(\) on mixed\.$#'
+			identifier: staticMethod.nonObject
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource\:\:importFromCache\(\) should return Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Parameter \#2 \$name of class Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
 
 		-
 			message: '#^Access to an undefined property object\:\:\$name\.$#'
@@ -493,10 +2029,34 @@ parameters:
 			path: test/unit/Reflection/ReflectionClassTest.php
 
 		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/ReflectionClassTest.php
+
+		-
 			message: '#^Parameter \#2 \$node of static method Roave\\BetterReflection\\Reflection\\ReflectionClass\:\:createFromNode\(\) expects PhpParser\\Node\\Stmt\\Class_\|PhpParser\\Node\\Stmt\\Enum_\|PhpParser\\Node\\Stmt\\Interface_\|PhpParser\\Node\\Stmt\\Trait_, PhpParser\\Node\\Expr\|PhpParser\\Node\\Name\|PhpParser\\Node\\Stmt\\Class_ given\.$#'
 			identifier: argument.type
 			count: 1
 			path: test/unit/Reflection/ReflectionClassTest.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/ReflectionConstantTest.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionEnum\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/ReflectionEnumTest.php
+
+		-
+			message: '#^Parameter \#2 \$data of static method Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:importFromCache\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: test/unit/Reflection/ReflectionFunctionTest.php
 
 		-
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'

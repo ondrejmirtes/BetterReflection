@@ -6,6 +6,7 @@ namespace Roave\BetterReflection\Reflection;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassConst;
+use ReflectionClass as CoreReflectionClass;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
@@ -20,6 +21,7 @@ use Roave\BetterReflection\Util\GetLastDocComment;
 
 use function array_map;
 use function assert;
+use function get_class;
 
 /** @psalm-immutable */
 class ReflectionClassConstant
@@ -52,6 +54,16 @@ class ReflectionClassConstant
     /** @var positive-int */
     private int $endColumn;
 
+    private ?ReflectionClass $declaringClass;
+
+    private ?ReflectionClass $implementingClass;
+
+    /** @var non-empty-string */
+    private string $declaringClassName;
+
+    /** @var non-empty-string */
+    private string $implementingClassName;
+
     /** @psalm-allow-private-mutation */
     private CompiledValue|null $compiledValue = null;
 
@@ -59,13 +71,15 @@ class ReflectionClassConstant
         private Reflector $reflector,
         ClassConst $node,
         int $positionInNode,
-        private ReflectionClass $declaringClass,
-        private ReflectionClass $implementingClass,
+        ReflectionClass $declaringClass,
+        ReflectionClass $implementingClass,
     ) {
-        $this->name      = $node->consts[$positionInNode]->name->name;
-        $this->modifiers = $this->computeModifiers($node);
-        $this->type      = $this->createType($node);
-        $this->value     = $node->consts[$positionInNode]->value;
+        $this->declaringClass    = $declaringClass;
+        $this->implementingClass = $implementingClass;
+        $this->name              = $node->consts[$positionInNode]->name->name;
+        $this->modifiers         = $this->computeModifiers($node);
+        $this->type              = $this->createType($node);
+        $this->value             = $node->consts[$positionInNode]->value;
 
         $this->docComment = GetLastDocComment::forNode($node);
         $this->attributes = ReflectionAttributeHelper::createAttributes($reflector, $this, $node->attrGroups);
@@ -79,6 +93,68 @@ class ReflectionClassConstant
         $this->endLine     = $endLine;
         $this->startColumn = CalculateReflectionColumn::getStartColumn($declaringClass->getLocatedSource()->getSource(), $node);
         $this->endColumn   = CalculateReflectionColumn::getEndColumn($declaringClass->getLocatedSource()->getSource(), $node);
+
+        $this->declaringClassName    = $this->declaringClass->getName();
+        $this->implementingClassName = $this->implementingClass->getName();
+    }
+
+    /** @return array<string, mixed> */
+    public function exportToCache(): array
+    {
+        $br = new BetterReflection();
+
+        return [
+            'declaringClassName' => $this->declaringClassName,
+            'implementingClassName' => $this->implementingClassName,
+            'name' => $this->name,
+            'modifiers' => $this->modifiers,
+            'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
+            'value' => $br->printer()->prettyPrintExpr($this->value),
+            'docComment' => $this->docComment,
+            'attributes' => array_map(
+                static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
+                $this->attributes,
+            ),
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+        ];
+    }
+
+    /** @param array<string, mixed> $data */
+    public static function importFromCache(Reflector $reflector, array $data): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        $ref        = $reflection->newInstanceWithoutConstructor();
+        assert($ref instanceof self);
+        $ref->reflector             = $reflector;
+        $ref->declaringClassName    = $data['declaringClassName'];
+        $ref->implementingClassName = $data['implementingClassName'];
+        $ref->name                  = $data['name'];
+        $ref->modifiers             = $data['modifiers'];
+
+        if ($data['type'] !== null) {
+            $typeClass = $data['type']['class'];
+            $ref->type = $typeClass::importFromCache($reflector, $data['type']['data'], $ref);
+        } else {
+            $ref->type = null;
+        }
+
+        $br         = new BetterReflection();
+        $ref->value = $br->phpParser()->parse('<?php ' . $data['value'] . ';')[0]->expr;
+
+        $ref->docComment  = $data['docComment'];
+        $ref->attributes  = array_map(
+            static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
+            $data['attributes'],
+        );
+        $ref->startLine   = $data['startLine'];
+        $ref->endLine     = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn   = $data['endColumn'];
+
+        return $ref;
     }
 
     /**
@@ -255,7 +331,7 @@ class ReflectionClassConstant
      */
     public function getDeclaringClass(): ReflectionClass
     {
-        return $this->declaringClass;
+        return $this->declaringClass ??= $this->reflector->reflectClass($this->declaringClassName);
     }
 
     /**
@@ -263,7 +339,7 @@ class ReflectionClassConstant
      */
     public function getImplementingClass(): ReflectionClass
     {
-        return $this->implementingClass;
+        return $this->implementingClass ??= $this->reflector->reflectClass($this->implementingClassName);
     }
 
     /** @return non-empty-string|null */

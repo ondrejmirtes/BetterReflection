@@ -23,6 +23,8 @@ use Roave\BetterReflectionTest\Fixture\Attr;
 use Roave\BetterReflectionTest\Fixture\ClassWithStaticMethod;
 use stdClass;
 
+use function var_export;
+
 #[CoversClass(ReflectionFunction::class)]
 class ReflectionFunctionTest extends TestCase
 {
@@ -367,5 +369,17 @@ class ReflectionFunctionTest extends TestCase
         $attributes         = $functionReflection->getAttributesByInstance(Attr::class);
 
         self::assertCount(2, $attributes);
+    }
+
+    public function testCaching(): void
+    {
+        $reflector  = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Attributes.php', $this->astLocator));
+        $reflection = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\functionWithAttributes');
+        $data       = $reflection->exportToCache();
+
+        $importedReflection = ReflectionFunction::importFromCache($reflector, eval('return ' . var_export($data, true) . ';'));
+
+        // The imported reflection may hold lazily-restored state, so it is compared through what it exports
+        self::assertSame($data, $importedReflection->exportToCache());
     }
 }
