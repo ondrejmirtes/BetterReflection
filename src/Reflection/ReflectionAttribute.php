@@ -7,6 +7,9 @@ namespace Roave\BetterReflection\Reflection;
 use Attribute;
 use LogicException;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use ReflectionClass as CoreReflectionClass;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
@@ -42,6 +45,47 @@ class ReflectionAttribute
         }
 
         $this->arguments = $arguments;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        $br = new BetterReflection();
+
+        return [
+            'name' => $this->name,
+            'isRepeated' => $this->isRepeated,
+            'arguments' => array_map(
+                static fn (Expr $expr) => $br->printer()->prettyPrintExpr($expr),
+                $this->arguments,
+            ),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionConstant|ReflectionClassConstant|ReflectionEnumCase|ReflectionProperty|ReflectionParameter $owner
+     */
+    public static function importFromCache(Reflector $reflector, array $data, $owner): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+
+        $ref->owner = $owner;
+        $ref->name = $data['name'];
+        $ref->isRepeated = $data['isRepeated'];
+
+        $br = new BetterReflection();
+        $ref->arguments = array_map(
+            static fn (string $exprCode) => $br->phpParser()->parse('<?php ' . $exprCode . ';')[0]->expr,
+            $data['arguments'],
+        );
+
+        return $ref;
     }
 
     /** @internal */

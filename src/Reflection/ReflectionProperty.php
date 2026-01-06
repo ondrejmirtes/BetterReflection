@@ -11,8 +11,10 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Property as PropertyNode;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FindingVisitor;
+use ReflectionClass as CoreReflectionClass;
 use ReflectionException;
 use ReflectionProperty as CoreReflectionProperty;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -27,6 +29,7 @@ use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
 use Roave\BetterReflection\Reflection\StringCast\ReflectionPropertyStringCast;
 use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
 use Roave\BetterReflection\Reflector\Reflector;
+use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\Util\CalculateReflectionColumn;
 use Roave\BetterReflection\Util\ClassExistenceChecker;
 use Roave\BetterReflection\Util\Exception\NoNodePosition;
@@ -70,6 +73,16 @@ class ReflectionProperty
     /** @var positive-int|null */
     private int|null $endColumn;
 
+    private ?ReflectionClass $declaringClass;
+
+    private ?ReflectionClass $implementingClass;
+
+    /** @var non-empty-string */
+    private string $declaringClassName;
+
+    /** @var non-empty-string */
+    private string $implementingClassName;
+
     private bool $immediateVirtual;
 
     /** @var array{get?: ReflectionMethod, set?: ReflectionMethod} */
@@ -91,11 +104,13 @@ class ReflectionProperty
         private Reflector $reflector,
         PropertyNode $node,
         Node\PropertyItem $propertyNode,
-        private ReflectionClass $declaringClass,
-        private ReflectionClass $implementingClass,
+        ReflectionClass $declaringClass,
+        ReflectionClass $implementingClass,
         private bool $isPromoted,
         private bool $declaredAtCompileTime,
     ) {
+        $this->declaringClass   = $declaringClass;
+        $this->implementingClass = $implementingClass;
         $this->name             = $propertyNode->name->name;
         $this->modifiers        = $this->computeModifiers($node);
         $this->type             = $this->createType($node);
@@ -131,6 +146,90 @@ class ReflectionProperty
         } catch (NoNodePosition) {
             $this->endColumn = null;
         }
+
+        $this->declaringClassName = $this->declaringClass->getName();
+        $this->implementingClassName = $this->implementingClass->getName();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        $br = new BetterReflection();
+
+        return [
+            'declaringClassName' => $this->declaringClassName,
+            'implementingClassName' => $this->implementingClassName,
+            'name' => $this->name,
+            'modifiers' => $this->modifiers,
+            'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
+            'default' => $this->default !== null ? $br->printer()->prettyPrintExpr($this->default) : null,
+            'docComment' => $this->docComment,
+            'attributes' => array_map(
+                static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
+                $this->attributes,
+            ),
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+            'isPromoted' => $this->isPromoted,
+            'declaredAtCompileTime' => $this->declaredAtCompileTime,
+            'immediateVirtual' => $this->immediateVirtual,
+            'immediateHooks' => array_map(
+                static fn (ReflectionMethod $method) => $method->exportToCache(),
+                $this->immediateHooks,
+            ),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function importFromCache(Reflector $reflector, array $data, LocatedSource $locatedSource): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+        $ref->declaringClassName = $data['declaringClassName'];
+        $ref->implementingClassName = $data['implementingClassName'];
+        $ref->name = $data['name'];
+        $ref->modifiers = $data['modifiers'];
+
+        if ($data['type'] !== null) {
+            $typeClass = $data['type']['class'];
+            $ref->type = $typeClass::importFromCache($reflector, $data['type']['data'], $ref);
+        } else {
+            $ref->type = null;
+        }
+
+        if ($data['default'] !== null) {
+            $br = new BetterReflection();
+            $ref->default = $br->phpParser()->parse('<?php ' . $data['default'] . ';')[0]->expr;
+        } else {
+            $ref->default = null;
+        }
+
+        $ref->docComment = $data['docComment'];
+        $ref->attributes = array_map(
+            static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
+            $data['attributes'],
+        );
+        $ref->startLine = $data['startLine'];
+        $ref->endLine = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn = $data['endColumn'];
+        $ref->isPromoted = $data['isPromoted'];
+        $ref->declaredAtCompileTime = $data['declaredAtCompileTime'];
+        $ref->immediateVirtual = $data['immediateVirtual'];
+        $ref->immediateHooks = array_map(
+            static fn ($hookData) => ReflectionMethod::importFromCache($reflector, $hookData, $locatedSource, $ref),
+            $data['immediateHooks'],
+        );
+
+        return $ref;
     }
 
     /**
@@ -292,7 +391,7 @@ class ReflectionProperty
     public function isAbstract(): bool
     {
         return (bool) ($this->modifiers & ReflectionPropertyAdapter::IS_ABSTRACT_COMPATIBILITY)
-            || $this->declaringClass->isInterface();
+            || $this->getDeclaringClass()->isInterface();
     }
 
     public function isPromoted(): bool
@@ -329,12 +428,12 @@ class ReflectionProperty
 
     public function getDeclaringClass(): ReflectionClass
     {
-        return $this->declaringClass;
+        return $this->declaringClass ??= $this->reflector->reflectClass($this->declaringClassName);
     }
 
     public function getImplementingClass(): ReflectionClass
     {
-        return $this->implementingClass;
+        return $this->implementingClass ??= $this->reflector->reflectClass($this->implementingClassName);
     }
 
     /** @return non-empty-string|null */
@@ -394,7 +493,7 @@ class ReflectionProperty
     public function getStartLine(): int
     {
         if ($this->startLine === null) {
-            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->implementingClass->getName()));
+            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->getImplementingClass()->getName()));
         }
 
         return $this->startLine;
@@ -410,7 +509,7 @@ class ReflectionProperty
     public function getEndLine(): int
     {
         if ($this->endLine === null) {
-            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->implementingClass->getName()));
+            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->getImplementingClass()->getName()));
         }
 
         return $this->endLine;
@@ -424,7 +523,7 @@ class ReflectionProperty
     public function getStartColumn(): int
     {
         if ($this->startColumn === null) {
-            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->implementingClass->getName()));
+            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->getImplementingClass()->getName()));
         }
 
         return $this->startColumn;
@@ -438,7 +537,7 @@ class ReflectionProperty
     public function getEndColumn(): int
     {
         if ($this->endColumn === null) {
-            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->implementingClass->getName()));
+            throw CodeLocationMissing::create(sprintf('Was looking for property "$%s" in "%s".', $this->name, $this->getImplementingClass()->getName()));
         }
 
         return $this->endColumn;

@@ -6,6 +6,7 @@ namespace Roave\BetterReflection\Reflection;
 
 use PhpParser\Node;
 use PhpParser\Node\IntersectionType;
+use ReflectionClass as CoreReflectionClass;
 use Roave\BetterReflection\Reflector\Reflector;
 
 use function array_map;
@@ -33,6 +34,36 @@ class ReflectionIntersectionType extends ReflectionType
         }, $type->types);
 
         $this->types = $types;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        return [
+            'types' => array_map(
+                static fn (ReflectionNamedType $type) => $type->exportToCache(),
+                $this->types,
+            ),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner
+     */
+    public static function importFromCache(Reflector $reflector, array $data, $owner): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->types = array_map(
+            static fn (array $typeData) => ReflectionNamedType::importFromCache($reflector, $typeData, $owner),
+            $data['types'],
+        );
+
+        return $ref;
     }
 
     /** @internal */
