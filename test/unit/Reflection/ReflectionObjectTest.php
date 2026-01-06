@@ -237,6 +237,8 @@ class ReflectionObjectTest extends TestCase
             'getDefaultProperties',
             '__toString',
             '__clone',
+            'importFromCache',
+            'exportToCache',
         ];
 
         $filteredMethods = [];

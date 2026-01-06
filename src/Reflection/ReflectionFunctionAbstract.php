@@ -13,10 +13,12 @@ use PhpParser\Node\Stmt\Class_ as ClassNode;
 use PhpParser\Node\Stmt\ClassMethod as MethodNode;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FindingVisitor;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
 use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
 use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
 use Roave\BetterReflection\Reflection\Exception\CodeLocationMissing;
+use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
 use Roave\BetterReflection\Util\CalculateReflectionColumn;
 use Roave\BetterReflection\Util\Exception\NoNodePosition;
@@ -92,6 +94,71 @@ trait ReflectionFunctionAbstract
     private bool $isClosure = false;
     /** @psalm-allow-private-mutation */
     private bool $isGenerator = false;
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function exportFunctionAbstractToCache(): array
+    {
+        return [
+            'name' => $this->name,
+            'parameters' => array_map(
+                static fn (ReflectionParameter $param) => $param->exportToCache(),
+                $this->parameters,
+            ),
+            'returnsReference' => $this->returnsReference,
+            'returnType' => $this->returnType !== null ? ['class' => get_class($this->returnType), 'data' => $this->returnType->exportToCache()] : null,
+            'attributes' => array_map(
+                static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
+                $this->attributes,
+            ),
+            'docComment' => $this->docComment,
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+            'couldThrow' => $this->couldThrow,
+            'isClosure' => $this->isClosure,
+            'isGenerator' => $this->isGenerator,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param ReflectionMethod|ReflectionFunction $owner
+     */
+    protected static function importFunctionAbstractFromCache(
+        self $ref,
+        Reflector $reflector,
+        array $data,
+    ): void {
+        $ref->name = $data['name'];
+        $ref->parameters = array_map(
+            static fn ($paramData) => ReflectionParameter::importFromCache($reflector, $paramData, $ref),
+            $data['parameters'],
+        );
+        $ref->returnsReference = $data['returnsReference'];
+
+        if ($data['returnType'] !== null) {
+            $typeClass = $data['returnType']['class'];
+            $ref->returnType = $typeClass::importFromCache($reflector, $data['returnType']['data'], $ref);
+        } else {
+            $ref->returnType = null;
+        }
+
+        $ref->attributes = array_map(
+            static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
+            $data['attributes'],
+        );
+        $ref->docComment = $data['docComment'];
+        $ref->startLine = $data['startLine'];
+        $ref->endLine = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn = $data['endColumn'];
+        $ref->couldThrow = $data['couldThrow'];
+        $ref->isClosure = $data['isClosure'];
+        $ref->isGenerator = $data['isGenerator'];
+    }
 
     /** @return non-empty-string */
     abstract public function __toString(): string;
