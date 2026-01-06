@@ -7,6 +7,8 @@ namespace Roave\BetterReflection\Reflection;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\EnumCase;
+use ReflectionClass as CoreReflectionClass;
+use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -70,6 +72,60 @@ class ReflectionEnumCase
         $this->endLine     = $endLine;
         $this->startColumn = CalculateReflectionColumn::getStartColumn($this->enum->getLocatedSource()->getSource(), $node);
         $this->endColumn   = CalculateReflectionColumn::getEndColumn($this->enum->getLocatedSource()->getSource(), $node);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        $br = new BetterReflection();
+
+        return [
+            'name' => $this->name,
+            'value' => $this->value !== null ? $br->printer()->prettyPrintExpr($this->value) : null,
+            'attributes' => array_map(
+                static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
+                $this->attributes,
+            ),
+            'docComment' => $this->docComment,
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function importFromCache(Reflector $reflector, array $data, ReflectionEnum $enum): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+        $ref->enum = $enum;
+        $ref->name = $data['name'];
+
+        if ($data['value'] !== null) {
+            $br = new BetterReflection();
+            $ref->value = $br->phpParser()->parse('<?php ' . $data['value'] . ';')[0]->expr;
+        } else {
+            $ref->value = null;
+        }
+
+        $ref->attributes = array_map(
+            static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
+            $data['attributes'],
+        );
+        $ref->docComment = $data['docComment'];
+        $ref->startLine = $data['startLine'];
+        $ref->endLine = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn = $data['endColumn'];
+
+        return $ref;
     }
 
     /** @internal */
