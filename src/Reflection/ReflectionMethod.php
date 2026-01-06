@@ -8,6 +8,7 @@ use Closure;
 use OutOfBoundsException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod as MethodNode;
+use ReflectionClass as CoreReflectionClass;
 use ReflectionException;
 use ReflectionMethod as CoreReflectionMethod;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
@@ -33,6 +34,21 @@ class ReflectionMethod
     /** @var int-mask-of<ReflectionMethodAdapter::IS_*> */
     private int $modifiers;
 
+    private ?ReflectionClass $declaringClass;
+
+    private ?ReflectionClass $implementingClass;
+
+    private ?ReflectionClass $currentClass;
+
+    /** @var non-empty-string */
+    private string $declaringClassName;
+
+    /** @var non-empty-string */
+    private string $implementingClassName;
+
+    /** @var non-empty-string */
+    private string $currentClassName;
+
     /**
      * @param non-empty-string      $name
      * @param non-empty-string|null $aliasName
@@ -44,18 +60,60 @@ class ReflectionMethod
         private LocatedSource $locatedSource,
         string $name,
         private string|null $namespace,
-        private ReflectionClass $declaringClass,
-        private ReflectionClass $implementingClass,
-        private ReflectionClass $currentClass,
+        ReflectionClass $declaringClass,
+        ReflectionClass $implementingClass,
+        ReflectionClass $currentClass,
         private string|null $aliasName,
         private ReflectionProperty|null $hookProperty = null,
     ) {
+        $this->declaringClass = $declaringClass;
+        $this->implementingClass = $implementingClass;
+        $this->currentClass = $currentClass;
         assert($node instanceof MethodNode || $node instanceof Node\PropertyHook);
 
         $this->name      = $name;
         $this->modifiers = $this->computeModifiers($node);
 
         $this->fillFromNode($node);
+
+        $this->declaringClassName = $this->declaringClass->getName();
+        $this->implementingClassName = $this->implementingClass->getName();
+        $this->currentClassName = $this->currentClass->getName();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        return array_merge($this->exportFunctionAbstractToCache(), [
+            'modifiers' => $this->modifiers,
+            'namespace' => $this->namespace,
+            'declaringClassName' => $this->declaringClassName,
+            'implementingClassName' => $this->implementingClassName,
+            'currentClassName' => $this->currentClassName,
+            'aliasName' => $this->aliasName,
+        ]);
+    }
+
+    public static function importFromCache(Reflector $reflector, array $data, LocatedSource $locatedSource, ?ReflectionProperty $hookProperty): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+        $ref->locatedSource = $locatedSource;
+        $ref->namespace = $data['namespace'];
+        $ref->modifiers = $data['modifiers'];
+        $ref->declaringClassName = $data['declaringClassName'];
+        $ref->implementingClassName = $data['implementingClassName'];
+        $ref->currentClassName = $data['currentClassName'];
+        $ref->aliasName = $data['aliasName'];
+        $ref->hookProperty = $hookProperty;
+
+        self::importFunctionAbstractFromCache($ref, $reflector, $data);
+
+        return $ref;
     }
 
     /**
@@ -330,7 +388,7 @@ class ReflectionMethod
     public function isAbstract(): bool
     {
         return (bool) ($this->modifiers & CoreReflectionMethod::IS_ABSTRACT)
-            || $this->declaringClass->isInterface();
+            || $this->getDeclaringClass()->isInterface();
     }
 
     /**
@@ -403,7 +461,7 @@ class ReflectionMethod
      */
     public function getDeclaringClass(): ReflectionClass
     {
-        return $this->declaringClass;
+        return $this->declaringClass ??= $this->reflector->reflectClass($this->declaringClassName);
     }
 
     /**
@@ -411,7 +469,7 @@ class ReflectionMethod
      */
     public function getImplementingClass(): ReflectionClass
     {
-        return $this->implementingClass;
+        return $this->implementingClass ??= $this->reflector->reflectClass($this->implementingClassName);
     }
 
     /**
@@ -421,7 +479,7 @@ class ReflectionMethod
      */
     public function getCurrentClass(): ReflectionClass
     {
-        return $this->currentClass;
+        return $this->currentClass ??= $this->reflector->reflectClass($this->currentClassName);
     }
 
     /**

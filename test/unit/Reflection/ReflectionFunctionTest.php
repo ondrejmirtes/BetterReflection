@@ -367,4 +367,21 @@ class ReflectionFunctionTest extends TestCase
 
         self::assertCount(2, $attributes);
     }
+
+    public function testCaching(): void
+    {
+        $reflector          = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Attributes.php', $this->astLocator));
+        $reflection = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\functionWithAttributes');
+        foreach ($reflection->getParameters() as $parameter) {
+            AttributesResetter::resetParameter($parameter);
+        }
+        $data = $reflection->exportToCache();
+        $s = var_export($data, true);
+        $readData = eval('return ' . $s . ';');
+        $importedReflection = ReflectionFunction::importFromCache($reflector, $readData);
+        foreach ($importedReflection->getParameters() as $parameter) {
+            AttributesResetter::resetParameter($parameter);
+        }
+        self::assertEquals($importedReflection, $reflection);
+    }
 }

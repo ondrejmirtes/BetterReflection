@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\BetterReflection\Reflection;
 
 use PhpParser\Node;
+use ReflectionClass as CoreReflectionClass;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
@@ -99,6 +100,61 @@ class ReflectionConstant implements Reflection
         $this->endLine     = $endLine;
         $this->startColumn = CalculateReflectionColumn::getStartColumn($this->locatedSource->getSource(), $node);
         $this->endColumn   = CalculateReflectionColumn::getEndColumn($this->locatedSource->getSource(), $node);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        $br = new BetterReflection();
+
+        return [
+            'locatedSource' => $this->locatedSource->exportToCache(),
+            'name' => $this->name,
+            'shortName' => $this->shortName,
+            'value' => $br->printer()->prettyPrintExpr($this->value),
+            'docComment' => $this->docComment,
+            'attributes' => array_map(
+                static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
+                $this->attributes,
+            ),
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+            'namespace' => $this->namespace,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function importFromCache(Reflector $reflector, array $data): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+        $ref->locatedSource = LocatedSource::importFromCache($data['locatedSource']);
+        $ref->namespace = $data['namespace'];
+        $ref->name = $data['name'];
+        $ref->shortName = $data['shortName'];
+
+        $br = new BetterReflection();
+        $ref->value = $br->phpParser()->parse('<?php ' . $data['value'] . ';')[0]->expr;
+
+        $ref->docComment = $data['docComment'];
+        $ref->attributes = array_map(
+            static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
+            $data['attributes'],
+        );
+        $ref->startLine = $data['startLine'];
+        $ref->endLine = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn = $data['endColumn'];
+
+        return $ref;
     }
 
     /**

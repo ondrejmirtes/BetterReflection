@@ -385,4 +385,17 @@ class ReflectionConstantTest extends TestCase
 
         self::assertCount(2, $attributes);
     }
+
+    public function testCaching(): void
+    {
+        $reflector          = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Attributes.php', $this->astLocator));
+        $reflection = $reflector->reflectConstant('Roave\BetterReflectionTest\Fixture\SOME_CONSTANT');
+        AttributesResetter::resetNodeAttributes($reflection->getValueExpression());
+        $data = $reflection->exportToCache();
+        $s = var_export($data, true);
+        $readData = eval('return ' . $s . ';');
+        $importedReflection = ReflectionConstant::importFromCache($reflector, $readData);
+        AttributesResetter::resetNodeAttributes($importedReflection->getValueExpression());
+        self::assertEquals($importedReflection, $reflection);
+    }
 }

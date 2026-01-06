@@ -7,6 +7,7 @@ namespace Roave\BetterReflection\Reflection;
 use LogicException;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use ReflectionClass as CoreReflectionClass;
 use Roave\BetterReflection\Reflector\Reflector;
 
 use function array_key_exists;
@@ -40,13 +41,44 @@ class ReflectionNamedType extends ReflectionType
     /** @var non-empty-string */
     private string $name;
 
+    private bool $isIdentifier;
+
     /** @internal */
     public function __construct(
         private Reflector $reflector,
         private ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        private Identifier|Name $type,
+        Identifier|Name $type,
     ) {
         $this->name = $type->toString();
+        $this->isIdentifier = $type instanceof Identifier;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        return [
+            'name' => $this->name,
+            'isIdentifier' => $this->isIdentifier,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner
+     */
+    public static function importFromCache(Reflector $reflector, array $data, $owner): self
+    {
+        $reflection = new CoreReflectionClass(self::class);
+        /** @var self $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+        $ref->owner = $owner;
+        $ref->name = $data['name'];
+        $ref->isIdentifier = $data['isIdentifier'];
+
+        return $ref;
     }
 
     /** @internal */
@@ -127,7 +159,7 @@ class ReflectionNamedType extends ReflectionType
 
     public function isIdentifier(): bool
     {
-        return $this->type instanceof Identifier;
+        return $this->isIdentifier;
     }
 
     /** @return non-empty-string */

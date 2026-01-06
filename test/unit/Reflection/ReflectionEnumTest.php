@@ -8,6 +8,7 @@ use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionEnum;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase;
 use Roave\BetterReflection\Reflection\ReflectionNamedType;
@@ -15,6 +16,7 @@ use Roave\BetterReflection\Reflector\DefaultReflector;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Ast\Locator;
 use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\IntEnum;
 use Roave\BetterReflectionTest\Fixture\PureEnum;
@@ -155,5 +157,18 @@ class ReflectionEnumTest extends TestCase
 
         $this->expectException(LogicException::class);
         $enumReflection->getBackingType();
+    }
+
+    public function testCaching(): void
+    {
+        $reflection = $this->reflector->reflectClass(IntEnum::class);
+        $data = $reflection->exportToCache();
+        AttributesResetter::resetClass($reflection);
+        $s = var_export($data, true);
+        $readData = eval('return ' . $s . ';');
+        $importedReflection = ReflectionEnum::importFromCache($this->reflector, $readData);
+        $importedReflection->getName(); // fill cachedName
+        AttributesResetter::resetClass($importedReflection);
+        self::assertEquals($importedReflection, $reflection);
     }
 }

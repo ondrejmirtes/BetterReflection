@@ -101,6 +101,7 @@ use function file_get_contents;
 use function sort;
 use function sprintf;
 use function uniqid;
+use function var_export;
 
 #[CoversClass(ReflectionClass::class)]
 class ReflectionClassTest extends TestCase
@@ -3074,5 +3075,19 @@ PHP;
         );
         $array     = $anonymous->getConstant('CACHE_MAP')->getValue();
         self::assertIsArray($array);
+    }
+
+    public function testCaching(): void
+    {
+        $reflector          = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/ClassForCaching.php', $this->astLocator));
+        $reflection = $reflector->reflectClass('Roave\\BetterReflectionTest\\Example');
+        AttributesResetter::resetClass($reflection);
+        $data = $reflection->exportToCache();
+        $s = var_export($data, true);
+        $readData = eval('return ' . $s . ';');
+        $importedReflection = ReflectionClass::importFromCache($reflector, $readData);
+        $importedReflection->getName(); // fill cachedName
+        AttributesResetter::resetClass($importedReflection);
+        self::assertEquals($importedReflection, $reflection);
     }
 }

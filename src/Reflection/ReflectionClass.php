@@ -240,6 +240,87 @@ class ReflectionClass implements Reflection
         $this->traitsData = $this->computeTraitsData($node);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportToCache(): array
+    {
+        return [
+            'locatedSource' => $this->locatedSource->exportToCache(),
+            'namespace' => $this->namespace,
+            'name' => $this->name,
+            'shortName' => $this->shortName,
+            'isInterface' => $this->isInterface,
+            'isTrait' => $this->isTrait,
+            'isEnum' => $this->isEnum,
+            'isBackedEnum' => $this->isBackedEnum,
+            'modifiers' => $this->modifiers,
+            'docComment' => $this->docComment,
+            'attributes' => array_map(static fn ($ref) => $ref->exportToCache(), $this->attributes),
+            'startLine' => $this->startLine,
+            'endLine' => $this->endLine,
+            'startColumn' => $this->startColumn,
+            'endColumn' => $this->endColumn,
+            'parentClassName' => $this->parentClassName,
+            'implementsClassNames' => $this->implementsClassNames,
+            'traitClassNames' => $this->traitClassNames,
+            'immediateConstants' => array_map(static fn ($ref) => $ref->exportToCache(), $this->immediateConstants),
+            'immediateProperties' => array_map(static fn ($ref) => $ref->exportToCache(), $this->immediateProperties),
+            'immediateMethods' => array_map(static fn ($ref) => $ref->exportToCache(), $this->immediateMethods),
+            'traitsData' => $this->traitsData,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return static
+     */
+    public static function importFromCache(Reflector $reflector, array $data): self
+    {
+        $reflection = new CoreReflectionClass(static::class);
+        /** @var static $ref */
+        $ref = $reflection->newInstanceWithoutConstructor();
+        $ref->reflector = $reflector;
+
+        $locatedSource = LocatedSource::importFromCache($data['locatedSource']);
+        $ref->locatedSource = $locatedSource;
+        $ref->namespace = $data['namespace'];
+        $ref->name = $data['name'];
+        $ref->shortName = $data['shortName'];
+        $ref->isInterface = $data['isInterface'];
+        $ref->isTrait = $data['isTrait'];
+        $ref->isEnum = $data['isEnum'];
+        $ref->isBackedEnum = $data['isBackedEnum'];
+        $ref->modifiers = $data['modifiers'];
+        $ref->docComment = $data['docComment'];
+        $ref->attributes = array_map(
+            static fn ($constData) => ReflectionAttribute::importFromCache($reflector, $constData, $ref),
+            $data['attributes'],
+        );
+        $ref->startLine = $data['startLine'];
+        $ref->endLine = $data['endLine'];
+        $ref->startColumn = $data['startColumn'];
+        $ref->endColumn = $data['endColumn'];
+        $ref->parentClassName = $data['parentClassName'];
+        $ref->implementsClassNames = $data['implementsClassNames'];
+        $ref->traitClassNames = $data['traitClassNames'];
+        $ref->immediateConstants = array_map(
+            static fn ($constData) => ReflectionClassConstant::importFromCache($reflector, $constData),
+            $data['immediateConstants'],
+        );
+        $ref->immediateProperties = array_map(
+            static fn ($propData) => ReflectionProperty::importFromCache($reflector, $propData, $locatedSource),
+            $data['immediateProperties'],
+        );
+        $ref->immediateMethods = array_map(
+            static fn ($methodData) => ReflectionMethod::importFromCache($reflector, $methodData, $locatedSource, null),
+            $data['immediateMethods'],
+        );
+        $ref->traitsData = $data['traitsData'];
+
+        return $ref;
+    }
+
     /** @return non-empty-string */
     public function __toString(): string
     {
