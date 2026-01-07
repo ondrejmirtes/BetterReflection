@@ -56,6 +56,8 @@ use const PHP_VERSION_ID;
 /** @internal */
 final class PhpStormStubsSourceStubber implements SourceStubber
 {
+    private Parser $phpParser;
+    private int $phpVersion = PHP_VERSION_ID;
     private const SEARCH_DIRECTORIES = [
         __DIR__ . '/../../../../../jetbrains/phpstorm-stubs',
         __DIR__ . '/../../../vendor/jetbrains/phpstorm-stubs',
@@ -146,7 +148,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
     private NodeTraverser $nodeTraverser;
 
-    private string|null $stubsDirectory = null;
+    /**
+     * @var string|null
+     */
+    private $stubsDirectory = null;
 
     private CachingVisitor $cachingVisitor;
 
@@ -182,8 +187,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     /** @var array<lowercase-string, string> */
     private static array $constantMap;
 
-    public function __construct(private Parser $phpParser, Standard $prettyPrinter, private int $phpVersion = PHP_VERSION_ID)
+    public function __construct(Parser $phpParser, Standard $prettyPrinter, int $phpVersion = PHP_VERSION_ID)
     {
+        $this->phpParser = $phpParser;
+        $this->phpVersion = $phpVersion;
         $this->builderFactory = new BuilderFactory();
         $this->prettyPrinter  = $prettyPrinter;
 
@@ -237,7 +244,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     }
 
     /** @param class-string|trait-string $className */
-    public function generateClassStub(string $className): StubData|null
+    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         if (strtolower($className) === 'iterable') {
             return null;
@@ -277,7 +284,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     }
 
     /** @return array{0: Node\Stmt\ClassLike, 1: Node\Stmt\Namespace_|null}|null */
-    private function getClassNodeData(string $className): array|null
+    private function getClassNodeData(string $className)
     {
         $lowercaseClassName = strtolower($className);
 
@@ -326,7 +333,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->functionNodes[$lowercaseFunctionName];
     }
 
-    public function generateFunctionStub(string $functionName): StubData|null
+    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $functionNodeData = $this->getFunctionNodeData($functionName);
 
@@ -340,7 +347,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return new StubData($this->createStub($functionNodeData[0], $functionNodeData[1]), $extension, $this->getAbsoluteFilePath($filePath));
     }
 
-    public function generateConstantStub(string $constantName): StubData|null
+    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $lowercaseConstantName = strtolower($constantName);
 
@@ -453,13 +460,16 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         }
     }
 
-    private function createStub(Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall $node, Node\Stmt\Namespace_|null $namespaceNode): string
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function createStub($node, ?\PhpParser\Node\Stmt\Namespace_ $namespaceNode): string
     {
         if ($node instanceof Node\Expr\FuncCall) {
             try {
                 ConstantNodeChecker::assertValidDefineFunctionCall($node);
                 $this->addDeprecatedDocComment($node);
-            } catch (InvalidConstantNode) {
+            } catch (InvalidConstantNode $exception) {
                 // just keep going
             }
         }
@@ -598,7 +608,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $newStmts;
     }
 
-    private function modifyStmtTypeByPhpVersion(Node\Stmt\Property|Node\Param $stmt): void
+    /**
+     * @param \PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $stmt
+     */
+    private function modifyStmtTypeByPhpVersion($stmt): void
     {
         $type = $this->getStmtType($stmt);
 
@@ -609,7 +622,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $stmt->type = $type;
     }
 
-    private function modifyFunctionReturnTypeByPhpVersion(Node\Stmt\ClassMethod|Node\Stmt\Function_ $function): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $function
+     */
+    private function modifyFunctionReturnTypeByPhpVersion($function): void
     {
         $isTentativeReturnType = $this->getNodeAttribute($function, 'JetBrains\PhpStorm\Internal\TentativeType') !== null;
 
@@ -635,7 +651,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $function->returnType = $type;
     }
 
-    private function modifyFunctionParametersByPhpVersion(Node\Stmt\ClassMethod|Node\Stmt\Function_ $function): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $function
+     */
+    private function modifyFunctionParametersByPhpVersion($function): void
     {
         $parameters = [];
 
@@ -652,7 +671,11 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $function->params = $parameters;
     }
 
-    private function getStmtType(Node\Stmt\Function_|Node\Stmt\ClassMethod|Node\Stmt\Property|Node\Param $node): Node\Name|Node\Identifier|Node\ComplexType|null
+    /**
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $node
+     * @return \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\ComplexType|null
+     */
+    private function getStmtType($node)
     {
         $languageLevelTypeAwareAttribute = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Internal\LanguageLevelTypeAware');
 
@@ -685,7 +708,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             : null;
     }
 
-    private function addDeprecatedDocComment(Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\FuncCall|Node\Stmt\Const_|Node\Stmt\EnumCase $node): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function addDeprecatedDocComment($node): void
     {
         if ($node instanceof Node\Expr\FuncCall) {
             if (! $this->isDeprecatedByPhpDocInPhpVersion($node)) {
@@ -708,34 +734,32 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $this->addAnnotationToDocComment($node, 'deprecated');
     }
 
-    private function addAnnotationToDocComment(
-        Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Stmt\Const_|Node\Stmt\EnumCase $node,
-        string $annotationName,
-    ): void {
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function addAnnotationToDocComment($node, string $annotationName): void
+    {
         $docComment = $node->getDocComment();
-
         if ($docComment === null) {
             $docCommentText = sprintf('/** @%s */', $annotationName);
         } else {
             $docCommentText = preg_replace('~(\r?\n\s*)\*/~', sprintf('\1* @%s\1*/', $annotationName), $docComment->getText());
             assert($docCommentText !== null);
         }
-
         $node->setDocComment(new Doc($docCommentText));
     }
 
-    private function removeAnnotationFromDocComment(
-        Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\FuncCall|Node\Stmt\Const_|Node\Stmt\EnumCase $node,
-        string $annotationName,
-    ): void {
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function removeAnnotationFromDocComment($node, string $annotationName): void
+    {
         $docComment = $node->getDocComment();
         if ($docComment === null) {
             return;
         }
-
         $docCommentText = preg_replace('~@' . $annotationName . '.*$~m', '', $docComment->getText());
         assert($docCommentText !== null);
-
         $node->setDocComment(new Doc($docCommentText));
     }
 
@@ -763,7 +787,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return true;
     }
 
-    private function isDeprecatedInPhpVersion(Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Stmt\EnumCase $node): bool
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function isDeprecatedInPhpVersion($node): bool
     {
         $deprecatedAttribute = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Deprecated');
         if ($deprecatedAttribute === null) {
@@ -781,25 +808,24 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return true;
     }
 
-    private function isSupportedInPhpVersion(
-        Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Param|Node\Stmt\EnumCase $node,
-    ): bool {
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Param|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function isSupportedInPhpVersion($node): bool
+    {
         [$fromVersion, $toVersion] = $this->getSupportedPhpVersions($node);
-
         if ($fromVersion !== null && $fromVersion > $this->phpVersion) {
             return false;
         }
-
         return $toVersion === null || $toVersion >= $this->phpVersion;
     }
 
-    /** @return array{0: int|null, 1: int|null} */
-    private function getSupportedPhpVersions(
-        Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Param|Node\Stmt\EnumCase $node,
-    ): array {
+    /** @return array{0: int|null, 1: int|null}
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Param|\PhpParser\Node\Stmt\EnumCase $node */
+    private function getSupportedPhpVersions($node): array
+    {
         $fromVersion = null;
         $toVersion   = null;
-
         $docComment = $node->getDocComment();
         if ($docComment !== null) {
             if (preg_match('~@since\s+(?P<version>\d+\.\d+(?:\.\d+)?)\s+~', $docComment->getText(), $sinceMatches) === 1) {
@@ -810,7 +836,6 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                 $toVersion = $this->parsePhpVersion($removedMatches['version']) - 1;
             }
         }
-
         $elementsAvailable = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Internal\PhpStormStubsElementAvailable');
         if ($elementsAvailable !== null) {
             foreach ($elementsAvailable->args as $i => $attributeArg) {
@@ -847,18 +872,17 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                 $toVersion = $this->parsePhpVersion($attributeArg->value->value, 99);
             }
         }
-
         return [$fromVersion, $toVersion];
     }
 
-    private function getNodeAttribute(
-        Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Param|Node\Stmt\EnumCase $node,
-        string $attributeName,
-    ): Node\Attribute|null {
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Param|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function getNodeAttribute($node, string $attributeName): ?\PhpParser\Node\Attribute
+    {
         if ($node instanceof Node\Expr\FuncCall || $node instanceof Node\Stmt\Const_) {
             return null;
         }
-
         foreach ($node->attrGroups as $attributesGroupNode) {
             foreach ($attributesGroupNode->attrs as $attributeNode) {
                 if ($attributeNode->name->toString() === $attributeName) {
@@ -866,7 +890,6 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                 }
             }
         }
-
         return null;
     }
 
@@ -877,10 +900,13 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $parts[0] * 10000 + $parts[1] * 100 + ($parts[2] ?? $defaultPatch);
     }
 
-    private function normalizeType(string $type): Node\Name|Node\Identifier|Node\ComplexType|null
+    /**
+     * @return \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\ComplexType|null
+     */
+    private function normalizeType(string $type)
     {
         // There are some invalid types in stubs, eg. `string[]|string|null`
-        if (str_contains($type, '[')) {
+        if (strpos($type, '[') !== false) {
             return null;
         }
 
