@@ -21,15 +21,22 @@ use function get_class;
  */
 class LocatedSource
 {
+    private string $source;
+    /**
+     * @var string|null
+     */
+    private $name;
     /** @var non-empty-string|null */
-    private string|null $filename;
+    private $filename;
 
     /**
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    public function __construct(private string $source, private string|null $name, string|null $filename = null)
+    public function __construct(string $source, ?string $name, ?string $filename = null)
     {
+        $this->source = $source;
+        $this->name = $name;
         if ($filename !== null) {
             assert($filename !== '');
 
@@ -44,13 +51,13 @@ class LocatedSource
         return $this->source;
     }
 
-    public function getName(): string|null
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /** @return non-empty-string|null */
-    public function getFileName(): string|null
+    public function getFileName(): ?string
     {
         return $this->filename;
     }
@@ -64,7 +71,7 @@ class LocatedSource
     }
 
     /** @return non-empty-string|null */
-    public function getExtensionName(): string|null
+    public function getExtensionName(): ?string
     {
         return null;
     }
@@ -77,7 +84,7 @@ class LocatedSource
         return false;
     }
 
-    public function getAliasName(): string|null
+    public function getAliasName(): ?string
     {
         return null;
     }

@@ -33,10 +33,12 @@ use function str_contains;
 /** @internal */
 final class AnonymousClassObjectSourceLocator implements SourceLocator
 {
+    private Parser $parser;
     private CoreReflectionClass $coreClassReflection;
 
-    public function __construct(object $anonymousClassObject, private Parser $parser)
+    public function __construct(object $anonymousClassObject, Parser $parser)
     {
+        $this->parser = $parser;
         $this->coreClassReflection = new CoreReflectionClass($anonymousClassObject);
     }
 
@@ -45,7 +47,7 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
      *
      * @throws ParseToAstFailure
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         return $this->getReflectionClass($reflector, $identifier->getType());
     }
@@ -60,7 +62,7 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
         return array_filter([$this->getReflectionClass($reflector, $identifierType)]);
     }
 
-    private function getReflectionClass(Reflector $reflector, IdentifierType $identifierType): ReflectionClass|null
+    private function getReflectionClass(Reflector $reflector, IdentifierType $identifierType): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         if (! $identifierType->isClass()) {
             return null;
@@ -73,7 +75,7 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
         /** @phpstan-var non-empty-string $fileName */
         $fileName = $this->coreClassReflection->getFileName();
 
-        if (str_contains($fileName, 'eval()\'d code')) {
+        if (strpos($fileName, 'eval()\'d code') !== false) {
             throw EvaledAnonymousClassCannotBeLocated::create();
         }
 
@@ -85,11 +87,15 @@ final class AnonymousClassObjectSourceLocator implements SourceLocator
 
         $nodeVisitor = new class ($fileName, $startLine) extends NodeVisitorAbstract
         {
+            private string $fileName;
+            private int $startLine;
             /** @var list<Class_> */
             private array $anonymousClassNodes = [];
 
-            public function __construct(private string $fileName, private int $startLine)
+            public function __construct(string $fileName, int $startLine)
             {
+                $this->fileName = $fileName;
+                $this->startLine = $startLine;
             }
 
             /**

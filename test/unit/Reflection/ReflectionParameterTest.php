@@ -123,8 +123,11 @@ class ReflectionParameterTest extends TestCase
         ];
     }
 
+    /**
+     * @param mixed $expectedValue
+     */
     #[DataProvider('defaultParameterProvider')]
-    public function testDefaultParametersTypes(string $defaultExpression, mixed $expectedValue): void
+    public function testDefaultParametersTypes(string $defaultExpression, $expectedValue): void
     {
         $content = sprintf('<?php class Foo { public function myMethod($var = %s) {} }', $defaultExpression);
 
@@ -193,16 +196,11 @@ class ReflectionParameterTest extends TestCase
 
     /** @param non-empty-string $parameterToTest */
     #[DataProvider('typeProvider')]
-    public function testGetType(
-        string $parameterToTest,
-        string $expectedType,
-    ): void {
+    public function testGetType(string $parameterToTest, string $expectedType) : void
+    {
         $classInfo = $this->reflector->reflectClass(Methods::class);
-
         $method = $classInfo->getMethod('methodWithExplicitTypedParameters');
-
         $type = $method->getParameter($parameterToTest)->getType();
-
         self::assertSame($expectedType, (string) $type);
     }
 
