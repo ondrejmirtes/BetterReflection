@@ -62,7 +62,7 @@ class ClosureSourceLocatorTest extends TestCase
 
     /** @param non-empty-string $file */
     #[DataProvider('closuresProvider')]
-    public function testLocateIdentifier(Closure $closure, string|null $namespace, string $file, int $startLine, int $endLine): void
+    public function testLocateIdentifier(Closure $closure, ?string $namespace, string $file, int $startLine, int $endLine): void
     {
         $locator = new ClosureSourceLocator($closure, $this->parser);
 
@@ -103,7 +103,7 @@ class ClosureSourceLocatorTest extends TestCase
     }
 
     #[DataProvider('closuresProvider')]
-    public function testLocateIdentifiersByType(Closure $closure, string|null $namespace, string $file, int $startLine, int $endLine): void
+    public function testLocateIdentifiersByType(Closure $closure, ?string $namespace, string $file, int $startLine, int $endLine): void
     {
         /** @var list<ReflectionFunction> $reflections */
         $reflections = (new ClosureSourceLocator($closure, $this->parser))->locateIdentifiersByType(
@@ -206,7 +206,7 @@ class ClosureSourceLocatorTest extends TestCase
         );
 
         self::assertInstanceOf(ReflectionFunction::class, $reflection);
-        self::assertSame('Roave\BetterReflectionTest\Fixture\ClassUsedAsClosureParameter', $reflection->getParameter('parameter')->getType()?->__toString());
+        self::assertSame('Roave\BetterReflectionTest\Fixture\ClassUsedAsClosureParameter', ($nullsafeVariable1 = $reflection->getParameter('parameter')->getType()) ? $nullsafeVariable1->__toString() : null);
     }
 
     public function testExceptionIfSourceFileIsNotReadable(): void
