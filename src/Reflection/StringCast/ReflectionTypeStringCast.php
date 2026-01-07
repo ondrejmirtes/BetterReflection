@@ -20,10 +20,10 @@ final class ReflectionTypeStringCast
      * @return non-empty-string
      *
      * @psalm-pure
+     * @param \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType $type
      */
-    public static function toString(
-        ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType $type,
-    ): string {
+    public static function toString($type): string
+    {
         if ($type instanceof ReflectionUnionType) {
             // php-src has this weird behavior where a union type composed of a single type `T`
             // together with `null` means that a `ReflectionNamedType` for `?T` is produced,
@@ -44,7 +44,6 @@ final class ReflectionTypeStringCast
                 return '?' . $nonNullTypes[0]->__toString();
             }
         }
-
         return $type->__toString();
     }
 }

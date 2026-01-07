@@ -27,8 +27,14 @@ use function preg_match;
 /** @psalm-immutable */
 class ReflectionObject extends ReflectionClass
 {
-    protected function __construct(private Reflector $reflector, private ReflectionClass $reflectionClass, private object $object)
+    private Reflector $reflector;
+    private ReflectionClass $reflectionClass;
+    private object $object;
+    protected function __construct(Reflector $reflector, ReflectionClass $reflectionClass, object $object)
     {
+        $this->reflector = $reflector;
+        $this->reflectionClass = $reflectionClass;
+        $this->object = $object;
     }
 
     /**
@@ -39,7 +45,7 @@ class ReflectionObject extends ReflectionClass
      */
     public static function createFromInstance(object $instance): ReflectionClass
     {
-        $className = $instance::class;
+        $className = get_class($instance);
 
         $betterReflection = new BetterReflection();
 
@@ -100,7 +106,8 @@ class ReflectionObject extends ReflectionClass
                 $propertyNode->props[0],
                 $this,
                 $this,
-                declaredAtCompileTime: false,
+                false,
+                false,
             );
         }
 
@@ -132,7 +139,7 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getName();
     }
 
-    public function getNamespaceName(): string|null
+    public function getNamespaceName(): ?string
     {
         return $this->reflectionClass->getNamespaceName();
     }
@@ -143,7 +150,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @return non-empty-string|null */
-    public function getExtensionName(): string|null
+    public function getExtensionName(): ?string
     {
         return $this->reflectionClass->getExtensionName();
     }
@@ -165,7 +172,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @param non-empty-string $methodName */
-    public function getMethod(string $methodName): ReflectionMethod|null
+    public function getMethod(string $methodName): ?\Roave\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->reflectionClass->getMethod($methodName);
     }
@@ -197,12 +204,12 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->hasConstant($name);
     }
 
-    public function getConstant(string $name): ReflectionClassConstant|null
+    public function getConstant(string $name): ?\Roave\BetterReflection\Reflection\ReflectionClassConstant
     {
         return $this->reflectionClass->getConstant($name);
     }
 
-    public function getConstructor(): ReflectionMethod|null
+    public function getConstructor(): ?\Roave\BetterReflection\Reflection\ReflectionMethod
     {
         return $this->reflectionClass->getConstructor();
     }
@@ -229,7 +236,7 @@ class ReflectionObject extends ReflectionClass
         );
     }
 
-    public function getProperty(string $name): ReflectionProperty|null
+    public function getProperty(string $name): ?\Roave\BetterReflection\Reflection\ReflectionProperty
     {
         $runtimeProperties = $this->getRuntimeProperties();
 
@@ -259,7 +266,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @return non-empty-string|null */
-    public function getFileName(): string|null
+    public function getFileName(): ?string
     {
         return $this->reflectionClass->getFileName();
     }
@@ -289,13 +296,13 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getEndColumn();
     }
 
-    public function getParentClass(): ReflectionClass|null
+    public function getParentClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
     {
         return $this->reflectionClass->getParentClass();
     }
 
     /** @return class-string|null */
-    public function getParentClassName(): string|null
+    public function getParentClassName(): ?string
     {
         return $this->reflectionClass->getParentClassName();
     }
@@ -309,7 +316,7 @@ class ReflectionObject extends ReflectionClass
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->reflectionClass->getDocComment();
     }
@@ -471,12 +478,18 @@ class ReflectionObject extends ReflectionClass
         return $this->reflectionClass->getStaticProperties();
     }
 
-    public function setStaticPropertyValue(string $propertyName, mixed $value): void
+    /**
+     * @param mixed $value
+     */
+    public function setStaticPropertyValue(string $propertyName, $value): void
     {
         $this->reflectionClass->setStaticPropertyValue($propertyName, $value);
     }
 
-    public function getStaticPropertyValue(string $propertyName): mixed
+    /**
+     * @return mixed
+     */
+    public function getStaticPropertyValue(string $propertyName)
     {
         return $this->reflectionClass->getStaticPropertyValue($propertyName);
     }
