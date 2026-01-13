@@ -94,6 +94,8 @@ trait ReflectionFunctionAbstract
     private bool $isClosure = false;
     /** @psalm-allow-private-mutation */
     private bool $isGenerator = false;
+    /** @psalm-allow-private-mutation */
+    private bool $isVariadic = false;
 
     /**
      * @return array<string, mixed>
@@ -120,6 +122,7 @@ trait ReflectionFunctionAbstract
             'couldThrow' => $this->couldThrow,
             'isClosure' => $this->isClosure,
             'isGenerator' => $this->isGenerator,
+            'isVariadic' => $this->isVariadic,
         ];
     }
 
@@ -158,6 +161,7 @@ trait ReflectionFunctionAbstract
         $ref->couldThrow = $data['couldThrow'];
         $ref->isClosure = $data['isClosure'];
         $ref->isGenerator = $data['isGenerator'];
+        $ref->isVariadic = $data['isVariadic'];
     }
 
     /** @return non-empty-string */
@@ -176,6 +180,7 @@ trait ReflectionFunctionAbstract
         $this->docComment       = GetLastDocComment::forNode($node);
         $this->couldThrow       = $this->computeCouldThrow($node);
         $this->isGenerator      = $this->nodeIsOrContainsYield($node);
+        $this->isVariadic       = $this->computeVariadic($node->params, $node);
 
         $startLine = $node->getStartLine();
         if ($startLine === -1) {
@@ -382,13 +387,7 @@ trait ReflectionFunctionAbstract
      */
     public function isVariadic(): bool
     {
-        foreach ($this->parameters as $parameter) {
-            if ($parameter->isVariadic()) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isVariadic;
     }
 
     /** Checks if the function/method contains `throw` expressions. */
@@ -446,6 +445,58 @@ trait ReflectionFunctionAbstract
             /** @psalm-var mixed $nodePropertyArrayItem */
             foreach ($nodeProperty as $nodePropertyArrayItem) {
                 if ($nodePropertyArrayItem instanceof Node && $this->nodeIsOrContainsYield($nodePropertyArrayItem)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param list<Node\Param> $params
+     */
+    private function computeVariadic(array $params, Node $node): bool
+    {
+        foreach ($params as $param) {
+            if ($param->variadic) {
+                return true;
+            }
+        }
+
+        return $this->nodeContainsVariadicFuncCall($node);
+    }
+
+    private function nodeContainsVariadicFuncCall(Node $node): bool
+    {
+        if (
+            $node instanceof Node\Expr\FuncCall
+            && $node->name instanceof Node\Name
+            && in_array($node->name->toLowerString(), ReflectionFunction::VARIADIC_FUNCTIONS, true)
+        ) {
+            return true;
+        }
+
+        /** @psalm-var string $nodeName */
+        foreach ($node->getSubNodeNames() as $nodeName) {
+            $nodeProperty = $node->$nodeName;
+
+            if (
+                $nodeProperty instanceof Node &&
+                ! ($nodeProperty instanceof ClassNode) &&
+                ! ($nodeProperty instanceof FunctionLikeNode) &&
+                $this->nodeContainsVariadicFuncCall($nodeProperty)
+            ) {
+                return true;
+            }
+
+            if (! is_array($nodeProperty)) {
+                continue;
+            }
+
+            /** @psalm-var mixed $nodePropertyArrayItem */
+            foreach ($nodeProperty as $nodePropertyArrayItem) {
+                if ($nodePropertyArrayItem instanceof Node && $this->nodeContainsVariadicFuncCall($nodePropertyArrayItem)) {
                     return true;
                 }
             }

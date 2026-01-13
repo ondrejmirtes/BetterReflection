@@ -199,6 +199,10 @@ class ReflectionFunctionAbstractTest extends TestCase
             ['<?php function foo($notVariadic) {}', false],
             ['<?php function foo(...$isVariadic) {}', true],
             ['<?php function foo($notVariadic, ...$isVariadic) {}', true],
+            ['<?php function foo($notVariadic) { func_get_args(); }', true],
+            ['<?php function foo($notVariadic) { func_get_arg(); }', true],
+            ['<?php function foo($notVariadic) { func_num_args(); }', true],
+            ['<?php function foo($notVariadic) { doFoo(); }', false],
         ];
     }
 
