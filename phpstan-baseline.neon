@@ -829,6 +829,12 @@ parameters:
 			path: src/Reflection/ReflectionFunction.php
 
 		-
+			message: '#^Parameter \#1 \$params of method Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:computeVariadic\(\) expects list\<PhpParser\\Node\\Param\>, array\<PhpParser\\Node\\Param\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 2
@@ -896,6 +902,12 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$isStatic \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionFunction.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionFunction\:\:\$isVariadic \(bool\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionFunction.php
@@ -1027,6 +1039,12 @@ parameters:
 			path: src/Reflection/ReflectionMethod.php
 
 		-
+			message: '#^Parameter \#1 \$params of method Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:computeVariadic\(\) expects list\<PhpParser\\Node\\Param\>, array\<PhpParser\\Node\\Param\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 2
@@ -1130,6 +1148,12 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$isGenerator \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionMethod.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionMethod\:\:\$isVariadic \(bool\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionMethod.php
