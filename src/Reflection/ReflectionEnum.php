@@ -22,7 +22,11 @@ use function assert;
 /** @psalm-immutable */
 class ReflectionEnum extends ReflectionClass
 {
-    private ReflectionNamedType|null $backingType;
+    private Reflector $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|null
+     */
+    private $backingType;
 
     /** @var array<non-empty-string, ReflectionEnumCase> */
     private array $cases;
@@ -32,14 +36,10 @@ class ReflectionEnum extends ReflectionClass
      *
      * @phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
      */
-    private function __construct(
-        private Reflector $reflector,
-        EnumNode $node,
-        LocatedSource $locatedSource,
-        string|null $namespace = null,
-    ) {
+    private function __construct(Reflector $reflector, EnumNode $node, LocatedSource $locatedSource, ?string $namespace = null)
+    {
+        $this->reflector = $reflector;
         parent::__construct($reflector, $node, $locatedSource, $namespace);
-
         $this->backingType = $this->createBackingType($node);
         $this->cases       = $this->createCases($node);
     }
@@ -50,7 +50,7 @@ class ReflectionEnum extends ReflectionClass
     public function exportToCache(): array
     {
         return array_merge(parent::exportToCache(), [
-            'backingType' => $this->backingType?->exportToCache(),
+            'backingType' => ($nullsafeVariable1 = $this->backingType) ? $nullsafeVariable1->exportToCache() : null,
             'cases' => array_map(
                 static fn (ReflectionEnumCase $case) => $case->exportToCache(),
                 $this->cases,
@@ -80,15 +80,11 @@ class ReflectionEnum extends ReflectionClass
      * @internal
      *
      * @param non-empty-string|null $namespace
+     * @param ClassNode|InterfaceNode|TraitNode|EnumNode $node
      */
-    public static function createFromNode(
-        Reflector $reflector,
-        ClassNode|InterfaceNode|TraitNode|EnumNode $node,
-        LocatedSource $locatedSource,
-        string|null $namespace = null,
-    ): self {
+    public static function createFromNode(Reflector $reflector, $node, LocatedSource $locatedSource, ?string $namespace = null): self
+    {
         assert($node instanceof EnumNode);
-
         return new self($reflector, $node, $locatedSource, $namespace);
     }
 
@@ -99,7 +95,7 @@ class ReflectionEnum extends ReflectionClass
     }
 
     /** @param non-empty-string $name */
-    public function getCase(string $name): ReflectionEnumCase|null
+    public function getCase(string $name): ?\Roave\BetterReflection\Reflection\ReflectionEnumCase
     {
         return $this->cases[$name] ?? null;
     }
@@ -135,7 +131,7 @@ class ReflectionEnum extends ReflectionClass
         return $this->backingType;
     }
 
-    private function createBackingType(EnumNode $node): ReflectionNamedType|null
+    private function createBackingType(EnumNode $node): ?\Roave\BetterReflection\Reflection\ReflectionNamedType
     {
         if ($node->scalarType === null) {
             return null;
