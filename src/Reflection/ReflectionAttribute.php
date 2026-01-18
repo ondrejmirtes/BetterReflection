@@ -9,7 +9,6 @@ use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use ReflectionClass as CoreReflectionClass;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
@@ -52,13 +51,11 @@ class ReflectionAttribute
      */
     public function exportToCache(): array
     {
-        $br = new BetterReflection();
-
         return [
             'name' => $this->name,
             'isRepeated' => $this->isRepeated,
             'arguments' => array_map(
-                static fn (Expr $expr) => $br->printer()->prettyPrintExpr($expr),
+                static fn (Expr $expr) => ExprCacheHelper::export($expr),
                 $this->arguments,
             ),
         ];
@@ -79,9 +76,8 @@ class ReflectionAttribute
         $ref->name = $data['name'];
         $ref->isRepeated = $data['isRepeated'];
 
-        $br = new BetterReflection();
         $ref->arguments = array_map(
-            static fn (string $exprCode) => $br->phpParser()->parse('<?php ' . $exprCode . ';')[0]->expr,
+            static fn (array $exprData) => ExprCacheHelper::import($exprData),
             $data['arguments'],
         );
 
