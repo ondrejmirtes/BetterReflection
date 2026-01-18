@@ -7,11 +7,11 @@ namespace Roave\BetterReflectionTest\SourceLocator\Type;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 
 #[CoversClass(StringSourceLocator::class)]
@@ -27,7 +27,7 @@ class StringSourceLocatorTest extends TestCase
     }
 
     /**
-     * @return (\PHPUnit\Framework\MockObject\MockObject & \Roave\BetterReflection\Reflector\Reflector)
+     * @return (\PHPUnit\Framework\MockObject\MockObject & \PHPStan\BetterReflection\Reflector\Reflector)
      */
     private function getMockReflector()
     {

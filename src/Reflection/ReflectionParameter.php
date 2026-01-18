@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use Closure;
 use Exception;
@@ -12,16 +12,16 @@ use OutOfBoundsException;
 use PhpParser\Node;
 use PhpParser\Node\Param as ParamNode;
 use ReflectionClass as CoreReflectionClass;
-use Roave\BetterReflection\NodeCompiler\CompiledValue;
-use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
-use Roave\BetterReflection\NodeCompiler\CompilerContext;
-use Roave\BetterReflection\NodeCompiler\Exception\UnableToCompileNode;
-use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
-use Roave\BetterReflection\Reflection\Exception\CodeLocationMissing;
-use Roave\BetterReflection\Reflection\StringCast\ReflectionParameterStringCast;
-use Roave\BetterReflection\Reflector\Reflector;
-use Roave\BetterReflection\Util\CalculateReflectionColumn;
-use Roave\BetterReflection\Util\Exception\NoNodePosition;
+use PHPStan\BetterReflection\NodeCompiler\CompiledValue;
+use PHPStan\BetterReflection\NodeCompiler\CompileNodeToValue;
+use PHPStan\BetterReflection\NodeCompiler\CompilerContext;
+use PHPStan\BetterReflection\NodeCompiler\Exception\UnableToCompileNode;
+use PHPStan\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
+use PHPStan\BetterReflection\Reflection\Exception\CodeLocationMissing;
+use PHPStan\BetterReflection\Reflection\StringCast\ReflectionParameterStringCast;
+use PHPStan\BetterReflection\Reflector\Reflector;
+use PHPStan\BetterReflection\Util\CalculateReflectionColumn;
+use PHPStan\BetterReflection\Util\Exception\NoNodePosition;
 
 use function array_map;
 use function assert;
@@ -36,7 +36,7 @@ class ReflectionParameter
 {
     private Reflector $reflector;
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionMethod|\PHPStan\BetterReflection\Reflection\ReflectionFunction
      */
     private $function;
     private int $parameterIndex;
@@ -50,7 +50,7 @@ class ReflectionParameter
     private $default;
 
     /**
-     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @var \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     private $type;
 
@@ -76,11 +76,11 @@ class ReflectionParameter
     private $endColumn;
 
     /** @psalm-allow-private-mutation
-     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+     * @var \PHPStan\BetterReflection\NodeCompiler\CompiledValue|null */
     private $compiledDefaultValue = null;
 
     /**
-     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionMethod|\PHPStan\BetterReflection\Reflection\ReflectionFunction $function
      */
     private function __construct(Reflector $reflector, ParamNode $node, $function, int $parameterIndex, bool $isOptional)
     {
@@ -150,7 +150,7 @@ class ReflectionParameter
 
     /**
      * @param array<string, mixed> $data
-     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionMethod|\PHPStan\BetterReflection\Reflection\ReflectionFunction $function
      */
     public static function importFromCache(Reflector $reflector, array $data, $function): self
     {
@@ -238,7 +238,7 @@ class ReflectionParameter
      * @internal
      *
      * @param ParamNode $node Node has to be processed by the PhpParser\NodeVisitor\NameResolver
-     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionMethod|\PHPStan\BetterReflection\Reflection\ReflectionFunction $function
      */
     public static function createFromNode(Reflector $reflector, ParamNode $node, $function, int $parameterIndex, bool $isOptional): self
     {
@@ -252,7 +252,7 @@ class ReflectionParameter
     }
 
     /** @internal
-     * @param \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction $function */
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionMethod|\PHPStan\BetterReflection\Reflection\ReflectionFunction $function */
     public function withFunction($function): self
     {
         $clone           = clone $this;
@@ -298,7 +298,7 @@ class ReflectionParameter
 
     /**
      * Get the function (or method) that declared this parameter.
-     * @return \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionMethod|\PHPStan\BetterReflection\Reflection\ReflectionFunction
      */
     public function getDeclaringFunction()
     {
@@ -311,7 +311,7 @@ class ReflectionParameter
      *
      * This will return null if the declaring function is not a method.
      */
-    public function getDeclaringClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
+    public function getDeclaringClass(): ?\PHPStan\BetterReflection\Reflection\ReflectionClass
     {
         if ($this->function instanceof ReflectionMethod) {
             return $this->function->getDeclaringClass();
@@ -320,7 +320,7 @@ class ReflectionParameter
         return null;
     }
 
-    public function getImplementingClass(): ?\Roave\BetterReflection\Reflection\ReflectionClass
+    public function getImplementingClass(): ?\PHPStan\BetterReflection\Reflection\ReflectionClass
     {
         if ($this->function instanceof ReflectionMethod) {
             return $this->function->getImplementingClass();
@@ -405,7 +405,7 @@ class ReflectionParameter
      * this parameter
      *
      * (note: this has nothing to do with DocBlocks).
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     public function getType()
     {
@@ -413,7 +413,7 @@ class ReflectionParameter
     }
 
     /**
-     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     * @return \PHPStan\BetterReflection\Reflection\ReflectionNamedType|\PHPStan\BetterReflection\Reflection\ReflectionUnionType|\PHPStan\BetterReflection\Reflection\ReflectionIntersectionType|null
      */
     private function createType(ParamNode $node)
     {

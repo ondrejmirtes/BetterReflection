@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
+use PHPStan\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
 
 #[CoversClass(PropertyDoesNotExist::class)]
 class PropertyDoesNotExistTest extends TestCase
