@@ -13,7 +13,6 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Param as ParamNode;
 use ReflectionClass as CoreReflectionClass;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -131,11 +130,9 @@ class ReflectionParameter
      */
     public function exportToCache(): array
     {
-        $br = new BetterReflection();
-
         return [
             'name' => $this->name,
-            'default' => $this->default !== null ? $br->printer()->prettyPrintExpr($this->default) : null,
+            'default' => $this->default !== null ? ExprCacheHelper::export($this->default) : null,
             'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
             'isVariadic' => $this->isVariadic,
             'byRef' => $this->byRef,
@@ -169,8 +166,7 @@ class ReflectionParameter
         $ref->name = $data['name'];
 
         if ($data['default'] !== null) {
-            $br = new BetterReflection();
-            $ref->default = $br->phpParser()->parse('<?php ' . $data['default'] . ';')[0]->expr;
+            $ref->default = ExprCacheHelper::import($data['default']);
         } else {
             $ref->default = null;
         }
