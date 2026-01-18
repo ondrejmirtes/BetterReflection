@@ -124,7 +124,37 @@ parameters:
 			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Reflection/ReflectionAttribute.php
+			path: src/Reflection/ExprCacheHelper.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Reflection/ExprCacheHelper.php
+
+		-
+			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Reflection/ExprCacheHelper.php
+
+		-
+			message: '#^Cannot call method setAttribute\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Reflection/ExprCacheHelper.php
+
+		-
+			message: '#^Method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) should return PhpParser\\Node\\Expr but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Reflection/ExprCacheHelper.php
+
+		-
+			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Reflection/ExprCacheHelper.php
 
 		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
@@ -145,13 +175,13 @@ parameters:
 			path: src/Reflection/ReflectionAttribute.php
 
 		-
-			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
-			identifier: offsetAccess.notFound
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: PhpParser\\Node\\Expr given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionAttribute.php
 
 		-
-			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(string\)\: mixed given\.$#'
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionAttribute.php
@@ -159,12 +189,6 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Reflection/ReflectionAttribute.php
-
-		-
-			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:\$arguments \(array\<int\|string, PhpParser\\Node\\Expr\>\) does not accept array\<mixed\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionAttribute.php
 
@@ -385,18 +409,6 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
-			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Reflection/ReflectionClassConstant.php
-
-		-
-			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Reflection/ReflectionClassConstant.php
-
-		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -427,8 +439,8 @@ parameters:
 			path: src/Reflection/ReflectionClassConstant.php
 
 		-
-			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
-			identifier: offsetAccess.notFound
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionClassConstant.php
 
@@ -535,24 +547,6 @@ parameters:
 			path: src/Reflection/ReflectionClassConstant.php
 
 		-
-			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$value \(PhpParser\\Node\\Expr\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Reflection/ReflectionClassConstant.php
-
-		-
-			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Reflection/ReflectionConstant.php
-
-		-
-			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Reflection/ReflectionConstant.php
-
-		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -565,8 +559,8 @@ parameters:
 			path: src/Reflection/ReflectionConstant.php
 
 		-
-			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
-			identifier: offsetAccess.notFound
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionConstant.php
 
@@ -655,12 +649,6 @@ parameters:
 			path: src/Reflection/ReflectionConstant.php
 
 		-
-			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$value \(PhpParser\\Node\\Expr\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Reflection/ReflectionConstant.php
-
-		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -685,18 +673,6 @@ parameters:
 			path: src/Reflection/ReflectionEnum.php
 
 		-
-			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Reflection/ReflectionEnumCase.php
-
-		-
-			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Reflection/ReflectionEnumCase.php
-
-		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -709,8 +685,8 @@ parameters:
 			path: src/Reflection/ReflectionEnumCase.php
 
 		-
-			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
-			identifier: offsetAccess.notFound
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionEnumCase.php
 
@@ -776,12 +752,6 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$startLine \(int\<1, max\>\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Reflection/ReflectionEnumCase.php
-
-		-
-			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$value \(PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionEnumCase.php
@@ -1237,18 +1207,6 @@ parameters:
 			path: src/Reflection/ReflectionNamedType.php
 
 		-
-			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Reflection/ReflectionParameter.php
-
-		-
-			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Reflection/ReflectionParameter.php
-
-		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1279,8 +1237,8 @@ parameters:
 			path: src/Reflection/ReflectionParameter.php
 
 		-
-			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
-			identifier: offsetAccess.notFound
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionParameter.php
 
@@ -1304,12 +1262,6 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$byRef \(bool\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Reflection/ReflectionParameter.php
-
-		-
-			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$default \(PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionParameter.php
@@ -1405,18 +1357,6 @@ parameters:
 			path: src/Reflection/ReflectionProperty.php
 
 		-
-			message: '#^Access to an undefined property PhpParser\\Node\\Stmt\:\:\$expr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Reflection/ReflectionProperty.php
-
-		-
-			message: '#^Binary operation "\." between ''\<\?php '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Reflection/ReflectionProperty.php
-
-		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1447,8 +1387,8 @@ parameters:
 			path: src/Reflection/ReflectionProperty.php
 
 		-
-			message: '#^Offset 0 might not exist on array\<PhpParser\\Node\\Stmt\>\|null\.$#'
-			identifier: offsetAccess.notFound
+			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionProperty.php
 
@@ -1484,12 +1424,6 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$declaringClassName \(non\-empty\-string\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Reflection/ReflectionProperty.php
-
-		-
-			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$default \(PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionProperty.php

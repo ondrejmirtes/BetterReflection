@@ -8,7 +8,6 @@ use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\EnumCase;
 use ReflectionClass as CoreReflectionClass;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -78,11 +77,9 @@ class ReflectionEnumCase
     /** @return array<string, mixed> */
     public function exportToCache(): array
     {
-        $br = new BetterReflection();
-
         return [
             'name' => $this->name,
-            'value' => $this->value !== null ? $br->printer()->prettyPrintExpr($this->value) : null,
+            'value' => $this->value !== null ? ExprCacheHelper::export($this->value) : null,
             'attributes' => array_map(
                 static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
                 $this->attributes,
@@ -106,8 +103,7 @@ class ReflectionEnumCase
         $ref->name      = $data['name'];
 
         if ($data['value'] !== null) {
-            $br         = new BetterReflection();
-            $ref->value = $br->phpParser()->parse('<?php ' . $data['value'] . ';')[0]->expr;
+            $ref->value = ExprCacheHelper::import($data['value']);
         } else {
             $ref->value = null;
         }

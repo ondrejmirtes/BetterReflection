@@ -6,7 +6,6 @@ namespace Roave\BetterReflection\Reflection;
 
 use PhpParser\Node;
 use ReflectionClass as CoreReflectionClass;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\NodeCompiler\CompiledValue;
 use Roave\BetterReflection\NodeCompiler\CompileNodeToValue;
 use Roave\BetterReflection\NodeCompiler\CompilerContext;
@@ -105,13 +104,11 @@ class ReflectionConstant implements Reflection
     /** @return array<string, mixed> */
     public function exportToCache(): array
     {
-        $br = new BetterReflection();
-
         return [
             'locatedSource' => $this->locatedSource->exportToCache(),
             'name' => $this->name,
             'shortName' => $this->shortName,
-            'value' => $br->printer()->prettyPrintExpr($this->value),
+            'value' => ExprCacheHelper::export($this->value),
             'docComment' => $this->docComment,
             'attributes' => array_map(
                 static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
@@ -137,8 +134,7 @@ class ReflectionConstant implements Reflection
         $ref->name          = $data['name'];
         $ref->shortName     = $data['shortName'];
 
-        $br         = new BetterReflection();
-        $ref->value = $br->phpParser()->parse('<?php ' . $data['value'] . ';')[0]->expr;
+        $ref->value = ExprCacheHelper::import($data['value']);
 
         $ref->docComment  = $data['docComment'];
         $ref->attributes  = array_map(

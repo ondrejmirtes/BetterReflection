@@ -101,15 +101,13 @@ class ReflectionClassConstant
     /** @return array<string, mixed> */
     public function exportToCache(): array
     {
-        $br = new BetterReflection();
-
         return [
             'declaringClassName' => $this->declaringClassName,
             'implementingClassName' => $this->implementingClassName,
             'name' => $this->name,
             'modifiers' => $this->modifiers,
             'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
-            'value' => $br->printer()->prettyPrintExpr($this->value),
+            'value' => ExprCacheHelper::export($this->value),
             'docComment' => $this->docComment,
             'attributes' => array_map(
                 static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
@@ -141,8 +139,7 @@ class ReflectionClassConstant
             $ref->type = null;
         }
 
-        $br         = new BetterReflection();
-        $ref->value = $br->phpParser()->parse('<?php ' . $data['value'] . ';')[0]->expr;
+        $ref->value = ExprCacheHelper::import($data['value']);
 
         $ref->docComment  = $data['docComment'];
         $ref->attributes  = array_map(
