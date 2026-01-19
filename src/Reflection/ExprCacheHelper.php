@@ -34,7 +34,7 @@ final class ExprCacheHelper
         $attributes = $data['attributes'];
 
         $br = new BetterReflection();
-        $expr = $br->phpParser()->parse('<?php ' . $code . ';')[0]->expr;
+        $expr = $br->originalPhpParser()->parse('<?php ' . $code . ';')[0]->expr;
         foreach ($attributes as $key => $value) {
             $expr->setAttribute($key, $value);
         }
