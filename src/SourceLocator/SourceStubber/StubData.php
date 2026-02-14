@@ -27,4 +27,10 @@ class StubData
     {
         return $this->fileName;
     }
+
+    public static function __set_state(array $properties)
+    {
+        return new self($properties['stub'], $properties['extensionName'], $properties['fileName']);
+    }
+
 }
