@@ -40,8 +40,6 @@ final class BetterReflection
 
     private Parser|null $phpParser = null;
 
-    private Parser|null $originalPhpParser = null;
-
     private AstLocator|null $astLocator = null;
 
     private FindReflectionOnLine|null $findReflectionOnLine = null;
@@ -108,12 +106,6 @@ final class BetterReflection
     {
         return $this->phpParser
             ?? $this->phpParser = (new ParserFactory())->createForNewestSupportedVersion();
-    }
-
-    public function originalPhpParser(): Parser
-    {
-        return $this->originalPhpParser
-            ?? $this->originalPhpParser = (new ParserFactory())->createForNewestSupportedVersion();
     }
 
     public function astLocator(): AstLocator
