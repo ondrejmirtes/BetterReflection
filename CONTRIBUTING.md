@@ -37,3 +37,9 @@ $ vendor/bin/phpunit
 Please ensure all new features or conditions are covered by unit tests.
 
 Read more about testing in [test/README.md](https://github.com/Roave/BetterReflection/blob/master/test/README.md).
+
+## Contributing
+
+To start a clean PR you need branch off the latest release branch and undo generated commits using `make drop-generated`.
+Now you can start working on changes.
+Finalize your PR with `make generate` which will re-generate the previously dropped commits.
