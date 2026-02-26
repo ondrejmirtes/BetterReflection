@@ -89,17 +89,12 @@ class ReflectionTypeTest extends TestCase
         ];
     }
 
-    /** @param class-string $expectedReflectionClass */
+    /** @param class-string $expectedReflectionClass
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name|\PhpParser\Node\NullableType|\PhpParser\Node\UnionType|\PhpParser\Node\IntersectionType $node */
     #[DataProvider('dataProvider')]
-    public function test(
-        Node\Identifier|Node\Name|Node\NullableType|Node\UnionType|Node\IntersectionType $node,
-        bool $forceAllowsNull,
-        string $expectedReflectionClass,
-        string $expectedTypeAsString,
-        bool $expectedAllowsNull,
-    ): void {
+    public function test($node, bool $forceAllowsNull, string $expectedReflectionClass, string $expectedTypeAsString, bool $expectedAllowsNull) : void
+    {
         $reflectionType = ReflectionType::createFromNode($this->reflector, $this->owner, $node, $forceAllowsNull);
-
         self::assertInstanceOf($expectedReflectionClass, $reflectionType);
         self::assertSame($expectedTypeAsString, $reflectionType->__toString());
         self::assertSame($expectedAllowsNull, $reflectionType->allowsNull());

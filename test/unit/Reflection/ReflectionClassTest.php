@@ -1403,24 +1403,15 @@ PHP;
 
     /** @param non-empty-string $methodName */
     #[DataProvider('declaringClassProvider')]
-    public function testGetDeclaringClassWithTraitAndParent(
-        string $className,
-        string $methodName,
-        string $declaringClassShortName,
-        string $implementingClassShortName,
-        string $currentClassShortName,
-    ): void {
+    public function testGetDeclaringClassWithTraitAndParent(string $className, string $methodName, string $declaringClassShortName, string $implementingClassShortName, string $currentClassShortName) : void
+    {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
             __DIR__ . '/../Fixture/TraitWithAbstractMethod.php',
             $this->astLocator,
         ));
-
         $classInfo = $reflector->reflectClass($className);
-
         self::assertTrue($classInfo->hasMethod($methodName));
-
         $fooMethodInfo = $classInfo->getMethod($methodName);
-
         self::assertSame($declaringClassShortName, $fooMethodInfo->getDeclaringClass()->getShortName());
         self::assertSame($implementingClassShortName, $fooMethodInfo->getImplementingClass()->getShortName());
         self::assertSame($currentClassShortName, $fooMethodInfo->getCurrentClass()->getShortName());
@@ -2238,7 +2229,7 @@ PHP;
                 self::assertTrue($reflection->hasConstant($constantName), 'Constant ' . $constantName . ' not set');
                 self::assertSame(
                     $constantValue,
-                    $reflection->getConstant($constantName)?->getValue(),
+                    ($nullsafeVariable1 = $reflection->getConstant($constantName)) ? $nullsafeVariable1->getValue() : null,
                     'Constant value for ' . $constantName . ' does not match',
                 );
             },
