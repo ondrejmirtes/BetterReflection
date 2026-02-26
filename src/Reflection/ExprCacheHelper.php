@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection;
+namespace PHPStan\BetterReflection\Reflection;
 
 use PhpParser\Node\Expr;
-use Roave\BetterReflection\BetterReflection;
+use PHPStan\BetterReflection\BetterReflection;
 
 final class ExprCacheHelper
 {
