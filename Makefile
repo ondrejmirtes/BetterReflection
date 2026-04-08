@@ -4,7 +4,7 @@ downgrade: downgrade-inner
 rename: rename-inner fix-cs
 
 downgrade-inner:
-	/opt/homebrew/opt/php@8.1/bin/php -d memory_limit=2G vendor/bin/rector process src test -c build/downgrade-config.php
+	/opt/homebrew/Cellar/php@8.4/8.4.16_1.reinstall/bin/php -d memory_limit=2G vendor/bin/rector process src test -c build/downgrade-config.php
 
 rename-inner:
 	php build/rename.php
