@@ -390,7 +390,7 @@ class ReflectionClass implements Reflection
             return $this->parentClassName;
         }
 
-        $implementsClassName = $this->getInterfaceClassNames();
+        $implementsClassName = $this->implementsClassNames;
         if ($implementsClassName !== []) {
             return $implementsClassName[0];
         }
