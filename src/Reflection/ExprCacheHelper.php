@@ -9,14 +9,13 @@ use Roave\BetterReflection\BetterReflection;
 
 final class ExprCacheHelper
 {
-    private static ?BetterReflection $betterReflection = null;
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, mixed
      */
     public static function export(Expr $expr): array
     {
-        $br = self::$betterReflection ??= new BetterReflection();
+        $br = new BetterReflection();
 
         $attributes = [];
         foreach (['startLine', 'endLine', 'startTokenPos', 'startFilePos', 'endTokenPos', 'endFilePos'] as $key) {
@@ -34,9 +33,8 @@ final class ExprCacheHelper
         $code = $data['code'];
         $attributes = $data['attributes'];
 
-        $br = self::$betterReflection ??= new BetterReflection();
-        // cached parser implementations might re-use nodes. clone so we don't mix up attributes.
-        $expr = clone $br->phpParser()->parse('<?php ' . $code . ';')[0]->expr;
+        $br = new BetterReflection();
+        $expr = $br->originalPhpParser()->parse('<?php ' . $code . ';')[0]->expr;
         foreach ($attributes as $key => $value) {
             $expr->setAttribute($key, $value);
         }
