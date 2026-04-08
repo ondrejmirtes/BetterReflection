@@ -26,18 +26,22 @@ use function assert;
 /** @psalm-immutable */
 class ReflectionClassConstant
 {
+    private Reflector $reflector;
     /** @var non-empty-string */
     private string $name;
 
     /** @var int-mask-of<ReflectionClassConstantAdapter::IS_*> */
     private int $modifiers;
 
-    private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private $type;
 
     private Node\Expr $value;
 
     /** @var non-empty-string|null */
-    private string|null $docComment;
+    private $docComment;
 
     /** @var list<ReflectionAttribute> */
     private array $attributes;
@@ -64,16 +68,18 @@ class ReflectionClassConstant
     /** @var non-empty-string */
     private string $implementingClassName;
 
-    /** @psalm-allow-private-mutation */
-    private CompiledValue|null $compiledValue = null;
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+    private $compiledValue = null;
 
     private function __construct(
-        private Reflector $reflector,
+        Reflector $reflector,
         ClassConst $node,
         int $positionInNode,
         ReflectionClass $declaringClass,
-        ReflectionClass $implementingClass,
+        ReflectionClass $implementingClass
     ) {
+        $this->reflector = $reflector;
         $this->declaringClass = $declaringClass;
         $this->implementingClass = $implementingClass;
         $this->name      = $node->consts[$positionInNode]->name->name;
@@ -168,7 +174,7 @@ class ReflectionClassConstant
         ClassConst $node,
         int $positionInNode,
         ReflectionClass $declaringClass,
-        ReflectionClass $implementingClass,
+        ReflectionClass $implementingClass
     ): self {
         return new self(
             $reflector,
@@ -203,7 +209,10 @@ class ReflectionClassConstant
         return $this->name;
     }
 
-    private function createType(ClassConst $node): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    private function createType(ClassConst $node)
     {
         $type = $node->type;
 
@@ -216,7 +225,10 @@ class ReflectionClassConstant
         return ReflectionType::createFromNode($this->reflector, $this, $type);
     }
 
-    public function getType(): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null
+    /**
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null
+     */
+    public function getType()
     {
         return $this->type;
     }
@@ -233,8 +245,9 @@ class ReflectionClassConstant
 
     /**
      * Returns constant value
+     * @return mixed
      */
-    public function getValue(): mixed
+    public function getValue()
     {
         if ($this->compiledValue === null) {
             $this->compiledValue = (new CompileNodeToValue())->__invoke(
@@ -344,7 +357,7 @@ class ReflectionClassConstant
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->docComment;
     }
