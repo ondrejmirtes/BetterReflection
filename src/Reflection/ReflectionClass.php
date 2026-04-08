@@ -1441,7 +1441,7 @@ class ReflectionClass implements Reflection
     private function addStringableInterfaceClassName(array $interfaceClassNames): array
     {
         if (BetterReflection::$phpVersion < 80000) {
-            return $interfaces;
+            return $interfaceClassNames;
         }
 
         /** @psalm-var class-string $stringableClassName */
