@@ -35,15 +35,16 @@ final class FileReadTrapStreamWrapper
     ];
 
     /** @var list<string>|null */
-    private static array|null $registeredStreamWrapperProtocols = null;
+    private static $registeredStreamWrapperProtocols = null;
 
     /**
      * Read this property to determine the last file on which reads were attempted
      *
      * @psalm-readonly
      * @psalm-allow-private-mutation
+     * @var string|null
      */
-    public static string|null $autoloadLocatedFile = null;
+    public static $autoloadLocatedFile = null;
 
     /** @var resource */
     public $context;
@@ -55,11 +56,12 @@ final class FileReadTrapStreamWrapper
      * @psalm-return ExecutedMethodReturnType
      *
      * @psalm-template ExecutedMethodReturnType of mixed
+     * @return mixed
      */
     public static function withStreamWrapperOverride(
         callable $executeMeWithinStreamWrapperOverride,
-        array $streamWrapperProtocols = self::DEFAULT_STREAM_WRAPPER_PROTOCOLS,
-    ): mixed {
+        array $streamWrapperProtocols = self::DEFAULT_STREAM_WRAPPER_PROTOCOLS
+    ) {
         self::$registeredStreamWrapperProtocols = $streamWrapperProtocols;
         self::$autoloadLocatedFile              = null;
 
@@ -121,7 +123,7 @@ final class FileReadTrapStreamWrapper
      *
      * @return mixed[]|bool
      */
-    public function url_stat($path, $flags): array|bool
+    public function url_stat($path, $flags)
     {
         if (self::$registeredStreamWrapperProtocols === null) {
             throw new LogicException(sprintf('%s not registered: cannot operate. Do not call this method directly.', self::class));
