@@ -471,11 +471,14 @@ final class ReflectionSourceStubber implements SourceStubber
 
             /** @phpstan-ignore argument.type */
             $classConstantNode = $this->builderFactory->classConst($constantReflection->getName(), $constantReflection->getValue());
-            $constantType      = $constantReflection->getType();
 
-            if ($constantType !== null) {
-                assert($constantType instanceof CoreReflectionNamedType || $constantType instanceof CoreReflectionUnionType || $constantType instanceof CoreReflectionIntersectionType);
-                $classConstantNode->setType($this->formatType($constantType));
+            if (method_exists($constantReflection, 'getType')) {
+                $constantType = $constantReflection->getType();
+
+                if ($constantType !== null) {
+                    assert($constantType instanceof CoreReflectionNamedType || $constantType instanceof CoreReflectionUnionType || $constantType instanceof CoreReflectionIntersectionType);
+                    $classConstantNode->setType($this->formatType($constantType));
+                }
             }
 
             $this->addAttributes($classConstantNode, $constantReflection);
