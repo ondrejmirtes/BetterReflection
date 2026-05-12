@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Located;
+namespace PHPStan\BetterReflection\SourceLocator\Located;
 
-use Roave\BetterReflection\SourceLocator\FileChecker;
+use PHPStan\BetterReflection\SourceLocator\FileChecker;
 
 /**
  * @internal
