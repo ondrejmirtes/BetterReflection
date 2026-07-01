@@ -22,14 +22,15 @@ class ReflectionUnionType extends ReflectionType
     /** @var non-empty-list<ReflectionNamedType|ReflectionIntersectionType> */
     private array $types;
 
-    /** @internal */
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner */
     public function __construct(
         Reflector $reflector,
-        ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        UnionType $type,
+        $owner,
+        UnionType $type
     ) {
         /** @var non-empty-list<ReflectionNamedType|ReflectionIntersectionType> $types */
-        $types = array_map(static function (Identifier|Name|IntersectionType $type) use ($reflector, $owner): ReflectionNamedType|ReflectionIntersectionType {
+        $types = array_map(static function ($type) use ($reflector, $owner) {
             $type = ReflectionType::createFromNode($reflector, $owner, $type);
             assert($type instanceof ReflectionNamedType || $type instanceof ReflectionIntersectionType);
 
@@ -46,7 +47,7 @@ class ReflectionUnionType extends ReflectionType
     {
         return [
             'types' => array_map(
-                static fn (ReflectionNamedType|ReflectionIntersectionType $type) => [
+                static fn ($type) => [
                     'class' => get_class($type),
                     'data' => $type->exportToCache(),
                 ],
@@ -65,7 +66,7 @@ class ReflectionUnionType extends ReflectionType
         /** @var self $ref */
         $ref = $reflection->newInstanceWithoutConstructor();
         $ref->types = array_map(
-            static function (array $typeData) use ($reflector, $owner): ReflectionNamedType|ReflectionIntersectionType {
+            static function (array $typeData) use ($reflector, $owner) {
                 $typeClass = $typeData['class'];
                 return $typeClass::importFromCache($reflector, $typeData['data'], $owner);
             },
@@ -75,12 +76,14 @@ class ReflectionUnionType extends ReflectionType
         return $ref;
     }
 
-    /** @internal */
-    public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @return static */
+    public function withOwner($owner)
     {
         $clone = clone $this;
 
-        $clone->types = array_map(static fn (ReflectionNamedType|ReflectionIntersectionType $type): ReflectionNamedType|ReflectionIntersectionType => $type->withOwner($owner), $clone->types);
+        $clone->types = array_map(static fn ($type) => $type->withOwner($owner), $clone->types);
 
         return $clone;
     }

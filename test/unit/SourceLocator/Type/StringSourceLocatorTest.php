@@ -26,7 +26,10 @@ class StringSourceLocatorTest extends TestCase
         $this->astLocator = BetterReflectionSingleton::instance()->astLocator();
     }
 
-    private function getMockReflector(): Reflector&Stub
+    /**
+     * @return (\PHPUnit\Framework\MockObject\Stub & \Roave\BetterReflection\Reflector\Reflector)
+     */
+    private function getMockReflector()
     {
         return self::createStub(Reflector::class);
     }
