@@ -28,7 +28,7 @@ class LocatedSource
      * @throws InvalidArgumentException
      * @throws InvalidFileLocation
      */
-    public function __construct(private string $source, private string|null $name, string|null $filename = null)
+    public function __construct(private string|null $source, private string|null $name, string|null $filename = null)
     {
         if ($filename !== null) {
             assert($filename !== '');
@@ -41,6 +41,14 @@ class LocatedSource
 
     public function getSource(): string
     {
+        if ($this->source === null) {
+            assert($this->filename !== null);
+            FileChecker::assertReadableFile($this->filename);
+            $fileContents = file_get_contents($this->filename);
+            assert($fileContents !== false);
+            $this->source = $fileContents;
+        }
+
         return $this->source;
     }
 
@@ -105,10 +113,10 @@ class LocatedSource
     {
         $class = $data['class'];
         if ($class === self::class) {
-            FileChecker::assertReadableFile($data['data']['filename']);
-            $fileContents = file_get_contents($data['data']['filename']);
-            assert($fileContents !== false);
-            return new self($fileContents, $data['data']['name'], $data['data']['filename']);
+            // Read the source lazily in getSource(); on the warm cache path the
+            // reflection is rebuilt entirely from the cached data (columns
+            // included), so the file contents are usually never needed.
+            return new self(null, $data['data']['name'], $data['data']['filename']);
         }
 
         return $class::importFromCache($data);
