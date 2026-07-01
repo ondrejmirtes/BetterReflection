@@ -1707,7 +1707,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''filename'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: src/SourceLocator/Located/LocatedSource.php
 
 		-
@@ -1729,19 +1729,13 @@ parameters:
 			path: src/SourceLocator/Located/LocatedSource.php
 
 		-
-			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/SourceLocator/Located/LocatedSource.php
-
-		-
-			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/SourceLocator/Located/LocatedSource.php
-
-		-
 			message: '#^Parameter \#2 \$name of class Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/LocatedSource.php
+
+		-
+			message: '#^Parameter \#3 \$filename of class Roave\\BetterReflection\\SourceLocator\\Located\\LocatedSource constructor expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/SourceLocator/Located/LocatedSource.php
