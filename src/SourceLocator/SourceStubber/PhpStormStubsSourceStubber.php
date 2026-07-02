@@ -48,8 +48,10 @@ use Traversable;
 
 use function array_change_key_case;
 use function array_key_exists;
+use function array_key_first;
 use function array_map;
 use function assert;
+use function count;
 use function explode;
 use function file_get_contents;
 use function in_array;
@@ -195,7 +197,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     /** @var array<lowercase-string, string> */
     private static array $constantMap;
 
-    public function __construct(private Parser $phpParser, Standard $prettyPrinter, private int $phpVersion = PHP_VERSION_ID)
+    /** @param int|null $maxCachedNodes maximum number of entries kept in each node cache, evicted by LRU; null means unlimited */
+    public function __construct(private Parser $phpParser, Standard $prettyPrinter, private int $phpVersion = PHP_VERSION_ID, private int|null $maxCachedNodes = null)
     {
         $this->builderFactory = new BuilderFactory();
         $this->prettyPrinter  = $prettyPrinter;
@@ -308,6 +311,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                 // Save `null` so we don't parse the file again for the same $lowercaseClassName
                 $this->classNodes[$lowercaseClassName] = null;
             }
+        } else {
+            $this->markAsRecentlyUsed($this->classNodes, $lowercaseClassName);
         }
 
         return $this->classNodes[$lowercaseClassName];
@@ -334,6 +339,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                 // Save `null` so we don't parse the file again for the same $lowercaseFunctionName
                 $this->functionNodes[$lowercaseFunctionName] = null;
             }
+        } else {
+            $this->markAsRecentlyUsed($this->functionNodes, $lowercaseFunctionName);
         }
 
         return $this->functionNodes[$lowercaseFunctionName];
@@ -371,6 +378,13 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $filePath         = self::$constantMap[$lowercaseConstantName];
         $constantNodeData = $this->constantNodes[$constantName] ?? $this->constantNodes[$lowercaseConstantName] ?? null;
 
+        if ($constantNodeData !== null) {
+            $this->markAsRecentlyUsed(
+                $this->constantNodes,
+                ($this->constantNodes[$constantName] ?? null) !== null ? $constantName : $lowercaseConstantName,
+            );
+        }
+
         if ($constantNodeData === null) {
             $this->parseFile($filePath);
 
@@ -391,6 +405,13 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
     private function parseFile(string $filePath): void
     {
+        // Evict before inserting the parsed file's nodes, not after, so that entries
+        // just added for the current file cannot be evicted before the caller reads them.
+        // The caches may thus temporarily exceed the limit by one stub file's worth of nodes.
+        $this->evictLeastRecentlyUsed($this->classNodes);
+        $this->evictLeastRecentlyUsed($this->functionNodes);
+        $this->evictLeastRecentlyUsed($this->constantNodes);
+
         $absoluteFilePath = $this->getAbsoluteFilePath($filePath);
         FileChecker::assertReadableFile($absoluteFilePath);
 
@@ -463,6 +484,42 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             }
 
             $this->constantNodes[$constantName] = $constantNodeData;
+        }
+    }
+
+    /**
+     * LRU bookkeeping: re-insert the entry at the end so genuinely cold nodes
+     * are evicted first, not the ones cached earliest.
+     *
+     * @param array<string, T> $cache
+     *
+     * @template T
+     */
+    private function markAsRecentlyUsed(array &$cache, string $key): void
+    {
+        if ($this->maxCachedNodes === null) {
+            return;
+        }
+
+        $value = $cache[$key];
+        unset($cache[$key]);
+        $cache[$key] = $value;
+    }
+
+    /** @param array<string, mixed> $cache */
+    private function evictLeastRecentlyUsed(array &$cache): void
+    {
+        if ($this->maxCachedNodes === null) {
+            return;
+        }
+
+        while (count($cache) > $this->maxCachedNodes) {
+            $oldestKey = array_key_first($cache);
+            if ($oldestKey === null) {
+                break;
+            }
+
+            unset($cache[$oldestKey]);
         }
     }
 
