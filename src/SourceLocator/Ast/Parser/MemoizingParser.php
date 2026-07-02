@@ -10,6 +10,8 @@ use PhpParser\Parser;
 use PhpParser\Token;
 
 use function array_key_exists;
+use function array_key_first;
+use function count;
 use function hash;
 use function serialize;
 use function sprintf;
@@ -25,8 +27,11 @@ final class MemoizingParser implements Parser
     /** @var Token[] */
     private array $lastTokens = [];
 
-    public function __construct(private Parser $wrappedParser)
-    {
+    /** @param int|null $maxCachedEntries maximum number of sources kept in the cache, evicted by LRU; null means unlimited */
+    public function __construct(
+        private Parser $wrappedParser,
+        private int|null $maxCachedEntries = null,
+    ) {
     }
 
     public function parse(string $code, ErrorHandler|null $errorHandler = null): array|null
@@ -39,6 +44,14 @@ final class MemoizingParser implements Parser
 
         if (array_key_exists($hash, $this->sourceHashToAst)) {
             [$serializedAst, $tokens] = $this->sourceHashToAst[$hash];
+
+            if ($this->maxCachedEntries !== null) {
+                // LRU bookkeeping: re-insert the entry at the end so genuinely cold
+                // sources are evicted first, not the ones cached earliest
+                unset($this->sourceHashToAst[$hash]);
+                $this->sourceHashToAst[$hash] = [$serializedAst, $tokens];
+            }
+
             /** @var Node\Stmt[]|null $ast */
             $ast              = unserialize($serializedAst);
             $this->lastTokens = $tokens;
@@ -46,8 +59,20 @@ final class MemoizingParser implements Parser
             return $ast;
         }
 
-        $ast                          = $this->wrappedParser->parse($code, $errorHandler);
-        $tokens                       = $this->wrappedParser->getTokens();
+        $ast    = $this->wrappedParser->parse($code, $errorHandler);
+        $tokens = $this->wrappedParser->getTokens();
+
+        if ($this->maxCachedEntries !== null) {
+            while (count($this->sourceHashToAst) >= $this->maxCachedEntries) {
+                $oldestKey = array_key_first($this->sourceHashToAst);
+                if ($oldestKey === null) {
+                    break;
+                }
+
+                unset($this->sourceHashToAst[$oldestKey]);
+            }
+        }
+
         $this->sourceHashToAst[$hash] = [serialize($ast), $tokens];
         $this->lastTokens             = $tokens;
 

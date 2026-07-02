@@ -1741,6 +1741,24 @@ parameters:
 			path: src/SourceLocator/Located/LocatedSource.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$classNodes \(array\<string, array\{PhpParser\\Node\\Stmt\\ClassLike, PhpParser\\Node\\Stmt\\Namespace_\|null\}\|null\>\) does not accept array\<string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$constantNodes \(array\<string, array\{PhpParser\\Node\\Expr\\FuncCall\|PhpParser\\Node\\Stmt\\Const_, PhpParser\\Node\\Stmt\\Namespace_\|null\}\|null\>\) does not accept array\<string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$functionNodes \(array\<string, array\{PhpParser\\Node\\Stmt\\Function_, PhpParser\\Node\\Stmt\\Namespace_\|null\}\|null\>\) does not accept array\<string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
 			message: '#^Access to an undefined property object\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1823,6 +1841,18 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/SourceLocator/SourceStubber/ReflectionSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\Type\\MemoizingSourceLocator\:\:\$cacheByIdentifierKeyAndOid \(array\<string, Roave\\BetterReflection\\Reflection\\Reflection\|null\>\) does not accept array\<string, list\<Roave\\BetterReflection\\Reflection\\Reflection\>\|Roave\\BetterReflection\\Reflection\\Reflection\|null\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/Type/MemoizingSourceLocator.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\Type\\MemoizingSourceLocator\:\:\$cacheByIdentifierTypeKeyAndOid \(array\<string, list\<Roave\\BetterReflection\\Reflection\\Reflection\>\>\) does not accept array\<string, list\<Roave\\BetterReflection\\Reflection\\Reflection\>\|Roave\\BetterReflection\\Reflection\\Reflection\|null\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/Type/MemoizingSourceLocator.php
 
 		-
 			message: '#^Method Roave\\BetterReflection\\Util\\FileHelper\:\:normalizePath\(\) should return non\-empty\-string but returns string\.$#'
