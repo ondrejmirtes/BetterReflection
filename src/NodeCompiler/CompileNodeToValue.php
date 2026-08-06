@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace PHPStan\BetterReflection\NodeCompiler;
 
 use Attribute;
+use Closure;
 use PhpParser\ConstExprEvaluator;
 use PhpParser\Node;
+use PhpParser\PrettyPrinter\Standard as PrettyPrinter;
 use PHPStan\BetterReflection\Reflection\ReflectionClass;
 use PHPStan\BetterReflection\Reflection\ReflectionClassConstant;
 use PHPStan\BetterReflection\Reflection\ReflectionEnum;
@@ -23,6 +25,8 @@ use function explode;
 use function in_array;
 use function is_file;
 use function sprintf;
+
+use const PHP_VERSION_ID;
 
 /** @internal */
 class CompileNodeToValue
@@ -173,6 +177,18 @@ class CompileNodeToValue
                 return (object) $this($node->expr, $context)->value;
             }
 
+            if ($node instanceof Node\Expr\Closure) {
+                return $this->compileClosureDeclaration($node, $context);
+            }
+
+            if (
+                ($node instanceof Node\Expr\FuncCall || $node instanceof Node\Expr\StaticCall)
+                && $node->isFirstClassCallable()
+                && PHP_VERSION_ID >= 80100 // the syntax cannot be eval'd on older runtimes
+            ) {
+                return $this->compileClosureDeclaration($node, $context);
+            }
+
             throw Exception\UnableToCompileNode::forUnRecognizedExpressionInContext($node, $context);
         });
 
@@ -217,6 +233,59 @@ class CompileNodeToValue
             default:
                 throw Exception\UnableToCompileNode::becauseOfInvalidEnumCasePropertyFetch($context, $class, $node);
         }
+    }
+
+    /**
+     * Compile a closure or a first-class callable declared in a constant expression (PHP 8.5+)
+     * into a real Closure, like native reflection does.
+     *
+     * The language guarantees such closures are static and capture no variables,
+     * so evaluating the declaration itself executes no user code.
+     *
+     * @param Node\Expr\Closure|Node\Expr\FuncCall|Node\Expr\StaticCall $node
+     */
+    private function compileClosureDeclaration(Node\Expr $node, CompilerContext $context): Closure
+    {
+        if ($node instanceof Node\Expr\StaticCall && $node->class instanceof Node\Name) {
+            $calleeClassName = $this->resolveClassName($node->class->toString(), $context);
+
+            if (! class_exists($calleeClassName)) {
+                throw Exception\UnableToCompileNode::becauseOfClassCannotBeLoaded($context, $node, $calleeClassName);
+            }
+
+            $node        = clone $node;
+            $node->class = new Node\Name\FullyQualified($calleeClassName);
+        }
+
+        $code = (new PrettyPrinter())->prettyPrintExpr($node);
+
+        $namespace = $context->getNamespace();
+
+        // The namespace wrapper keeps the fallback to global scope for unqualified function calls
+        $code = $namespace !== null && $namespace !== ''
+            ? sprintf('namespace %s; return %s;', $namespace, $code)
+            : sprintf('return %s;', $code);
+
+        try {
+            $closure = eval($code);
+        } catch (\Throwable $e) {
+            // e.g. a syntax not supported by the current runtime
+            throw Exception\UnableToCompileNode::forUnRecognizedExpressionInContext($node, $context);
+        }
+
+        assert($closure instanceof Closure);
+
+        $contextClass     = $context->getClass();
+        $contextClassName = $contextClass !== null ? $contextClass->getName() : null;
+
+        // Bind the class scope like native reflection does
+        if ($contextClassName !== null && class_exists($contextClassName)) {
+            $boundClosure = Closure::bind($closure, null, $contextClassName);
+
+            return $boundClosure ?? $closure;
+        }
+
+        return $closure;
     }
 
     private function resolveConstantName(Node\Expr\ConstFetch $constNode, CompilerContext $context): string
