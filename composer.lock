@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f95bbc466a50f5e28815aebc2eb75aa",
+    "content-hash": "58a3fbdc72075a89a6234f231f1b2e60",
     "packages": [
         {
             "name": "jetbrains/phpstorm-stubs",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JetBrains/phpstorm-stubs",
-                "reference": "4e14dd6b8c20af38c7d42a8bcfc5a8dd40ced583"
+                "reference": "2da66a03e379335dba086b0d493c70185eb01ddd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/4e14dd6b8c20af38c7d42a8bcfc5a8dd40ced583",
-                "reference": "4e14dd6b8c20af38c7d42a8bcfc5a8dd40ced583",
+                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/2da66a03e379335dba086b0d493c70185eb01ddd",
+                "reference": "2da66a03e379335dba086b0d493c70185eb01ddd",
                 "shasum": ""
             },
             "require-dev": {
