@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee4b3855755f94474905a225bc273415",
+    "content-hash": "9f95bbc466a50f5e28815aebc2eb75aa",
     "packages": [
         {
             "name": "jetbrains/phpstorm-stubs",
@@ -12,19 +12,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JetBrains/phpstorm-stubs",
-                "reference": "dfcad4524db603bd20bdec3aab1a31c5f5128ea3"
+                "reference": "4e14dd6b8c20af38c7d42a8bcfc5a8dd40ced583"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/dfcad4524db603bd20bdec3aab1a31c5f5128ea3",
-                "reference": "dfcad4524db603bd20bdec3aab1a31c5f5128ea3",
+                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/4e14dd6b8c20af38c7d42a8bcfc5a8dd40ced583",
+                "reference": "4e14dd6b8c20af38c7d42a8bcfc5a8dd40ced583",
                 "shasum": ""
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^v3.86",
                 "nikic/php-parser": "^v5.6",
-                "phpdocumentor/reflection-docblock": "^5.6",
-                "phpunit/phpunit": "^12.3"
+                "phpdocumentor/reflection-docblock": "^6.0",
+                "phpunit/phpunit": "^13.2"
             },
             "default-branch": true,
             "type": "library",
@@ -49,7 +49,7 @@
                 "stubs",
                 "type"
             ],
-            "time": "2026-04-02T11:15:54+00:00"
+            "time": "2026-08-21T14:57:18+00:00"
         },
         {
             "name": "nikic/php-parser",

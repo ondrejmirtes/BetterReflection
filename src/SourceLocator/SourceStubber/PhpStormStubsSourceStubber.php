@@ -193,8 +193,27 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     /** @var array<lowercase-string, string> */
     private static array $constantMap;
 
+    /** @var array<lowercase-string, string> */
+    private array $selectedClassMap = [];
+
+    /** @var array<lowercase-string, string> */
+    private array $selectedFunctionMap = [];
+
+    /** @var array<lowercase-string, string> */
+    private array $selectedConstantMap = [];
+
+    /** @var array<lowercase-string, string> */
+    private array $disabledClassMap = [];
+
+    /** @var array<lowercase-string, string> */
+    private array $disabledFunctionMap = [];
+
+    /** @var array<lowercase-string, string> */
+    private array $disabledConstantMap = [];
+
     /** @param int|null $maxCachedNodes maximum number of entries kept in each node cache, evicted by LRU; null means unlimited */
-    public function __construct(Parser $phpParser, Standard $prettyPrinter, int $phpVersion = PHP_VERSION_ID, ?int $maxCachedNodes = null)
+    /** @param array<string, int> $extensionVersions */
+    public function __construct(Parser $phpParser, Standard $prettyPrinter, int $phpVersion = PHP_VERSION_ID, ?int $maxCachedNodes = null, array $extensionVersions = [])
     {
         $this->phpParser = $phpParser;
         $this->phpVersion = $phpVersion;
@@ -206,31 +225,31 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
         $this->nodeTraverser = new NodeTraverser(new NameResolver(), $this->cachingVisitor);
 
-        if (self::$mapsInitialized) {
-            return;
+        if (! self::$mapsInitialized) {
+            /** @psalm-suppress PropertyTypeCoercion */
+            self::$classMap = array_change_key_case(PhpStormStubsMap::CLASSES);
+            /** @psalm-suppress PropertyTypeCoercion */
+            self::$functionMap = array_change_key_case(PhpStormStubsMap::FUNCTIONS);
+            /** @psalm-suppress PropertyTypeCoercion */
+            self::$constantMap = array_change_key_case(PhpStormStubsMap::CONSTANTS);
+
+            self::$mapsInitialized = true;
         }
 
-        /** @psalm-suppress PropertyTypeCoercion */
-        self::$classMap = array_change_key_case(PhpStormStubsMap::CLASSES);
-        /** @psalm-suppress PropertyTypeCoercion */
-        self::$functionMap = array_change_key_case(PhpStormStubsMap::FUNCTIONS);
-        /** @psalm-suppress PropertyTypeCoercion */
-        self::$constantMap = array_change_key_case(PhpStormStubsMap::CONSTANTS);
-
-        self::$mapsInitialized = true;
+        $this->initializeExtensionVersionMaps($extensionVersions);
     }
 
     public function hasClass(string $className): bool
     {
         $lowercaseClassName = strtolower($className);
 
-        return array_key_exists($lowercaseClassName, self::$classMap);
+        return $this->getClassFilePath($lowercaseClassName) !== null;
     }
 
     public function isPresentClass(string $className): ?bool
     {
         $lowercaseClassName = strtolower($className);
-        if (! array_key_exists($lowercaseClassName, self::$classMap)) {
+        if ($this->getClassFilePath($lowercaseClassName) === null) {
             return null;
         }
 
@@ -242,7 +261,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     public function isPresentFunction(string $functionName): ?bool
     {
         $lowercaseFunctionName = strtolower($functionName);
-        if (! array_key_exists($lowercaseFunctionName, self::$functionMap)) {
+        if ($this->getFunctionFilePath($lowercaseFunctionName) === null) {
             return null;
         }
 
@@ -277,7 +296,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             $classNode->extends = $this->replaceExtendsOrImplementsByPhpVersion($className, $classNode->extends);
         }
 
-        $filePath  = self::$classMap[strtolower($className)];
+        $filePath = $this->getClassFilePath(strtolower($className));
+        assert($filePath !== null);
         $extension = $this->getExtensionFromFilePath($filePath);
         $stub      = $this->createStub($classNode, $classNodeData[1]);
 
@@ -296,11 +316,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     {
         $lowercaseClassName = strtolower($className);
 
-        if (! array_key_exists($lowercaseClassName, self::$classMap)) {
+        $filePath = $this->getClassFilePath($lowercaseClassName);
+        if ($filePath === null) {
             return null;
         }
-
-        $filePath = self::$classMap[$lowercaseClassName];
 
         if (! array_key_exists($lowercaseClassName, $this->classNodes)) {
             $this->parseFile($filePath);
@@ -324,11 +343,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     {
         $lowercaseFunctionName = strtolower($functionName);
 
-        if (! array_key_exists($lowercaseFunctionName, self::$functionMap)) {
+        $filePath = $this->getFunctionFilePath($lowercaseFunctionName);
+        if ($filePath === null) {
             return null;
         }
-
-        $filePath = self::$functionMap[$lowercaseFunctionName];
 
         if (! array_key_exists($lowercaseFunctionName, $this->functionNodes)) {
             $this->parseFile($filePath);
@@ -353,7 +371,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             return null;
         }
 
-        $filePath  = self::$functionMap[strtolower($functionName)];
+        $filePath = $this->getFunctionFilePath(strtolower($functionName));
+        assert($filePath !== null);
         $extension = $this->getExtensionFromFilePath($filePath);
 
         return new StubData($this->createStub($functionNodeData[0], $functionNodeData[1]), $extension, $this->getAbsoluteFilePath($filePath));
@@ -363,7 +382,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     {
         $lowercaseConstantName = strtolower($constantName);
 
-        if (! array_key_exists($lowercaseConstantName, self::$constantMap)) {
+        $filePath = $this->getConstantFilePath($lowercaseConstantName);
+        if ($filePath === null) {
             return null;
         }
 
@@ -374,7 +394,6 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             return null;
         }
 
-        $filePath         = self::$constantMap[$lowercaseConstantName];
         $constantNodeData = $this->constantNodes[$constantName] ?? $this->constantNodes[$lowercaseConstantName] ?? null;
 
         if ($constantNodeData !== null) {
@@ -567,11 +586,80 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         );
     }
 
+    /** @param array<string, int> $extensionVersions */
+    private function initializeExtensionVersionMaps(array $extensionVersions): void
+    {
+        foreach ($extensionVersions as $extensionName => $version) {
+            $extensionName = strtolower($extensionName);
+            if (! array_key_exists($extensionName, PhpStormStubsMap::EXTENSION_VERSIONS)) {
+                continue;
+            }
+
+            $versionMaps = PhpStormStubsMap::EXTENSION_VERSIONS[$extensionName];
+            if (! array_key_exists($version, $versionMaps)) {
+                continue;
+            }
+
+            $defaultMap = $versionMaps['default'];
+            $selectedMap = $versionMaps[$version];
+
+            $this->disabledClassMap += array_change_key_case($defaultMap['classes']);
+            $this->disabledFunctionMap += array_change_key_case($defaultMap['functions']);
+            $this->disabledConstantMap += array_change_key_case($defaultMap['constants']);
+            $this->selectedClassMap += array_change_key_case($selectedMap['classes']);
+            $this->selectedFunctionMap += array_change_key_case($selectedMap['functions']);
+            $this->selectedConstantMap += array_change_key_case($selectedMap['constants']);
+        }
+    }
+
+    private function getClassFilePath(string $lowercaseClassName): ?string
+    {
+        if (array_key_exists($lowercaseClassName, $this->selectedClassMap)) {
+            return $this->selectedClassMap[$lowercaseClassName];
+        }
+
+        if (array_key_exists($lowercaseClassName, $this->disabledClassMap)) {
+            return null;
+        }
+
+        return self::$classMap[$lowercaseClassName] ?? null;
+    }
+
+    private function getFunctionFilePath(string $lowercaseFunctionName): ?string
+    {
+        if (array_key_exists($lowercaseFunctionName, $this->selectedFunctionMap)) {
+            return $this->selectedFunctionMap[$lowercaseFunctionName];
+        }
+
+        if (array_key_exists($lowercaseFunctionName, $this->disabledFunctionMap)) {
+            return null;
+        }
+
+        return self::$functionMap[$lowercaseFunctionName] ?? null;
+    }
+
+    private function getConstantFilePath(string $lowercaseConstantName): ?string
+    {
+        if (array_key_exists($lowercaseConstantName, $this->selectedConstantMap)) {
+            return $this->selectedConstantMap[$lowercaseConstantName];
+        }
+
+        if (array_key_exists($lowercaseConstantName, $this->disabledConstantMap)) {
+            return null;
+        }
+
+        return self::$constantMap[$lowercaseConstantName] ?? null;
+    }
+
     /** @return non-empty-string */
     private function getExtensionFromFilePath(string $filePath): string
     {
         $extensionName = explode('/', $filePath)[0];
         assert($extensionName !== '');
+
+        if (preg_match('~^(.+)_v\d+$~', $extensionName, $matches) === 1) {
+            return $matches[1];
+        }
 
         return $extensionName;
     }
