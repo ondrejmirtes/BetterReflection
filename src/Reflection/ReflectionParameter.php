@@ -26,10 +26,13 @@ use Roave\BetterReflection\Util\GetLastDocComment;
 use function array_map;
 use function assert;
 use function get_class;
+use function is_array;
 use function is_string;
+use function ltrim;
 use function preg_match;
 use function sprintf;
 use function strlen;
+use function strtolower;
 
 use const PREG_UNMATCHED_AS_NULL;
 
@@ -39,7 +42,13 @@ class ReflectionParameter
     /** @var non-empty-string */
     private string $name;
 
-    private Node\Expr|null $default;
+    /**
+     * The default value expression, its exported cache form (parsed into an Expr only when
+     * asked for), or null.
+     *
+     * @var Node\Expr|array<string, mixed>|null
+     */
+    private Node\Expr|array|null $default;
 
     private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type;
 
@@ -126,7 +135,7 @@ class ReflectionParameter
     {
         return [
             'name' => $this->name,
-            'default' => $this->default !== null ? ExprCacheHelper::export($this->default) : null,
+            'default' => $this->default === null || is_array($this->default) ? $this->default : ExprCacheHelper::export($this->default),
             'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
             'isVariadic' => $this->isVariadic,
             'byRef' => $this->byRef,
@@ -157,11 +166,7 @@ class ReflectionParameter
         $ref->isOptional     = $data['isOptional'];
         $ref->name           = $data['name'];
 
-        if ($data['default'] !== null) {
-            $ref->default = ExprCacheHelper::import($data['default']);
-        } else {
-            $ref->default = null;
-        }
+        $ref->default = $data['default'];
 
         if ($data['type'] !== null) {
             $typeClass = $data['type']['class'];
@@ -282,7 +287,7 @@ class ReflectionParameter
 
         if ($this->compiledDefaultValue === null) {
             $this->compiledDefaultValue = (new CompileNodeToValue())->__invoke(
-                $this->default,
+                $this->getDefaultValueExpression(),
                 new CompilerContext($this->reflector, $this),
             );
         }
@@ -425,6 +430,10 @@ class ReflectionParameter
 
     public function getDefaultValueExpression(): Node\Expr|null
     {
+        if (is_array($this->default)) {
+            $this->default = ExprCacheHelper::import($this->default);
+        }
+
         return $this->default;
     }
 
@@ -485,7 +494,12 @@ class ReflectionParameter
 
         assert($type instanceof Node\Identifier || $type instanceof Node\Name || $type instanceof Node\NullableType || $type instanceof Node\UnionType || $type instanceof Node\IntersectionType);
 
-        $allowsNull = $this->default instanceof Node\Expr\ConstFetch && $this->default->name->toLowerString() === 'null' && ! $this->isPromoted;
+        // the lazy cache form answers the null-default question without parsing the expression
+        if (is_array($this->default)) {
+            $allowsNull = strtolower(ltrim($this->default['code'], '\\')) === 'null' && ! $this->isPromoted;
+        } else {
+            $allowsNull = $this->default instanceof Node\Expr\ConstFetch && $this->default->name->toLowerString() === 'null' && ! $this->isPromoted;
+        }
 
         return ReflectionType::createFromNode($this->reflector, $this, $type, $allowsNull);
     }

@@ -17,6 +17,7 @@ use Roave\BetterReflection\Reflector\Reflector;
 
 use function array_map;
 use function assert;
+use function is_array;
 use function strrpos;
 use function substr;
 
@@ -26,8 +27,27 @@ class ReflectionAttribute
     /** @var class-string */
     private string $name;
 
-    /** @var array<int|string, Node\Expr> */
+    /**
+     * Argument expressions, each either a Node\Expr or its exported cache form (parsed
+     * into an Expr only when the arguments are actually asked for).
+     *
+     * @var array<int|string, Node\Expr|array<string, mixed>>
+     */
     private array $arguments;
+
+    /** @return array<int|string, Node\Expr> */
+    private function argumentExpressions(): array
+    {
+        foreach ($this->arguments as $key => $argument) {
+            if (! is_array($argument)) {
+                continue;
+            }
+
+            $this->arguments[$key] = ExprCacheHelper::import($argument);
+        }
+
+        return $this->arguments;
+    }
 
     /** @internal */
     public function __construct(
@@ -56,7 +76,7 @@ class ReflectionAttribute
             'name' => $this->name,
             'isRepeated' => $this->isRepeated,
             'arguments' => array_map(
-                static fn (Expr $expr) => ExprCacheHelper::export($expr),
+                static fn (Expr|array $expr) => is_array($expr) ? $expr : ExprCacheHelper::export($expr),
                 $this->arguments,
             ),
         ];
@@ -77,10 +97,7 @@ class ReflectionAttribute
         $ref->name       = $data['name'];
         $ref->isRepeated = $data['isRepeated'];
 
-        $ref->arguments = array_map(
-            static fn (array $exprData) => ExprCacheHelper::import($exprData),
-            $data['arguments'],
-        );
+        $ref->arguments = $data['arguments'];
 
         return $ref;
     }
@@ -131,7 +148,7 @@ class ReflectionAttribute
     /** @return array<int|string, Node\Expr> */
     public function getArgumentsExpressions(): array
     {
-        return $this->arguments;
+        return $this->argumentExpressions();
     }
 
     /** @return array<int|string, mixed> */
@@ -140,7 +157,7 @@ class ReflectionAttribute
         $compiler = new CompileNodeToValue();
         $context  = new CompilerContext($this->reflector, $this->owner);
 
-        return array_map(static fn (Node\Expr $value): mixed => $compiler->__invoke($value, $context)->value, $this->arguments);
+        return array_map(static fn (Node\Expr $value): mixed => $compiler->__invoke($value, $context)->value, $this->argumentExpressions());
     }
 
     /** @return int-mask-of<Attribute::TARGET_*>|ReflectionAttributeAdapter::TARGET_CONSTANT_COMPATIBILITY */

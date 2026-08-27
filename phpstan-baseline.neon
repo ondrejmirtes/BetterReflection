@@ -175,20 +175,8 @@ parameters:
 			path: src/Reflection/ReflectionAttribute.php
 
 		-
-			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: PhpParser\\Node\\Expr given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Reflection/ReflectionAttribute.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Reflection/ReflectionAttribute.php
-
-		-
-			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
-			identifier: argument.type
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionAttribute\:\:\$arguments \(array\<int\|string, array\<string, mixed\>\|PhpParser\\Node\\Expr\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionAttribute.php
 
@@ -439,12 +427,6 @@ parameters:
 			path: src/Reflection/ReflectionClassConstant.php
 
 		-
-			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Reflection/ReflectionClassConstant.php
-
-		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -547,6 +529,12 @@ parameters:
 			path: src/Reflection/ReflectionClassConstant.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionClassConstant\:\:\$value \(array\<string, mixed\>\|PhpParser\\Node\\Expr\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionClassConstant.php
+
+		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -555,12 +543,6 @@ parameters:
 		-
 			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionConstant and Roave\\BetterReflection\\Reflection\\ReflectionConstant will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Reflection/ReflectionConstant.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionConstant.php
 
@@ -649,6 +631,12 @@ parameters:
 			path: src/Reflection/ReflectionConstant.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionConstant\:\:\$value \(array\<string, mixed\>\|PhpParser\\Node\\Expr\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionConstant.php
+
+		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -681,12 +669,6 @@ parameters:
 		-
 			message: '#^Instanceof between Roave\\BetterReflection\\Reflection\\ReflectionEnumCase and Roave\\BetterReflection\\Reflection\\ReflectionEnumCase will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Reflection/ReflectionEnumCase.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionEnumCase.php
 
@@ -752,6 +734,12 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$startLine \(int\<1, max\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionEnumCase.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionEnumCase\:\:\$value \(array\<string, mixed\>\|PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionEnumCase.php
@@ -1237,7 +1225,13 @@ parameters:
 			path: src/Reflection/ReflectionParameter.php
 
 		-
-			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#1 \$node of method Roave\\BetterReflection\\NodeCompiler\\CompileNodeToValue\:\:__invoke\(\) expects PhpParser\\Node\\Expr\|PhpParser\\Node\\Stmt\\Expression, PhpParser\\Node\\Expr\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionParameter.php
@@ -1262,6 +1256,12 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$byRef \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionParameter.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionParameter\:\:\$default \(array\<string, mixed\>\|PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionParameter.php
@@ -1387,7 +1387,7 @@ parameters:
 			path: src/Reflection/ReflectionProperty.php
 
 		-
-			message: '#^Parameter \#1 \$data of static method Roave\\BetterReflection\\Reflection\\ExprCacheHelper\:\:import\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#1 \$node of method Roave\\BetterReflection\\NodeCompiler\\CompileNodeToValue\:\:__invoke\(\) expects PhpParser\\Node\\Expr\|PhpParser\\Node\\Stmt\\Expression, PhpParser\\Node\\Expr\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Reflection/ReflectionProperty.php
@@ -1424,6 +1424,12 @@ parameters:
 
 		-
 			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$declaringClassName \(non\-empty\-string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Reflection/ReflectionProperty.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\Reflection\\ReflectionProperty\:\:\$default \(array\<string, mixed\>\|PhpParser\\Node\\Expr\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Reflection/ReflectionProperty.php

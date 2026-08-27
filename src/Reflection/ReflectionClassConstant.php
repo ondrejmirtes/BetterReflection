@@ -22,6 +22,7 @@ use Roave\BetterReflection\Util\GetLastDocComment;
 use function array_map;
 use function assert;
 use function get_class;
+use function is_array;
 
 /** @psalm-immutable */
 class ReflectionClassConstant
@@ -34,7 +35,13 @@ class ReflectionClassConstant
 
     private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type;
 
-    private Node\Expr $value;
+    /**
+     * The value expression, or its exported cache form - a hydrated reflection keeps the
+     * compact form and only parses it into an Expr when the value is actually asked for.
+     *
+     * @var Node\Expr|array<string, mixed>
+     */
+    private Node\Expr|array $value;
 
     /** @var non-empty-string|null */
     private string|null $docComment;
@@ -107,7 +114,7 @@ class ReflectionClassConstant
             'name' => $this->name,
             'modifiers' => $this->modifiers,
             'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
-            'value' => ExprCacheHelper::export($this->value),
+            'value' => is_array($this->value) ? $this->value : ExprCacheHelper::export($this->value),
             'docComment' => $this->docComment,
             'attributes' => array_map(
                 static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
@@ -139,7 +146,7 @@ class ReflectionClassConstant
             $ref->type = null;
         }
 
-        $ref->value = ExprCacheHelper::import($data['value']);
+        $ref->value = $data['value'];
 
         $ref->docComment  = $data['docComment'];
         $ref->attributes  = array_map(
@@ -224,6 +231,10 @@ class ReflectionClassConstant
 
     public function getValueExpression(): Node\Expr
     {
+        if (is_array($this->value)) {
+            $this->value = ExprCacheHelper::import($this->value);
+        }
+
         return $this->value;
     }
 
@@ -234,7 +245,7 @@ class ReflectionClassConstant
     {
         if ($this->compiledValue === null) {
             $this->compiledValue = (new CompileNodeToValue())->__invoke(
-                $this->value,
+                $this->getValueExpression(),
                 new CompilerContext($this->reflector, $this),
             );
         }
