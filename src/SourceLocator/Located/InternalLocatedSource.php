@@ -14,7 +14,7 @@ use Roave\BetterReflection\SourceLocator\FileChecker;
 class InternalLocatedSource extends LocatedSource
 {
     /** @param non-empty-string $extensionName */
-    public function __construct(string $source, string $name, private string $extensionName, ?string $fileName = null, private ?string $aliasName = null)
+    public function __construct(string|null $source, string $name, private string $extensionName, ?string $fileName = null, private ?string $aliasName = null)
     {
         parent::__construct($source, $name, $fileName);
     }
@@ -53,9 +53,11 @@ class InternalLocatedSource extends LocatedSource
     public static function importFromCache(array $data): self
     {
         FileChecker::assertReadableFile($data['data']['filename']);
-        $fileContents = file_get_contents($data['data']['filename']);
-        assert($fileContents !== false);
 
-        return new self($fileContents, $data['data']['name'], $data['data']['extensionName'], $data['data']['filename'], $data['data']['aliasName']);
+        // Read the source lazily in getSource(), like the parent import does. The
+        // eager read here duplicated the whole stub file into every hydrated
+        // reflection - stub files hold many classes each, so a process ended up
+        // with dozens of copies of the same multi-hundred-KB source.
+        return new self(null, $data['data']['name'], $data['data']['extensionName'], $data['data']['filename'], $data['data']['aliasName']);
     }
 }
