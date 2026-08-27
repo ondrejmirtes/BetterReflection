@@ -14,8 +14,9 @@ use function preg_replace;
 /** @internal */
 final class ReflectionStringCastHelper
 {
-    /** @psalm-pure */
-    public static function docCommentToString(ReflectionProperty|ReflectionClassConstant|ReflectionEnumCase $reflection, bool $indent): string
+    /** @psalm-pure
+     * @param \Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase $reflection */
+    public static function docCommentToString($reflection, bool $indent): string
     {
         $docComment = $reflection->getDocComment();
 
