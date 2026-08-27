@@ -86,7 +86,7 @@ Class [ <user> abstract class Roave\BetterReflectionTest\Fixture\StringCastClass
       }
     }
 
-    Method [ <user, inherits Roave\BetterReflectionTest\Fixture\StringCastClassParent, prototype Roave\BetterReflectionTest\Fixture\StringCastClassInterface2> public method inheritedMethod ] {
+    Method [ <user, prototype Roave\BetterReflectionTest\Fixture\StringCastClassInterface2> public method inheritedMethod ] {
       @@ %s/Fixture/StringCastClass.php 21 - 23
     }
   }

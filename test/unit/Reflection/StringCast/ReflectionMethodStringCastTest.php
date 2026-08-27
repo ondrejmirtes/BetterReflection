@@ -48,7 +48,8 @@ class ReflectionMethodStringCastTest extends TestCase
             ['staticPublicMethod', "Method [ <user> static public method staticPublicMethod ] {\n  @@ %s/Fixture/StringCastMethods.php 49 - 51\n}"],
             ['noVisibility', "Method [ <user> public method noVisibility ] {\n  @@ %s/Fixture/StringCastMethods.php 53 - 55\n}"],
             ['overwrittenMethod', "Method [ <user, overwrites Roave\BetterReflectionTest\Fixture\StringCastMethodsParent, prototype Roave\BetterReflectionTest\Fixture\StringCastMethodsParent> public method overwrittenMethod ] {\n  @@ %s/Fixture/StringCastMethods.php 57 - 59\n}"],
-            ['inheritedMethod', "Method [ <user, inherits Roave\BetterReflectionTest\Fixture\StringCastMethodsParent> public method inheritedMethod ] {\n  @@ %s/Fixture/StringCastMethods.php 16 - 18\n}"],
+            // inherited methods are shared with the parent class, so they are not marked as inherited
+            ['inheritedMethod', "Method [ <user> public method inheritedMethod ] {\n  @@ %s/Fixture/StringCastMethods.php 16 - 18\n}"],
             ['prototypeMethod', "Method [ <user, prototype Roave\BetterReflectionTest\Fixture\StringCastMethodsInterface> public method prototypeMethod ] {\n  @@ %s/Fixture/StringCastMethods.php 61 - 63\n}"],
             ['methodWithParameters', "Method [ <user> public method methodWithParameters ] {\n  @@ %s/Fixture/StringCastMethods.php 65 - 67\n\n  - Parameters [2] {\n    Parameter #0 [ <required> \$a ]\n    Parameter #1 [ <required> \$b ]\n  }\n}"],
             ['methodWithReturnType', "Method [ <user> public method methodWithReturnType ] {\n  @@ %s/Fixture/StringCastMethods.php 69 - 71\n\n  - Parameters [0] {\n  }\n  - Return [ string ]\n}"],

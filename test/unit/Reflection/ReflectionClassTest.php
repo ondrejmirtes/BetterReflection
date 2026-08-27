@@ -1356,7 +1356,8 @@ PHP;
                 'foo',
                 'AbstractClassImplementingMethodFromTrait',
                 'AbstractClassImplementingMethodFromTrait',
-                'ClassUsingTraitWithAbstractMethod',
+                // inherited methods without a static return type are shared with the parent class
+                'AbstractClassImplementingMethodFromTrait',
             ],
             [
                 ClassUsingTraitWithAbstractMethod::class,

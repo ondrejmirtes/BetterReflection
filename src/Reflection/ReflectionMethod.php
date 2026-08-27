@@ -246,6 +246,16 @@ class ReflectionMethod
     /** @internal */
     public function withCurrentClass(ReflectionClass $currentClass): self
     {
+        // Only a 'static' return type resolves through the current class
+        // (parameter and property types cannot be 'static'); any other method
+        // reads identically through every inheriting class, so hand back the
+        // same instance instead of one clone per inheriting class - the clones
+        // were 85% of all retained ReflectionMethod instances in a PHPStan
+        // worker analysing an inheritance-heavy codebase.
+        if (! $this->typeUsesStatic($this->returnType)) {
+            return $this;
+        }
+
         $clone = clone $this;
         /** @phpstan-ignore property.readOnlyByPhpDocAssignNotInConstructor */
         $clone->currentClass = $currentClass;
@@ -257,6 +267,25 @@ class ReflectionMethod
         // We don't need to clone parameters and attributes
 
         return $clone;
+    }
+
+    private function typeUsesStatic(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type): bool
+    {
+        if ($type === null) {
+            return false;
+        }
+
+        if ($type instanceof ReflectionNamedType) {
+            return strtolower($type->getName()) === 'static';
+        }
+
+        foreach ($type->getTypes() as $innerType) {
+            if ($this->typeUsesStatic($innerType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return non-empty-string */
