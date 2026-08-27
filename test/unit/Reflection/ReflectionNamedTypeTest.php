@@ -404,12 +404,24 @@ class ReflectionNamedTypeTest extends TestCase
 
     public function testWithOwner(): void
     {
-        $typeReflection = $this->createType('string');
+        // 'static' resolves through the owner, so re-owning must clone
+        $typeReflection = $this->createType('static');
 
         $owner = self::createStub(ReflectionParameter::class);
 
         $cloneTypeReflection = $typeReflection->withOwner($owner);
 
         self::assertNotSame($typeReflection, $cloneTypeReflection);
+    }
+
+    public function testWithOwnerReturnsSameInstanceForOwnerInsensitiveType(): void
+    {
+        // any name but self/parent/static never consults the owner, so
+        // re-owning hands back the same instance
+        $typeReflection = $this->createType('string');
+
+        $owner = self::createStub(ReflectionParameter::class);
+
+        self::assertSame($typeReflection, $typeReflection->withOwner($owner));
     }
 }

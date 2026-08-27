@@ -786,7 +786,8 @@ PHP;
         self::assertNotSame($methodReflection->getImplementingClass(), $cloneMethodReflection->getImplementingClass());
         self::assertNotSame($methodReflection->getCurrentClass(), $cloneMethodReflection->getCurrentClass());
 
-        self::assertNotSame($methodReflection->getReturnType(), $cloneMethodReflection->getReturnType());
+        // an 'array' return type never consults its owner, so it is shared, not cloned
+        self::assertSame($methodReflection->getReturnType(), $cloneMethodReflection->getReturnType());
 
         $cloneParameters = $cloneMethodReflection->getParameters();
 
@@ -801,14 +802,21 @@ PHP;
 
     public function testWithCurrentClass(): void
     {
-        $reflector        = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Attributes.php', $this->astLocator));
-        $classReflection  = $reflector->reflectClass(ClassWithAttributes::class);
-        $methodReflection = $classReflection->getMethod('methodWithAttributes');
-        $parameters       = $methodReflection->getParameters();
-        $attributes       = $methodReflection->getAttributes();
+        // a 'static' return type resolves through the current class, so the
+        // method must be cloned and its return type re-owned
+        $php = '<?php
+            class MethodWithStaticReturnType
+            {
+                public function get(): static
+                {
+                    return $this;
+                }
+            }
+        ';
 
-        self::assertCount(1, $parameters);
-        self::assertCount(2, $attributes);
+        $reflector        = new DefaultReflector(new StringSourceLocator($php, $this->astLocator));
+        $classReflection  = $reflector->reflectClass('MethodWithStaticReturnType');
+        $methodReflection = $classReflection->getMethod('get');
 
         $currentClassReflection = self::createStub(ReflectionClass::class);
 
@@ -820,16 +828,19 @@ PHP;
         self::assertNotSame($methodReflection->getCurrentClass(), $cloneMethodReflection->getCurrentClass());
 
         self::assertNotSame($methodReflection->getReturnType(), $cloneMethodReflection->getReturnType());
+    }
 
-        $cloneParameters = $cloneMethodReflection->getParameters();
+    public function testWithCurrentClassReturnsSameInstanceWithoutStaticType(): void
+    {
+        // without a 'static' return type nothing resolves through the current
+        // class, so the same instance serves every inheriting class
+        $reflector        = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/Attributes.php', $this->astLocator));
+        $classReflection  = $reflector->reflectClass(ClassWithAttributes::class);
+        $methodReflection = $classReflection->getMethod('methodWithAttributes');
 
-        self::assertCount(1, $cloneParameters);
-        self::assertSame($parameters[0], $cloneParameters[0]);
+        $currentClassReflection = self::createStub(ReflectionClass::class);
 
-        $cloneAttributes = $cloneMethodReflection->getAttributes();
-
-        self::assertCount(2, $cloneAttributes);
-        self::assertSame($attributes[0], $cloneAttributes[0]);
+        self::assertSame($methodReflection, $methodReflection->withCurrentClass($currentClassReflection));
     }
 
     public function testSetPropertyHookHasImplicitParameter(): void

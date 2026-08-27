@@ -48,6 +48,8 @@ class ReflectionIntersectionTypeTest extends TestCase
 
     public function testWithOwner(): void
     {
+        // class names never consult the owner, so re-owning hands back the
+        // same instance with the same children
         $typeReflection = new ReflectionIntersectionType($this->reflector, $this->owner, new Node\IntersectionType([new Node\Name('\A\Foo'), new Node\Name('Boo')]));
         $types          = $typeReflection->getTypes();
 
@@ -55,13 +57,6 @@ class ReflectionIntersectionTypeTest extends TestCase
 
         $owner = self::createStub(ReflectionParameter::class);
 
-        $cloneTypeReflection = $typeReflection->withOwner($owner);
-
-        self::assertNotSame($typeReflection, $cloneTypeReflection);
-
-        $cloneTypes = $cloneTypeReflection->getTypes();
-
-        self::assertCount(2, $cloneTypes);
-        self::assertNotSame($types[0], $cloneTypes[0]);
+        self::assertSame($typeReflection, $typeReflection->withOwner($owner));
     }
 }

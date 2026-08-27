@@ -645,7 +645,8 @@ class ReflectionParameterTest extends TestCase
 
         self::assertNotSame($parameterReflection, $cloneParameterReflection);
         self::assertNotSame($parameterReflection->getDeclaringFunction(), $cloneParameterReflection->getDeclaringFunction());
-        self::assertNotSame($parameterReflection->getType(), $cloneParameterReflection->getType());
+        // an 'array' type never consults its owner, so it is shared, not cloned
+        self::assertSame($parameterReflection->getType(), $cloneParameterReflection->getType());
 
         $cloneAttributes = $cloneParameterReflection->getAttributes();
 
