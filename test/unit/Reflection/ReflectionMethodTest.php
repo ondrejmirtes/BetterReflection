@@ -125,7 +125,7 @@ class ReflectionMethodTest extends TestCase
         bool $shouldBeProtected,
         bool $shouldBeFinal,
         bool $shouldBeAbstract,
-        bool $shouldBeStatic,
+        bool $shouldBeStatic
     ): void {
         $classInfo        = $this->reflector->reflectClass(Methods::class);
         $reflectionMethod = $classInfo->getMethod($methodName);
@@ -335,7 +335,7 @@ class ReflectionMethodTest extends TestCase
 
     /** @param non-empty-string $method */
     #[DataProvider('prototypeProvider')]
-    public function testGetPrototype(string $class, string $method, string|null $expectedPrototype): void
+    public function testGetPrototype(string $class, string $method, ?string $expectedPrototype): void
     {
         $fixture   = __DIR__ . '/../Fixture/PrototypeTree.php';
         $reflector = new DefaultReflector(new SingleFileSourceLocator($fixture, $this->astLocator));
@@ -893,7 +893,7 @@ PHP;
 
     /** @param non-empty-string $propertyName */
     #[DataProvider('getPropertyHookReturnTypeProvider')]
-    public function testGetPropertyHookReturnType(string $propertyName, string|null $returnType): void
+    public function testGetPropertyHookReturnType(string $propertyName, ?string $returnType): void
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
         $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\GetPropertyHooksReturnTypes');
@@ -901,7 +901,7 @@ PHP;
         $hookProperty      = $classInfo->getProperty($propertyName);
         $getHookReflection = $hookProperty->getHook(ReflectionPropertyHookType::Get);
         self::assertNotNull($getHookReflection);
-        self::assertSame($returnType, $getHookReflection->getReturnType()?->__toString());
+        self::assertSame($returnType, ($nullsafeVariable1 = $getHookReflection->getReturnType()) ? $nullsafeVariable1->__toString() : null);
     }
 
     /** @return list<array{0: non-empty-string, 1: bool}> */
