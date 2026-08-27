@@ -1675,12 +1675,6 @@ parameters:
 			path: src/SourceLocator/Located/InternalLocatedSource.php
 
 		-
-			message: '#^Parameter \#1 \$filename of function file_get_contents expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/SourceLocator/Located/InternalLocatedSource.php
-
-		-
 			message: '#^Parameter \#1 \$filename of static method Roave\\BetterReflection\\SourceLocator\\FileChecker\:\:assertReadableFile\(\) expects non\-empty\-string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1694,6 +1688,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#3 \$extensionName of class Roave\\BetterReflection\\SourceLocator\\Located\\InternalLocatedSource constructor expects non\-empty\-string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/SourceLocator/Located/InternalLocatedSource.php
+
+		-
+			message: '#^Parameter \#4 \$fileName of class Roave\\BetterReflection\\SourceLocator\\Located\\InternalLocatedSource constructor expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/SourceLocator/Located/InternalLocatedSource.php
