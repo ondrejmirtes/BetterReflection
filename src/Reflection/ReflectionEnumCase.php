@@ -19,6 +19,7 @@ use Roave\BetterReflection\Util\CalculateReflectionColumn;
 use Roave\BetterReflection\Util\GetLastDocComment;
 
 use function assert;
+use function is_array;
 use function is_int;
 use function is_string;
 
@@ -28,7 +29,13 @@ class ReflectionEnumCase
     /** @var non-empty-string */
     private string $name;
 
-    private Node\Expr|null $value;
+    /**
+     * The value expression, its exported cache form (parsed into an Expr only when asked
+     * for), or null.
+     *
+     * @var Node\Expr|array<string, mixed>|null
+     */
+    private Node\Expr|array|null $value;
 
     /** @var list<ReflectionAttribute> */
     private array $attributes;
@@ -80,7 +87,7 @@ class ReflectionEnumCase
     {
         return [
             'name' => $this->name,
-            'value' => $this->value !== null ? ExprCacheHelper::export($this->value) : null,
+            'value' => $this->value === null || is_array($this->value) ? $this->value : ExprCacheHelper::export($this->value),
             'attributes' => array_map(
                 static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
                 $this->attributes,
@@ -105,11 +112,7 @@ class ReflectionEnumCase
         $ref->enum = $enum;
         $ref->name = $data['name'];
 
-        if ($data['value'] !== null) {
-            $ref->value = ExprCacheHelper::import($data['value']);
-        } else {
-            $ref->value = null;
-        }
+        $ref->value = $data['value'];
 
         $ref->attributes = array_map(
             static fn ($attrData) => ReflectionAttribute::importFromCache($reflector, $attrData, $ref),
@@ -159,6 +162,10 @@ class ReflectionEnumCase
             throw new LogicException('This enum case does not have a value');
         }
 
+        if (is_array($this->value)) {
+            $this->value = ExprCacheHelper::import($this->value);
+        }
+
         return $this->value;
     }
 
@@ -183,7 +190,7 @@ class ReflectionEnumCase
 
         if ($this->compiledValue === null) {
             $this->compiledValue = (new CompileNodeToValue())->__invoke(
-                $this->value,
+                $this->getValueExpression(),
                 new CompilerContext($this->reflector, $this),
             );
         }
