@@ -21,6 +21,11 @@ use function unserialize;
 /** @internal */
 final class MemoizingParser implements Parser
 {
+    private Parser $wrappedParser;
+    /**
+     * @var int|null
+     */
+    private $maxCachedEntries = null;
     /** @var array<string, array{string, Token[]}> indexed by source hash */
     private array $sourceHashToAst = [];
 
@@ -28,13 +33,13 @@ final class MemoizingParser implements Parser
     private array $lastTokens = [];
 
     /** @param int|null $maxCachedEntries maximum number of sources kept in the cache, evicted by LRU; null means unlimited */
-    public function __construct(
-        private Parser $wrappedParser,
-        private int|null $maxCachedEntries = null,
-    ) {
+    public function __construct(Parser $wrappedParser, ?int $maxCachedEntries = null)
+    {
+        $this->wrappedParser = $wrappedParser;
+        $this->maxCachedEntries = $maxCachedEntries;
     }
 
-    public function parse(string $code, ErrorHandler|null $errorHandler = null): array|null
+    public function parse(string $code, ?\PhpParser\ErrorHandler $errorHandler = null): ?array
     {
         // note: this code is mathematically buggy by default, as we are using a hash to identify
         //       cache entries. The string length is added to further reduce likeliness (although

@@ -16,9 +16,12 @@ use function sprintf;
 /** @internal */
 class UnableToCompileNode extends LogicException
 {
-    private string|null $constantName = null;
+    /**
+     * @var string|null
+     */
+    private $constantName = null;
 
-    public function constantName(): string|null
+    public function constantName(): ?string
     {
         return $this->constantName;
     }
@@ -28,7 +31,7 @@ class UnableToCompileNode extends LogicException
         return new self(sprintf(
             'Unable to compile expression in %s: unrecognized node type %s in file %s (line %d)',
             self::compilerContextToContextDescription($context),
-            $expression::class,
+            get_class($expression),
             self::getFileName($context),
             $expression->getStartLine(),
         ));
@@ -37,7 +40,7 @@ class UnableToCompileNode extends LogicException
     public static function becauseOfNotFoundClassConstantReference(
         CompilerContext $fetchContext,
         ReflectionClass $targetClass,
-        Node\Expr\ClassConstFetch $constantFetch,
+        Node\Expr\ClassConstFetch $constantFetch
     ): self {
         assert($constantFetch->name instanceof Node\Identifier);
 
@@ -54,7 +57,7 @@ class UnableToCompileNode extends LogicException
     public static function becauseOfNotFoundConstantReference(
         CompilerContext $fetchContext,
         Node\Expr\ConstFetch $constantFetch,
-        string $constantName,
+        string $constantName
     ): self {
         $exception = new self(sprintf(
             'Could not locate constant "%s" while evaluating expression in %s in file %s (line %d)',
@@ -72,7 +75,7 @@ class UnableToCompileNode extends LogicException
     public static function becauseOfInvalidEnumCasePropertyFetch(
         CompilerContext $fetchContext,
         ReflectionClass $targetClass,
-        Node\Expr\PropertyFetch $propertyFetch,
+        Node\Expr\PropertyFetch $propertyFetch
     ): self {
         assert($propertyFetch->var instanceof Node\Expr\ClassConstFetch);
         assert($propertyFetch->var->name instanceof Node\Identifier);
@@ -89,9 +92,12 @@ class UnableToCompileNode extends LogicException
         ));
     }
 
+    /**
+     * @param \PhpParser\Node\Scalar\MagicConst\Dir|\PhpParser\Node\Scalar\MagicConst\File $node
+     */
     public static function becauseOfMissingFileName(
         CompilerContext $context,
-        Node\Scalar\MagicConst\Dir|Node\Scalar\MagicConst\File $node,
+        $node
     ): self {
         return new self(sprintf(
             'No file name for %s (line %d)',
@@ -102,7 +108,7 @@ class UnableToCompileNode extends LogicException
 
     public static function becauseOfNonexistentFile(
         CompilerContext $context,
-        string $fileName,
+        string $fileName
     ): self {
         return new self(sprintf(
             'File not found for %s: %s',
@@ -114,7 +120,7 @@ class UnableToCompileNode extends LogicException
     public static function becauseOfClassCannotBeLoaded(
         CompilerContext $context,
         Node\Expr\New_ $newNode,
-        string $className,
+        string $className
     ): self {
         return new self(sprintf(
             'Cound not load class "%s" while evaluating expression in %s in file %s (line %d)',
@@ -128,7 +134,7 @@ class UnableToCompileNode extends LogicException
     public static function becauseOfValueIsEnum(
         CompilerContext $fetchContext,
         ReflectionClass $targetClass,
-        Node\Expr\ClassConstFetch $constantFetch,
+        Node\Expr\ClassConstFetch $constantFetch
     ): self {
         assert($constantFetch->name instanceof Node\Identifier);
 

@@ -29,6 +29,20 @@ use function strtolower;
 /** @psalm-immutable */
 class ReflectionMethod
 {
+    private Reflector $reflector;
+    private LocatedSource $locatedSource;
+    /**
+     * @var non-empty-string|null
+     */
+    private $namespace;
+    /**
+     * @var non-empty-string|null
+     */
+    private $aliasName;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionProperty|null
+     */
+    private $hookProperty = null;
     use ReflectionFunctionAbstract;
 
     /** @var int-mask-of<ReflectionMethodAdapter::IS_*> */
@@ -53,19 +67,25 @@ class ReflectionMethod
      * @param non-empty-string      $name
      * @param non-empty-string|null $aliasName
      * @param non-empty-string|null $namespace
+     * @param MethodNode|\PhpParser\Node\PropertyHook|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
      */
     private function __construct(
-        private Reflector $reflector,
-        MethodNode|Node\PropertyHook|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
-        private LocatedSource $locatedSource,
+        Reflector $reflector,
+        $node,
+        LocatedSource $locatedSource,
         string $name,
-        private string|null $namespace,
+        ?string $namespace,
         ReflectionClass $declaringClass,
         ReflectionClass $implementingClass,
         ReflectionClass $currentClass,
-        private string|null $aliasName,
-        private ReflectionProperty|null $hookProperty = null,
+        ?string $aliasName,
+        ?\Roave\BetterReflection\Reflection\ReflectionProperty $hookProperty = null
     ) {
+        $this->reflector = $reflector;
+        $this->locatedSource = $locatedSource;
+        $this->namespace = $namespace;
+        $this->aliasName = $aliasName;
+        $this->hookProperty = $hookProperty;
         $this->declaringClass = $declaringClass;
         $this->implementingClass = $implementingClass;
         $this->currentClass = $currentClass;
@@ -126,11 +146,11 @@ class ReflectionMethod
         Reflector $reflector,
         MethodNode $node,
         LocatedSource $locatedSource,
-        string|null $namespace,
+        ?string $namespace,
         ReflectionClass $declaringClass,
         ReflectionClass $implementingClass,
         ReflectionClass $currentClass,
-        string|null $aliasName = null,
+        ?string $aliasName = null
     ): self {
         return new self(
             $reflector,
@@ -149,17 +169,18 @@ class ReflectionMethod
      * @internal
      *
      * @param non-empty-string $name
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name|\PhpParser\Node\NullableType|\PhpParser\Node\UnionType|\PhpParser\Node\IntersectionType|null $type
      */
     public static function createFromPropertyHook(
         Reflector $reflector,
         Node\PropertyHook $node,
         LocatedSource $locatedSource,
         string $name,
-        Node\Identifier|Node\Name|Node\NullableType|Node\UnionType|Node\IntersectionType|null $type,
+        $type,
         ReflectionClass $declaringClass,
         ReflectionClass $implementingClass,
         ReflectionClass $currentClass,
-        ReflectionProperty $hookProperty,
+        ReflectionProperty $hookProperty
     ): self {
         $method = new self(
             $reflector,
@@ -180,7 +201,7 @@ class ReflectionMethod
             if ($method->parameters === []) {
                 $parameter = ReflectionParameter::createFromNode(
                     $reflector,
-                    new Node\Param(new Node\Expr\Variable('value'), type: $type),
+                    new Node\Param(new Node\Expr\Variable('value'), null, $type),
                     $method,
                     0,
                     false,
@@ -223,7 +244,7 @@ class ReflectionMethod
      * @param non-empty-string|null                      $aliasName
      * @param int-mask-of<ReflectionMethodAdapter::IS_*> $modifiers
      */
-    public function withImplementingClass(ReflectionClass $implementingClass, string|null $aliasName, int $modifiers): self
+    public function withImplementingClass(ReflectionClass $implementingClass, ?string $aliasName, int $modifiers): self
     {
         $clone = clone $this;
 
@@ -269,7 +290,10 @@ class ReflectionMethod
         return $clone;
     }
 
-    private function typeUsesStatic(ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type): bool
+    /**
+     * @param \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType|null $type
+     */
+    private function typeUsesStatic($type): bool
     {
         if ($type === null) {
             return false;
@@ -299,7 +323,7 @@ class ReflectionMethod
     }
 
     /** @return non-empty-string|null */
-    public function getAliasName(): string|null
+    public function getAliasName(): ?string
     {
         return $this->aliasName;
     }
@@ -325,7 +349,7 @@ class ReflectionMethod
         $currentClass = $currentClass->getParentClass();
 
         if ($currentClass !== null) {
-            $prototype = $currentClass->getMethod($this->getName())?->findPrototype();
+            $prototype = ($nullsafeVariable1 = $currentClass->getMethod($this->getName())) ? $nullsafeVariable1->findPrototype() : null;
 
             if (
                 $prototype !== null
@@ -345,7 +369,7 @@ class ReflectionMethod
         ));
     }
 
-    private function findPrototype(): self|null
+    private function findPrototype(): ?self
     {
         if ($this->isAbstract()) {
             return $this;
@@ -357,7 +381,7 @@ class ReflectionMethod
 
         try {
             return $this->getPrototype();
-        } catch (Exception\MethodPrototypeNotFound) {
+        } catch (Exception\MethodPrototypeNotFound $exception) {
             return $this;
         }
     }
@@ -372,8 +396,9 @@ class ReflectionMethod
         return $this->modifiers;
     }
 
-    /** @return int-mask-of<ReflectionMethodAdapter::IS_*> */
-    private function computeModifiers(MethodNode|Node\PropertyHook $node): int
+    /** @return int-mask-of<ReflectionMethodAdapter::IS_*>
+     * @param MethodNode|\PhpParser\Node\PropertyHook $node */
+    private function computeModifiers($node): int
     {
         $modifiers = 0;
 
@@ -401,7 +426,7 @@ class ReflectionMethod
         return false;
     }
 
-    public function getNamespaceName(): string|null
+    public function getNamespaceName(): ?string
     {
         return null;
     }
@@ -516,19 +541,19 @@ class ReflectionMethod
      * @throws NoObjectProvided
      * @throws ObjectNotInstanceOfClass
      */
-    public function getClosure(object|null $object = null): Closure
+    public function getClosure(?object $object = null): Closure
     {
         $declaringClassName = $this->getDeclaringClass()->getName();
 
         if ($this->isStatic()) {
             $this->assertClassExist($declaringClassName);
 
-            return fn (mixed ...$args): mixed => $this->callStaticMethod($args);
+            return fn (...$args) => $this->callStaticMethod($args);
         }
 
         $instance = $this->assertObject($object);
 
-        return fn (mixed ...$args): mixed => $this->callObjectMethod($instance, $args);
+        return fn (...$args) => $this->callObjectMethod($instance, $args);
     }
 
     /** @psalm-assert-if-true !null $this->getHookProperty() */
@@ -537,7 +562,7 @@ class ReflectionMethod
         return $this->hookProperty !== null;
     }
 
-    public function getHookProperty(): ReflectionProperty|null
+    public function getHookProperty(): ?\Roave\BetterReflection\Reflection\ReflectionProperty
     {
         return $this->hookProperty;
     }
@@ -546,8 +571,10 @@ class ReflectionMethod
      * @throws ClassDoesNotExist
      * @throws NoObjectProvided
      * @throws ObjectNotInstanceOfClass
+     * @param mixed ...$args
+     * @return mixed
      */
-    public function invoke(object|null $object = null, mixed ...$args): mixed
+    public function invoke(?object $object = null, ...$args)
     {
         return $this->invokeArgs($object, $args);
     }
@@ -558,8 +585,9 @@ class ReflectionMethod
      * @throws ClassDoesNotExist
      * @throws NoObjectProvided
      * @throws ObjectNotInstanceOfClass
+     * @return mixed
      */
-    public function invokeArgs(object|null $object = null, array $args = []): mixed
+    public function invokeArgs(?object $object = null, array $args = [])
     {
         $implementingClassName = $this->getImplementingClass()->getName();
 
@@ -572,13 +600,14 @@ class ReflectionMethod
         return $this->callObjectMethod($this->assertObject($object), $args);
     }
 
-    /** @param array<mixed> $args */
-    private function callStaticMethod(array $args): mixed
+    /** @param array<mixed> $args
+     * @return mixed */
+    private function callStaticMethod(array $args)
     {
         $implementingClassName = $this->getImplementingClass()->getName();
 
         /** @psalm-suppress InvalidStringClass */
-        $closure = Closure::bind(fn (string $implementingClassName, string $_methodName, array $methodArgs): mixed => $implementingClassName::{$_methodName}(...$methodArgs), null, $implementingClassName);
+        $closure = Closure::bind(fn (string $implementingClassName, string $_methodName, array $methodArgs) => $implementingClassName::{$_methodName}(...$methodArgs), null, $implementingClassName);
 
         /** @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue */
         assert($closure instanceof Closure);
@@ -586,11 +615,12 @@ class ReflectionMethod
         return $closure->__invoke($implementingClassName, $this->getName(), $args);
     }
 
-    /** @param array<mixed> $args */
-    private function callObjectMethod(object $object, array $args): mixed
+    /** @param array<mixed> $args
+     * @return mixed */
+    private function callObjectMethod(object $object, array $args)
     {
         /** @psalm-suppress MixedMethodCall */
-        $closure = Closure::bind(fn (object $object, string $methodName, array $methodArgs): mixed => $object->{$methodName}(...$methodArgs), $object, $this->getImplementingClass()->getName());
+        $closure = Closure::bind(fn (object $object, string $methodName, array $methodArgs) => $object->{$methodName}(...$methodArgs), $object, $this->getImplementingClass()->getName());
 
         /** @phpstan-ignore function.alreadyNarrowedType, instanceof.alwaysTrue */
         assert($closure instanceof Closure);
@@ -610,7 +640,7 @@ class ReflectionMethod
      * @throws NoObjectProvided
      * @throws ObjectNotInstanceOfClass
      */
-    private function assertObject(object|null $object): object
+    private function assertObject(?object $object): object
     {
         if ($object === null) {
             throw NoObjectProvided::create();
@@ -618,7 +648,7 @@ class ReflectionMethod
 
         $implementingClassName = $this->getImplementingClass()->getName();
 
-        if ($object::class !== $implementingClassName) {
+        if (get_class($object) !== $implementingClassName) {
             throw ObjectNotInstanceOfClass::fromClassName($implementingClassName);
         }
 
