@@ -84,10 +84,22 @@ class ReflectionNamedType extends ReflectionType
     /** @internal */
     public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
     {
-        $clone        = clone $this;
-        $clone->owner = $owner;
+        // The owner is only ever consulted when resolving self/parent/static
+        // to a class - any other name reads the same through any owner, so
+        // re-owning would only duplicate the instance: one fresh 'void' per
+        // inherited-method clone was ~45k duplicate instances in a PHPStan
+        // worker process.
+        switch (strtolower($this->name)) {
+            case 'self':
+            case 'parent':
+            case 'static':
+                $clone        = clone $this;
+                $clone->owner = $owner;
 
-        return $clone;
+                return $clone;
+        }
+
+        return $this;
     }
 
     /** @return non-empty-string */

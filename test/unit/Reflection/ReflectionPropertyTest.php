@@ -906,7 +906,8 @@ PHP;
         self::assertNotSame($propertyReflection, $clonePropertyReflection);
         self::assertSame($propertyReflection->getDeclaringClass(), $clonePropertyReflection->getDeclaringClass());
         self::assertNotSame($propertyReflection->getImplementingClass(), $clonePropertyReflection->getImplementingClass());
-        self::assertNotSame($propertyReflection->getType(), $clonePropertyReflection->getType());
+        // an 'array' type never consults its owner, so it is shared, not cloned
+        self::assertSame($propertyReflection->getType(), $clonePropertyReflection->getType());
 
         $cloneAttributes = $clonePropertyReflection->getAttributes();
 

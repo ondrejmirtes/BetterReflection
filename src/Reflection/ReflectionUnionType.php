@@ -78,9 +78,15 @@ class ReflectionUnionType extends ReflectionType
     /** @internal */
     public function withOwner(ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner): static
     {
+        $types = array_map(static fn (ReflectionNamedType|ReflectionIntersectionType $type): ReflectionNamedType|ReflectionIntersectionType => $type->withOwner($owner), $this->types);
+        if ($types === $this->types) {
+            // no child consults the owner - see ReflectionNamedType::withOwner()
+            return $this;
+        }
+
         $clone = clone $this;
 
-        $clone->types = array_map(static fn (ReflectionNamedType|ReflectionIntersectionType $type): ReflectionNamedType|ReflectionIntersectionType => $type->withOwner($owner), $clone->types);
+        $clone->types = $types;
 
         return $clone;
     }
