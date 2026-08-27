@@ -51,7 +51,8 @@ class ReflectionUnionTypeTest extends TestCase
 
     public function testWithOwner(): void
     {
-        $typeReflection = new ReflectionUnionType($this->reflector, $this->owner, new Node\UnionType([new Node\Name('\A\Foo'), new Node\Name('Boo')]));
+        // 'static' resolves through the owner, so re-owning must clone
+        $typeReflection = new ReflectionUnionType($this->reflector, $this->owner, new Node\UnionType([new Node\Name('static'), new Node\Name('Boo')]));
         $types          = $typeReflection->getTypes();
 
         self::assertCount(2, $types);
@@ -66,5 +67,16 @@ class ReflectionUnionTypeTest extends TestCase
 
         self::assertCount(2, $cloneTypes);
         self::assertNotSame($types[0], $cloneTypes[0]);
+        // the owner-insensitive child is shared, not cloned
+        self::assertSame($types[1], $cloneTypes[1]);
+    }
+
+    public function testWithOwnerReturnsSameInstanceWhenNoChildConsultsTheOwner(): void
+    {
+        $typeReflection = new ReflectionUnionType($this->reflector, $this->owner, new Node\UnionType([new Node\Name('\A\Foo'), new Node\Name('Boo')]));
+
+        $owner = self::createStub(ReflectionParameter::class);
+
+        self::assertSame($typeReflection, $typeReflection->withOwner($owner));
     }
 }
