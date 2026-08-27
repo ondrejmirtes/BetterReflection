@@ -37,6 +37,7 @@ use Roave\BetterReflection\Util\GetLastDocComment;
 use function array_map;
 use function assert;
 use function func_num_args;
+use function is_array;
 use function is_object;
 use function sprintf;
 use function str_contains;
@@ -52,7 +53,13 @@ class ReflectionProperty
 
     private ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type;
 
-    private Node\Expr|null $default;
+    /**
+     * The default value expression, its exported cache form (parsed into an Expr only when
+     * asked for), or null.
+     *
+     * @var Node\Expr|array<string, mixed>|null
+     */
+    private Node\Expr|array|null $default;
 
     /** @var non-empty-string|null */
     private string|null $docComment;
@@ -161,7 +168,7 @@ class ReflectionProperty
             'name' => $this->name,
             'modifiers' => $this->modifiers,
             'type' => $this->type !== null ? ['class' => get_class($this->type), 'data' => $this->type->exportToCache()] : null,
-            'default' => $this->default !== null ? ExprCacheHelper::export($this->default) : null,
+            'default' => $this->default === null || is_array($this->default) ? $this->default : ExprCacheHelper::export($this->default),
             'docComment' => $this->docComment,
             'attributes' => array_map(
                 static fn (ReflectionAttribute $attr) => $attr->exportToCache(),
@@ -202,11 +209,7 @@ class ReflectionProperty
             $ref->type = null;
         }
 
-        if ($data['default'] !== null) {
-            $ref->default = ExprCacheHelper::import($data['default']);
-        } else {
-            $ref->default = null;
-        }
+        $ref->default = $data['default'];
 
         $ref->docComment = $data['docComment'];
         $ref->attributes = array_map(
@@ -445,6 +448,10 @@ class ReflectionProperty
 
     public function getDefaultValueExpression(): Node\Expr|null
     {
+        if (is_array($this->default)) {
+            $this->default = ExprCacheHelper::import($this->default);
+        }
+
         return $this->default;
     }
 
@@ -460,7 +467,7 @@ class ReflectionProperty
 
         if ($this->compiledDefaultValue === null) {
             $this->compiledDefaultValue = (new CompileNodeToValue())->__invoke(
-                $this->default,
+                $this->getDefaultValueExpression(),
                 new CompilerContext(
                     $this->reflector,
                     $this,
