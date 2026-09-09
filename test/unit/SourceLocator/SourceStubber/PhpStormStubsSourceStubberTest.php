@@ -1065,7 +1065,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
         }
     }
 
-    public function testLanguageLevelTypeAwareDefaultResourceDoesNotBecomeNativeResourceType(): void
+    public function testLanguageLevelTypeAwareDefaultResourceDoesNotBecomeNativeResourceReturnType(): void
     {
         $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, 70400);
         $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
@@ -1074,6 +1074,20 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         self::assertStringContainsString('@return resource|false', $function->getDocComment() ?? '');
         self::assertNull($function->getReturnType());
+    }
+
+    public function testLanguageLevelTypeAwareDefaultResourceDoesNotBecomeNativeResourceParameterType(): void
+    {
+        $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, 70400);
+        $reflector     = new DefaultReflector(new PhpInternalSourceLocator($this->astLocator, $sourceStubber));
+
+        $function  = $reflector->reflectFunction('dba_exists');
+        $parameter = $function->getParameter('dba');
+
+        self::assertStringContainsString('@param resource', $function->getDocComment() ?? '');
+
+        self::assertInstanceOf(ReflectionParameter::class, $parameter);
+        self::assertNull($parameter->getType());
     }
 
     /** @return list<array{0: string, 1: int, 2: bool}> */
