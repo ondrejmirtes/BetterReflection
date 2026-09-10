@@ -741,7 +741,11 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $function->params = $parameters;
     }
 
-    private function getStmtType(Function_|ClassMethod|Property|Param $node): Name|Identifier|ComplexType|null
+    /**
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $node
+     * @return \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\ComplexType|null
+     */
+    private function getStmtType($node)
     {
         $type = $this->getRawStmtType($node);
 
@@ -752,7 +756,11 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->normalizeType($type);
     }
 
-    private function getRawStmtType(Function_|ClassMethod|Property|Param $node): string|null
+    /**
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $node
+     * @return string|null
+     */
+    private function getRawStmtType($node)
     {
         $languageLevelTypeAwareAttribute = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Internal\LanguageLevelTypeAware');
 
@@ -977,10 +985,13 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $parts[0] * 10000 + $parts[1] * 100 + ($parts[2] ?? $defaultPatch);
     }
 
-    private function normalizeType(string $type): Name|Identifier|ComplexType|null
+    /**
+     * @return \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\ComplexType|null
+     */
+    private function normalizeType(string $type)
     {
         // There are some invalid types in stubs, eg. `string[]|string|null`
-        if (str_contains($type, '[')) {
+        if (strpos($type, '[') !== false) {
             return null;
         }
 
