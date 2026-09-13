@@ -11,7 +11,7 @@ final class ExprCacheHelper
 {
 
     /**
-     * @return array<string, mixed
+     * @return array<string, mixed>
      */
     public static function export(Expr $expr): array
     {
