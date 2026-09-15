@@ -1747,6 +1747,42 @@ parameters:
 			path: src/SourceLocator/Located/LocatedSource.php
 
 		-
+			message: '#^Access to undefined constant JetBrains\\PHPStormStub\\PhpStormStubsMap\:\:EXTENSION_VERSIONS\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Cannot access offset ''classes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Cannot access offset ''constants'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Cannot access offset ''functions'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_change_key_case expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 6
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_key_exists expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$classNodes \(array\<string, array\{PhpParser\\Node\\Stmt\\ClassLike, PhpParser\\Node\\Stmt\\Namespace_\|null\}\|null\>\) does not accept array\<string, mixed\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -1759,7 +1795,43 @@ parameters:
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
 
 		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$disabledClassMap \(array\<lowercase\-string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$disabledConstantMap \(array\<lowercase\-string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$disabledFunctionMap \(array\<lowercase\-string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
 			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$functionNodes \(array\<string, array\{PhpParser\\Node\\Stmt\\Function_, PhpParser\\Node\\Stmt\\Namespace_\|null\}\|null\>\) does not accept array\<string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$selectedClassMap \(array\<lowercase\-string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$selectedConstantMap \(array\<lowercase\-string, string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Property Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:\$selectedFunctionMap \(array\<lowercase\-string, string\>\) does not accept array\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
@@ -2056,6 +2128,12 @@ parameters:
 			message: '#^Comparison operation "\>\=" between int\<80400, 80699\> and 80000 is always true\.$#'
 			identifier: greaterOrEqual.alwaysTrue
 			count: 1
+			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
+
+		-
+			message: '#^Parameter \#1 \$className of method Roave\\BetterReflection\\SourceLocator\\SourceStubber\\PhpStormStubsSourceStubber\:\:generateClassStub\(\) expects class\-string, string given\.$#'
+			identifier: argument.type
+			count: 2
 			path: test/unit/SourceLocator/SourceStubber/PhpStormStubsSourceStubberTest.php
 
 		-
