@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Roave\BetterReflectionTest\Reflection\Adapter\ReflectionEnumTest;
 
-enum ExampleUnitEnum
+class ExampleUnitEnum
 {
-    case A;
-    case B;
+    public const A = 'a';
+    public const B = 'b';
 }

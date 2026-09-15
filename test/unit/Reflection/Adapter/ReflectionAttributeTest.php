@@ -68,9 +68,10 @@ class ReflectionAttributeTest extends TestCase
      * @param non-empty-string             $methodName
      * @param list<mixed>                  $args
      * @param class-string<Throwable>|null $expectedException
+     * @param mixed $returnValue
      */
     #[DataProvider('methodExpectationProvider')]
-    public function testAdapterMethods(string $methodName, string|null $expectedException, mixed $returnValue, array $args): void
+    public function testAdapterMethods(string $methodName, ?string $expectedException, $returnValue, array $args): void
     {
         if ($expectedException === null) {
             $reflectionStub = $this->createMock(BetterReflectionAttribute::class);

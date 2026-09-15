@@ -21,6 +21,12 @@ use function is_array;
 /** @psalm-immutable */
 class ReflectionAttribute
 {
+    private Reflector $reflector;
+    /**
+     * @var \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionParameter
+     */
+    private $owner;
+    private bool $isRepeated;
     /** @var class-string */
     private string $name;
 
@@ -46,13 +52,17 @@ class ReflectionAttribute
         return $this->arguments;
     }
 
-    /** @internal */
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionParameter $owner */
     public function __construct(
-        private Reflector $reflector,
+        Reflector $reflector,
         Node\Attribute $node,
-        private ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionConstant|ReflectionClassConstant|ReflectionEnumCase|ReflectionProperty|ReflectionParameter $owner,
-        private bool $isRepeated,
+        $owner,
+        bool $isRepeated
     ) {
+        $this->reflector = $reflector;
+        $this->owner = $owner;
+        $this->isRepeated = $isRepeated;
         /** @var class-string $name */
         $name = $node->name->toString();
 
@@ -60,7 +70,7 @@ class ReflectionAttribute
 
         $arguments = [];
         foreach ($node->args as $argNo => $arg) {
-            $arguments[$arg->name?->toString() ?? $argNo] = $arg->value;
+            $arguments[(($nullsafeVariable1 = $arg->name) ? $nullsafeVariable1->toString() : null) ?? $argNo] = $arg->value;
         }
 
         $this->arguments = $arguments;
@@ -75,7 +85,7 @@ class ReflectionAttribute
             'name' => $this->name,
             'isRepeated' => $this->isRepeated,
             'arguments' => array_map(
-                static fn (Expr|array $expr) => is_array($expr) ? $expr : ExprCacheHelper::export($expr),
+                static fn ($expr) => is_array($expr) ? $expr : ExprCacheHelper::export($expr),
                 $this->arguments,
             ),
         ];
@@ -101,8 +111,9 @@ class ReflectionAttribute
         return $ref;
     }
 
-    /** @internal */
-    public function withOwner(ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionConstant|ReflectionClassConstant|ReflectionEnumCase|ReflectionProperty|ReflectionParameter $owner): self
+    /** @internal
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionParameter $owner */
+    public function withOwner($owner): self
     {
         $clone        = clone $this;
         $clone->owner = $owner;
@@ -135,24 +146,32 @@ class ReflectionAttribute
         $compiler = new CompileNodeToValue();
         $context  = new CompilerContext($this->reflector, $this->owner);
 
-        return array_map(static fn (Node\Expr $value): mixed => $compiler->__invoke($value, $context)->value, $this->argumentExpressions());
+        return array_map(static fn (Node\Expr $value) => $compiler->__invoke($value, $context)->value, $this->argumentExpressions());
     }
 
     /** @return int-mask-of<Attribute::TARGET_*>|ReflectionAttributeAdapter::TARGET_CONSTANT_COMPATIBILITY */
     public function getTarget(): int
     {
-        return match (true) {
-            $this->owner instanceof ReflectionClass => Attribute::TARGET_CLASS,
-            $this->owner instanceof ReflectionFunction => Attribute::TARGET_FUNCTION,
-            $this->owner instanceof ReflectionConstant => ReflectionAttributeAdapter::TARGET_CONSTANT_COMPATIBILITY,
-            $this->owner instanceof ReflectionMethod => Attribute::TARGET_METHOD,
-            $this->owner instanceof ReflectionProperty => Attribute::TARGET_PROPERTY,
-            $this->owner instanceof ReflectionClassConstant => Attribute::TARGET_CLASS_CONSTANT,
-            $this->owner instanceof ReflectionEnumCase => Attribute::TARGET_CLASS_CONSTANT,
-            // @infection-ignore-all InstanceOf_: There's no other option
-            $this->owner instanceof ReflectionParameter => Attribute::TARGET_PARAMETER,
-            default => throw new LogicException('unknown owner'), // @phpstan-ignore-line
-        };
+        switch (true) {
+            case $this->owner instanceof ReflectionClass:
+                return Attribute::TARGET_CLASS;
+            case $this->owner instanceof ReflectionFunction:
+                return Attribute::TARGET_FUNCTION;
+            case $this->owner instanceof ReflectionConstant:
+                return ReflectionAttributeAdapter::TARGET_CONSTANT_COMPATIBILITY;
+            case $this->owner instanceof ReflectionMethod:
+                return Attribute::TARGET_METHOD;
+            case $this->owner instanceof ReflectionProperty:
+                return Attribute::TARGET_PROPERTY;
+            case $this->owner instanceof ReflectionClassConstant:
+                return Attribute::TARGET_CLASS_CONSTANT;
+            case $this->owner instanceof ReflectionEnumCase:
+                return Attribute::TARGET_CLASS_CONSTANT;
+            case $this->owner instanceof ReflectionParameter:
+                return Attribute::TARGET_PARAMETER;
+            default:
+                throw new LogicException('unknown owner');
+        }
     }
 
     public function isRepeated(): bool
