@@ -127,6 +127,58 @@ class PhpStormStubsSourceStubberTest extends TestCase
         self::fail('Parsing PHPStorm stubs should never trigger autoloading - tried loading ' . $className);
     }
 
+    public function testSelectsVersionedExtensionStubsPerInstance(): void
+    {
+        $version1Stubber = new PhpStormStubsSourceStubber(
+            $this->phpParser,
+            $this->prettyPrinter,
+            PHP_VERSION_ID,
+            null,
+            ['ds' => 1],
+        );
+        $version2Stubber = new PhpStormStubsSourceStubber(
+            $this->phpParser,
+            $this->prettyPrinter,
+            PHP_VERSION_ID,
+            null,
+            ['ds' => 2],
+        );
+
+        self::assertNotNull($version1Stubber->generateClassStub('Ds\\Vector'));
+        self::assertNull($version1Stubber->generateClassStub('Ds\\Seq'));
+        self::assertNull($version2Stubber->generateClassStub('Ds\\Vector'));
+
+        $mapStub = $version2Stubber->generateClassStub('Ds\\Map');
+        self::assertInstanceOf(StubData::class, $mapStub);
+        self::assertSame('ds', $mapStub->getExtensionName());
+        self::assertStringEndsWith('/ds_v2/ds.php', (string) $mapStub->getFileName());
+
+        $sequenceStub = $version2Stubber->generateClassStub('Ds\\Seq');
+        self::assertInstanceOf(StubData::class, $sequenceStub);
+        self::assertSame('ds', $sequenceStub->getExtensionName());
+
+        $functionStub = $version2Stubber->generateFunctionStub('Ds\\seq');
+        self::assertInstanceOf(StubData::class, $functionStub);
+        self::assertSame('ds', $functionStub->getExtensionName());
+        self::assertStringEndsWith('/ds_v2/ds.php', (string) $functionStub->getFileName());
+    }
+
+    public function testSelectsVersionedExtensionConstants(): void
+    {
+        $sourceStubber = new PhpStormStubsSourceStubber(
+            $this->phpParser,
+            $this->prettyPrinter,
+            PHP_VERSION_ID,
+            null,
+            ['couchbase' => 2],
+        );
+
+        $constantStub = $sourceStubber->generateConstantStub('COUCHBASE_AUTH_CONTINUE');
+        self::assertInstanceOf(StubData::class, $constantStub);
+        self::assertSame('couchbase', $constantStub->getExtensionName());
+        self::assertStringEndsWith('/couchbase_v2/toplevel.php', (string) $constantStub->getFileName());
+    }
+
     /** @return list<array{0: string}> */
     public static function internalClassesProvider(): array
     {
