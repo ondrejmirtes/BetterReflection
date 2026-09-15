@@ -18,11 +18,12 @@ final class Memoize
      * @var T
      * @psalm-suppress PropertyNotSetInConstructor
      * @phpstan-ignore property.uninitializedReadonly
+     * @readonly
      */
-    private readonly mixed $cached;
+    private $cached;
 
     /** @var (pure-Closure(): T)|null */
-    private Closure|null $cb;
+    private $cb;
 
     /** @param pure-Closure(): T $cb */
     public function __construct(Closure $cb)
@@ -31,7 +32,7 @@ final class Memoize
     }
 
     /** @return T */
-    public function get(): mixed
+    public function get()
     {
         if ($this->cb) {
             /** @psalm-suppress InaccessibleProperty */

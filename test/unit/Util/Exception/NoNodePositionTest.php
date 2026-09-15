@@ -22,6 +22,6 @@ class NoNodePositionTest extends TestCase
         $exception = NoNodePosition::fromNode($node);
 
         self::assertInstanceOf(NoNodePosition::class, $exception);
-        self::assertSame(sprintf('%s doesn\'t contain position. Your %s is not configured properly', $node::class, Lexer::class), $exception->getMessage());
+        self::assertSame(sprintf('%s doesn\'t contain position. Your %s is not configured properly', get_class($node), Lexer::class), $exception->getMessage());
     }
 }

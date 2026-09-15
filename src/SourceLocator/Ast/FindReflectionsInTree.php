@@ -27,8 +27,10 @@ use function count;
 /** @internal */
 final class FindReflectionsInTree
 {
-    public function __construct(private AstConversionStrategy $astConversionStrategy)
+    private AstConversionStrategy $astConversionStrategy;
+    public function __construct(AstConversionStrategy $astConversionStrategy)
     {
+        $this->astConversionStrategy = $astConversionStrategy;
     }
 
     /**
@@ -42,21 +44,28 @@ final class FindReflectionsInTree
         Reflector $reflector,
         array $ast,
         IdentifierType $identifierType,
-        LocatedSource $locatedSource,
+        LocatedSource $locatedSource
     ): array {
         $nodeVisitor = new class ($reflector, $identifierType, $locatedSource, $this->astConversionStrategy) extends NodeVisitorAbstract
         {
+            private Reflector $reflector;
+            private IdentifierType $identifierType;
+            private LocatedSource $locatedSource;
+            private AstConversionStrategy $astConversionStrategy;
             /** @var list<ReflectionClass|ReflectionFunction|ReflectionConstant> */
             private array $reflections = [];
 
-            private Namespace_|null $currentNamespace = null;
+            /**
+             * @var \PhpParser\Node\Stmt\Namespace_|null
+             */
+            private $currentNamespace = null;
 
-            public function __construct(
-                private Reflector $reflector,
-                private IdentifierType $identifierType,
-                private LocatedSource $locatedSource,
-                private AstConversionStrategy $astConversionStrategy,
-            ) {
+            public function __construct(Reflector $reflector, IdentifierType $identifierType, LocatedSource $locatedSource, AstConversionStrategy $astConversionStrategy)
+            {
+                $this->reflector = $reflector;
+                $this->identifierType = $identifierType;
+                $this->locatedSource = $locatedSource;
+                $this->astConversionStrategy = $astConversionStrategy;
             }
 
             /**
@@ -106,7 +115,7 @@ final class FindReflectionsInTree
 
                         try {
                             ConstantNodeChecker::assertValidDefineFunctionCall($functionCall);
-                        } catch (InvalidConstantNode) {
+                        } catch (InvalidConstantNode $exception) {
                             return null;
                         }
 
@@ -118,7 +127,7 @@ final class FindReflectionsInTree
                                 $this->reflector->reflectFunction($namespacedName->toString());
 
                                 return null;
-                            } catch (IdentifierNotFound) {
+                            } catch (IdentifierNotFound $exception) {
                                 // Global define()
                             }
                         }

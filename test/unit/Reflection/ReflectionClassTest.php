@@ -1409,7 +1409,7 @@ PHP;
         string $methodName,
         string $declaringClassShortName,
         string $implementingClassShortName,
-        string $currentClassShortName,
+        string $currentClassShortName
     ): void {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
             __DIR__ . '/../Fixture/TraitWithAbstractMethod.php',
@@ -2241,7 +2241,7 @@ PHP;
                 self::assertTrue($reflection->hasConstant($constantName), 'Constant ' . $constantName . ' not set');
                 self::assertSame(
                     $constantValue,
-                    $reflection->getConstant($constantName)?->getValue(),
+                    ($nullsafeVariable1 = $reflection->getConstant($constantName)) ? $nullsafeVariable1->getValue() : null,
                     'Constant value for ' . $constantName . ' does not match',
                 );
             },

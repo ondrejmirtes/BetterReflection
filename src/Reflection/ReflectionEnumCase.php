@@ -26,6 +26,8 @@ use function is_string;
 /** @psalm-immutable */
 class ReflectionEnumCase
 {
+    private Reflector $reflector;
+    private ReflectionEnum $enum;
     /** @var non-empty-string */
     private string $name;
 
@@ -35,13 +37,13 @@ class ReflectionEnumCase
      *
      * @var Node\Expr|array<string, mixed>|null
      */
-    private Node\Expr|array|null $value;
+    private $value;
 
     /** @var list<ReflectionAttribute> */
     private array $attributes;
 
     /** @var non-empty-string|null */
-    private string|null $docComment;
+    private $docComment;
 
     /** @var positive-int */
     private int $startLine;
@@ -55,14 +57,17 @@ class ReflectionEnumCase
     /** @var positive-int */
     private int $endColumn;
 
-    /** @psalm-allow-private-mutation */
-    private CompiledValue|null $compiledValue = null;
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+    private $compiledValue = null;
 
     private function __construct(
-        private Reflector $reflector,
+        Reflector $reflector,
         EnumCase $node,
-        private ReflectionEnum $enum,
+        ReflectionEnum $enum
     ) {
+        $this->reflector = $reflector;
+        $this->enum = $enum;
         $this->name = $node->name->toString();
 
         $this->value      = $node->expr;
@@ -131,7 +136,7 @@ class ReflectionEnumCase
     public static function createFromNode(
         Reflector $reflector,
         EnumCase $node,
-        ReflectionEnum $enum,
+        ReflectionEnum $enum
     ): self {
         return new self($reflector, $node, $enum);
     }
@@ -169,7 +174,10 @@ class ReflectionEnumCase
         return $this->value;
     }
 
-    public function getValue(): string|int
+    /**
+     * @return int|string
+     */
+    public function getValue()
     {
         $value = $this->getCompiledValue()->value;
         assert(is_string($value) || is_int($value));
@@ -233,7 +241,7 @@ class ReflectionEnumCase
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->docComment;
     }

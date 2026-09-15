@@ -17,8 +17,10 @@ use function count;
 /** @psalm-immutable */
 abstract class ReflectionType extends CoreReflectionType
 {
-    /** @psalm-pure */
-    public static function fromTypeOrNull(BetterReflectionUnionType|BetterReflectionNamedType|BetterReflectionIntersectionType|null $betterReflectionType): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType|null
+    /** @psalm-pure
+     * @param BetterReflectionUnionType|BetterReflectionNamedType|BetterReflectionIntersectionType|null $betterReflectionType
+     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType|null */
+    public static function fromTypeOrNull($betterReflectionType)
     {
         return $betterReflectionType !== null ? self::fromType($betterReflectionType) : null;
     }
@@ -27,8 +29,10 @@ abstract class ReflectionType extends CoreReflectionType
      * @internal
      *
      * @psalm-pure
+     * @param BetterReflectionNamedType|BetterReflectionUnionType|BetterReflectionIntersectionType $betterReflectionType
+     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionUnionType|\Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType|\Roave\BetterReflection\Reflection\Adapter\ReflectionIntersectionType
      */
-    public static function fromType(BetterReflectionNamedType|BetterReflectionUnionType|BetterReflectionIntersectionType $betterReflectionType): ReflectionUnionType|ReflectionNamedType|ReflectionIntersectionType
+    public static function fromType($betterReflectionType)
     {
         if ($betterReflectionType instanceof BetterReflectionUnionType) {
             // php-src has this weird behavior where a union type composed of a single type `T`
