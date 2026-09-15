@@ -11,11 +11,23 @@ final class ExprCacheHelper
 {
 
     /**
+     * One instance for every export and import: a BetterReflection memoizes
+     * its php-parser and printer, and building a Php8 parser (token map plus
+     * every reduce callback) per imported expression dominated cache hydration.
+     */
+    private static BetterReflection|null $betterReflection = null;
+
+    private static function betterReflection(): BetterReflection
+    {
+        return self::$betterReflection ??= new BetterReflection();
+    }
+
+    /**
      * @return array<string, mixed
      */
     public static function export(Expr $expr): array
     {
-        $br = new BetterReflection();
+        $br = self::betterReflection();
 
         $attributes = [];
         foreach (['startLine', 'endLine', 'startTokenPos', 'startFilePos', 'endTokenPos', 'endFilePos'] as $key) {
@@ -33,8 +45,7 @@ final class ExprCacheHelper
         $code = $data['code'];
         $attributes = $data['attributes'];
 
-        $br = new BetterReflection();
-        $expr = $br->originalPhpParser()->parse('<?php ' . $code . ';')[0]->expr;
+        $expr = self::betterReflection()->originalPhpParser()->parse('<?php ' . $code . ';')[0]->expr;
         foreach ($attributes as $key => $value) {
             $expr->setAttribute($key, $value);
         }
