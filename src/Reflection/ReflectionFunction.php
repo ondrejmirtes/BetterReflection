@@ -24,6 +24,12 @@ use function function_exists;
 /** @psalm-immutable */
 class ReflectionFunction implements Reflection
 {
+    private Reflector $reflector;
+    private LocatedSource $locatedSource;
+    /**
+     * @var non-empty-string|null
+     */
+    private $namespace = null;
     use ReflectionFunctionAbstract;
 
     public const VARIADIC_FUNCTIONS = [
@@ -36,13 +42,17 @@ class ReflectionFunction implements Reflection
 
     private bool $isStatic;
 
-    /** @param non-empty-string|null $namespace */
+    /** @param non-empty-string|null $namespace
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node */
     private function __construct(
-        private Reflector $reflector,
-        Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
-        private LocatedSource $locatedSource,
-        private string|null $namespace = null,
+        Reflector $reflector,
+        $node,
+        LocatedSource $locatedSource,
+        ?string $namespace = null
     ) {
+        $this->reflector = $reflector;
+        $this->locatedSource = $locatedSource;
+        $this->namespace = $namespace;
         assert($node instanceof Node\Stmt\Function_ || $node instanceof Node\Expr\Closure || $node instanceof Node\Expr\ArrowFunction);
 
         $this->name = $node instanceof Node\Expr\Closure || $node instanceof Node\Expr\ArrowFunction
@@ -110,12 +120,13 @@ class ReflectionFunction implements Reflection
      * @internal
      *
      * @param non-empty-string|null $namespace
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
      */
     public static function createFromNode(
         Reflector $reflector,
-        Node\Stmt\Function_|Node\Expr\Closure|Node\Expr\ArrowFunction $node,
+        $node,
         LocatedSource $locatedSource,
-        string|null $namespace = null,
+        ?string $namespace = null
     ): self {
         return new self($reflector, $node, $locatedSource, $namespace);
     }
@@ -165,14 +176,16 @@ class ReflectionFunction implements Reflection
 
         $this->assertFunctionExist($functionName);
 
-        return static fn (mixed ...$args): mixed => $functionName(...$args);
+        return static fn (...$args) => $functionName(...$args);
     }
 
     /**
      * @throws NotImplemented
      * @throws FunctionDoesNotExist
+     * @param mixed ...$args
+     * @return mixed
      */
-    public function invoke(mixed ...$args): mixed
+    public function invoke(...$args)
     {
         return $this->invokeArgs($args);
     }
@@ -182,8 +195,9 @@ class ReflectionFunction implements Reflection
      *
      * @throws NotImplemented
      * @throws FunctionDoesNotExist
+     * @return mixed
      */
-    public function invokeArgs(array $args = []): mixed
+    public function invokeArgs(array $args = [])
     {
         $this->assertIsNoClosure();
 
