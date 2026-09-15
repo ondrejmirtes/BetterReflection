@@ -8,7 +8,7 @@ use PhpParser\Lexer;
 use PhpParser\Node\Scalar\LNumber;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Util\Exception\NoNodePosition;
+use PHPStan\BetterReflection\Util\Exception\NoNodePosition;
 
 use function sprintf;
 

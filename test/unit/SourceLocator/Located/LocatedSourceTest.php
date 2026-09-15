@@ -6,8 +6,8 @@ namespace Roave\BetterReflectionTest\SourceLocator\Located;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
-use Roave\BetterReflection\Util\FileHelper;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\Util\FileHelper;
 
 #[CoversClass(LocatedSource::class)]
 class LocatedSourceTest extends TestCase

@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Type\Composer\Factory\Excepti
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Type\Composer\Factory\Exception\InvalidProjectDirectory;
+use PHPStan\BetterReflection\SourceLocator\Type\Composer\Factory\Exception\InvalidProjectDirectory;
 
 #[CoversClass(InvalidProjectDirectory::class)]
 class InvalidProjectDirectoryTest extends TestCase
