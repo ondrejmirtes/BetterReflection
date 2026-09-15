@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Type\Composer\Factory\Excepti
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Type\Composer\Factory\Exception\MissingInstalledJson;
+use PHPStan\BetterReflection\SourceLocator\Type\Composer\Factory\Exception\MissingInstalledJson;
 
 #[CoversClass(MissingInstalledJson::class)]
 class MissingInstalledJsonTest extends TestCase

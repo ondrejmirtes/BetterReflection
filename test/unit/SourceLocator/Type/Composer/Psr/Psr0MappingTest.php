@@ -7,9 +7,9 @@ namespace Roave\BetterReflectionTest\SourceLocator\Type\Composer\Psr;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\SourceLocator\Type\Composer\Psr\Psr0Mapping;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\SourceLocator\Type\Composer\Psr\Psr0Mapping;
 
 #[CoversClass(Psr0Mapping::class)]
 class Psr0MappingTest extends TestCase

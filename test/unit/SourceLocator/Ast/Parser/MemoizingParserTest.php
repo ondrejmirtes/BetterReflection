@@ -12,7 +12,7 @@ use PhpParser\ParserFactory;
 use PhpParser\Token;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Ast\Parser\MemoizingParser;
+use PHPStan\BetterReflection\SourceLocator\Ast\Parser\MemoizingParser;
 
 use function array_map;
 use function array_unique;
