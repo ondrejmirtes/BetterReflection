@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use ReflectionNamedType as CoreReflectionNamedType;
-use Roave\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
 
 use function strtolower;
 
