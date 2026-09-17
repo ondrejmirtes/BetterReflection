@@ -640,7 +640,13 @@ class ReflectionProperty
     /** @return list<ReflectionAttribute> */
     public function getAttributesByName(string $name): array
     {
-        return ReflectionAttributeHelper::filterAttributesByName($this->getAttributes(), $name);
+        $attributes = $this->getAttributes();
+
+        if ($attributes === []) {
+            return [];
+        }
+
+        return ReflectionAttributeHelper::filterAttributesByName($attributes, $name);
     }
 
     /**

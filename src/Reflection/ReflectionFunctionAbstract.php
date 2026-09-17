@@ -99,6 +99,12 @@ trait ReflectionFunctionAbstract
     /** @psalm-allow-private-mutation */
     private bool $isVariadic = false;
 
+    /**
+     * @var non-empty-string|null
+     * @psalm-allow-private-mutation
+     */
+    private string|null $cachedName = null;
+
     /** @return array<string, mixed> */
     protected function exportFunctionAbstractToCache(): array
     {
@@ -240,13 +246,17 @@ trait ReflectionFunctionAbstract
      */
     public function getName(): string
     {
+        if ($this->cachedName !== null) {
+            return $this->cachedName;
+        }
+
         $namespace = $this->getNamespaceName();
 
         if ($namespace === null) {
-            return $this->getShortName();
+            return $this->cachedName = $this->getShortName();
         }
 
-        return $namespace . '\\' . $this->getShortName();
+        return $this->cachedName = $namespace . '\\' . $this->getShortName();
     }
 
     /**
@@ -644,7 +654,13 @@ trait ReflectionFunctionAbstract
     /** @return list<ReflectionAttribute> */
     public function getAttributesByName(string $name): array
     {
-        return ReflectionAttributeHelper::filterAttributesByName($this->getAttributes(), $name);
+        $attributes = $this->getAttributes();
+
+        if ($attributes === []) {
+            return [];
+        }
+
+        return ReflectionAttributeHelper::filterAttributesByName($attributes, $name);
     }
 
     /**

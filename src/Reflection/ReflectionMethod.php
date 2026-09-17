@@ -227,6 +227,7 @@ class ReflectionMethod
     {
         $clone = clone $this;
 
+        $clone->cachedName        = null;
         $clone->aliasName         = $aliasName;
         $clone->modifiers         = $modifiers;
         $clone->implementingClass = $implementingClass;
