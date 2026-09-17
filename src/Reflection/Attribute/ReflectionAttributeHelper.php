@@ -66,7 +66,20 @@ class ReflectionAttributeHelper
      */
     public static function filterAttributesByName(array $attributes, string $name): array
     {
-        return array_values(array_filter($attributes, static fn (ReflectionAttribute $attribute): bool => $attribute->getName() === $name));
+        if ($attributes === []) {
+            return [];
+        }
+
+        $filtered = [];
+        foreach ($attributes as $attribute) {
+            if ($attribute->getName() !== $name) {
+                continue;
+            }
+
+            $filtered[] = $attribute;
+        }
+
+        return $filtered;
     }
 
     /**
