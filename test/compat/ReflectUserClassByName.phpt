@@ -4,7 +4,7 @@ Reflecting a user-defined class by name
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use Roave\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
 
 $classInfo = ReflectionClass::createFromName(ReflectionClass::class);
 

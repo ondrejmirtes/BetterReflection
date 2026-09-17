@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\StringCast;
+namespace PHPStan\BetterReflection\Reflection\StringCast;
 
-use Roave\BetterReflection\Reflection\ReflectionParameter;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter;
 
 use function is_array;
 use function is_string;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use ReflectionUnionType as CoreReflectionUnionType;
-use Roave\BetterReflection\Reflection\ReflectionType as BetterReflectionType;
-use Roave\BetterReflection\Reflection\ReflectionUnionType as BetterReflectionUnionType;
+use PHPStan\BetterReflection\Reflection\ReflectionType as BetterReflectionType;
+use PHPStan\BetterReflection\Reflection\ReflectionUnionType as BetterReflectionUnionType;
 
 use function array_map;
 use function assert;
