@@ -10,7 +10,10 @@ use const PHP_VERSION_ID;
 
 final class ReflectionAttributeFactory
 {
-    public static function create(BetterReflectionAttribute $betterReflectionAttribute): ReflectionAttribute|FakeReflectionAttribute
+    /**
+     * @return \Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute|\Roave\BetterReflection\Reflection\Adapter\FakeReflectionAttribute
+     */
+    public static function create(BetterReflectionAttribute $betterReflectionAttribute)
     {
         if (PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 80012) {
             return new FakeReflectionAttribute($betterReflectionAttribute);

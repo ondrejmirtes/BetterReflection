@@ -132,10 +132,10 @@ class MemoizingSourceLocatorTest extends TestCase
             ->with(self::logicalOr($this->reflector1, $this->reflector2))
             ->willReturnCallback(function (
                 Reflector $reflector,
-                IdentifierType $identifierType,
+                IdentifierType $identifierType
             ) use (
                 $symbols1,
-                $symbols2,
+                $symbols2
             ): array {
                 if ($reflector === $this->reflector1) {
                     return $symbols1[$identifierType->getName()];
@@ -173,7 +173,7 @@ class MemoizingSourceLocatorTest extends TestCase
     private function assertMemoization(
         array $identifiers,
         int $expectedFetchOperationsCount,
-        array $reflectors,
+        array $reflectors
     ): void {
         $fetchedSymbolsCount = [];
 
@@ -187,10 +187,10 @@ class MemoizingSourceLocatorTest extends TestCase
             )
             ->willReturnCallback(static function (
                 Reflector $reflector,
-                Identifier $identifier,
+                Identifier $identifier
             ) use (
-                &$fetchedSymbolsCount,
-            ): Reflection|null {
+                &$fetchedSymbolsCount
+            ): ?\Roave\BetterReflection\Reflection\Reflection {
                 $identifierId = spl_object_id($identifier);
                 $reflectorId  = spl_object_id($reflector);
                 $hash         = $reflectorId . $identifierId;

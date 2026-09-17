@@ -12,15 +12,15 @@ interface SourceStubber
      *
      * @param class-string|trait-string $className
      */
-    public function generateClassStub(string $className): StubData|null;
+    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
 
     /**
      * Generates stub for given function. Returns null when it cannot generate the stub.
      */
-    public function generateFunctionStub(string $functionName): StubData|null;
+    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
 
     /**
      * Generates stub for given constant. Returns null when it cannot generate the stub.
      */
-    public function generateConstantStub(string $constantName): StubData|null;
+    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
 }

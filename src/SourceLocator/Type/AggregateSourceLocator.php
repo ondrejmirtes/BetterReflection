@@ -14,12 +14,17 @@ use function array_merge;
 
 class AggregateSourceLocator implements SourceLocator
 {
+    /**
+     * @var list<SourceLocator>
+     */
+    private array $sourceLocators = [];
     /** @param list<SourceLocator> $sourceLocators */
-    public function __construct(private array $sourceLocators = [])
+    public function __construct(array $sourceLocators = [])
     {
+        $this->sourceLocators = $sourceLocators;
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         foreach ($this->sourceLocators as $sourceLocator) {
             $located = $sourceLocator->locateIdentifier($reflector, $identifier);
