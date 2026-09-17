@@ -664,7 +664,7 @@ class ReflectionClass implements Reflection
      */
     public function getMethods(int $filter = 0): array
     {
-        $methods = $this->getMethodsIndexedByLowercasedName(AlreadyVisitedClasses::createEmpty());
+        $methods = $this->cachedMethods ?? $this->getMethodsIndexedByLowercasedName(AlreadyVisitedClasses::createEmpty());
 
         if ($filter !== 0) {
             $methods = array_filter(
@@ -797,10 +797,9 @@ class ReflectionClass implements Reflection
      */
     public function getMethod(string $methodName): ReflectionMethod|null
     {
-        $lowercaseMethodName = strtolower($methodName);
-        $methods             = $this->getMethodsIndexedByLowercasedName(AlreadyVisitedClasses::createEmpty());
+        $methods = $this->cachedMethods ?? $this->getMethodsIndexedByLowercasedName(AlreadyVisitedClasses::createEmpty());
 
-        return $methods[$lowercaseMethodName] ?? null;
+        return $methods[strtolower($methodName)] ?? null;
     }
 
     /**
@@ -882,7 +881,7 @@ class ReflectionClass implements Reflection
      */
     public function getConstants(int $filter = 0): array
     {
-        $constants = $this->getConstantsConsideringAlreadyVisitedClasses(AlreadyVisitedClasses::createEmpty());
+        $constants = $this->cachedConstants ?? $this->getConstantsConsideringAlreadyVisitedClasses(AlreadyVisitedClasses::createEmpty());
 
         if ($filter === 0) {
             return $constants;
@@ -1110,7 +1109,7 @@ class ReflectionClass implements Reflection
      */
     public function getProperties(int $filter = 0): array
     {
-        $properties = $this->getPropertiesConsideringAlreadyVisitedClasses(AlreadyVisitedClasses::createEmpty());
+        $properties = $this->cachedProperties ?? $this->getPropertiesConsideringAlreadyVisitedClasses(AlreadyVisitedClasses::createEmpty());
 
         if ($filter === 0) {
             return $properties;
@@ -2020,7 +2019,11 @@ class ReflectionClass implements Reflection
     /** @return list<ReflectionAttribute> */
     public function getAttributesByName(string $name): array
     {
-        return ReflectionAttributeHelper::filterAttributesByName($this->getAttributes(), $name);
+        if ($this->attributes === []) {
+            return [];
+        }
+
+        return ReflectionAttributeHelper::filterAttributesByName($this->attributes, $name);
     }
 
     /**
