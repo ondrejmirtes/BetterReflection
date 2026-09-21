@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
 
 #[CoversClass(IdentifierType::class)]
 class IdentifierTypeTest extends TestCase
