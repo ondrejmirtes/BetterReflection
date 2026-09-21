@@ -15,10 +15,12 @@ use function sprintf;
 /** @template-extends CoreReflectionAttribute<object> */
 final class ReflectionAttribute extends CoreReflectionAttribute
 {
+    private BetterReflectionAttribute $betterReflectionAttribute;
     public const TARGET_CONSTANT_COMPATIBILITY = 64;
 
-    public function __construct(private BetterReflectionAttribute $betterReflectionAttribute)
+    public function __construct(BetterReflectionAttribute $betterReflectionAttribute)
     {
+        $this->betterReflectionAttribute = $betterReflectionAttribute;
         unset($this->name);
     }
 
@@ -77,7 +79,10 @@ final class ReflectionAttribute extends CoreReflectionAttribute
         return $this->betterReflectionAttribute->__toString();
     }
 
-    public function __get(string $name): mixed
+    /**
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if ($name === 'name') {
             return $this->betterReflectionAttribute->getName();
