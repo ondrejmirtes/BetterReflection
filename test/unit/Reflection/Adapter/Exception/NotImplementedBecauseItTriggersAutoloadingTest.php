@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection\Adapter;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplementedBecauseItTriggersAutoloading;
+use PHPStan\BetterReflection\Reflection\Adapter\Exception\NotImplementedBecauseItTriggersAutoloading;
 
 #[CoversClass(NotImplementedBecauseItTriggersAutoloading::class)]
 class NotImplementedBecauseItTriggersAutoloadingTest extends TestCase

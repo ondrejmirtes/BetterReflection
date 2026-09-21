@@ -7,7 +7,7 @@ namespace Roave\BetterReflectionTest\Reflection\Annotation;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Annotation\AnnotationHelper;
+use PHPStan\BetterReflection\Reflection\Annotation\AnnotationHelper;
 
 #[CoversClass(AnnotationHelper::class)]
 class AnnotationHelperTest extends TestCase

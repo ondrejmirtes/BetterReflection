@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type\Composer\Psr\Exception;
+namespace PHPStan\BetterReflection\SourceLocator\Type\Composer\Psr\Exception;
 
 use InvalidArgumentException;
 
