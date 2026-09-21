@@ -54,6 +54,7 @@ use function assert;
 use function count;
 use function explode;
 use function file_get_contents;
+use function implode;
 use function in_array;
 use function is_dir;
 use function is_string;
@@ -155,6 +156,120 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         'zlib',
     ];
 
+    /**
+     * `@throws` tags added in https://github.com/JetBrains/phpstorm-stubs/pull/1926 naming errors
+     * that functions and methods existing in PHP 7 throw only as of PHP 8
+     */
+    private const PHP_8_THROWS = [
+        'array_chunk' => ['ValueError'],
+        'array_fill' => ['ValueError'],
+        'array_rand' => ['ValueError'],
+        'assert_options' => ['ValueError'],
+        'bcadd' => ['ValueError'],
+        'bcpow' => ['ValueError', 'DivisionByZeroError'],
+        'bcpowmod' => ['ValueError', 'DivisionByZeroError'],
+        'bcscale' => ['ValueError'],
+        'bcsqrt' => ['ValueError'],
+        'bind_textdomain_codeset' => ['ValueError'],
+        'curl_multi_select' => ['ValueError'],
+        'date_parse_from_format' => ['ValueError'],
+        'dgettext' => ['ValueError'],
+        'dngettext' => ['ValueError'],
+        'easter_date' => ['ValueError'],
+        'exec' => ['ValueError'],
+        'fgetcsv' => ['ValueError'],
+        'file' => ['ValueError'],
+        'fprintf' => ['ValueError', 'ArgumentCountError'],
+        'ftp_set_option' => ['ValueError', 'TypeError'],
+        'get_called_class' => ['Error'],
+        'get_class' => ['TypeError', 'Error'],
+        'getimagesize' => ['ValueError'],
+        'gmp_binomial' => ['ValueError'],
+        'gmp_random_bits' => ['ValueError'],
+        'gmp_random_range' => ['ValueError'],
+        'gmp_random_seed' => ['ValueError'],
+        'hash' => ['ValueError'],
+        'hash_hkdf' => ['ValueError'],
+        'hash_hmac' => ['ValueError'],
+        'hash_hmac_file' => ['ValueError'],
+        'hash_init' => ['ValueError'],
+        'hash_pbkdf2' => ['ValueError'],
+        'imagefilter' => ['ValueError'],
+        'imagejpeg' => ['ValueError'],
+        'imagepng' => ['ValueError'],
+        'imagescale' => ['ValueError'],
+        'imagewebp' => ['ValueError'],
+        'imap_clearflag_full' => ['ValueError'],
+        'imap_close' => ['ValueError'],
+        'imap_delete' => ['ValueError'],
+        'imap_gc' => ['ValueError'],
+        'imap_setflag_full' => ['ValueError'],
+        'jdtounix' => ['ValueError'],
+        'json_decode' => ['ValueError'],
+        'libxml_set_streams_context' => ['TypeError'],
+        'max' => ['ValueError'],
+        'mb_convert_encoding' => ['ValueError'],
+        'mb_convert_kana' => ['ValueError'],
+        'mb_decode_numericentity' => ['ValueError'],
+        'mb_encode_numericentity' => ['ValueError'],
+        'mb_encoding_aliases' => ['ValueError'],
+        'mb_http_input' => ['ValueError'],
+        'mb_http_output' => ['ValueError'],
+        'mb_internal_encoding' => ['ValueError'],
+        'mb_stripos' => ['ValueError'],
+        'mb_strpos' => ['ValueError'],
+        'mb_strripos' => ['ValueError'],
+        'mb_strrpos' => ['ValueError'],
+        'min' => ['ValueError'],
+        'mt_rand' => ['ValueError'],
+        'passthru' => ['ValueError'],
+        'pg_convert' => ['ValueError', 'TypeError'],
+        'pg_fetch_object' => ['ValueError'],
+        'pg_insert' => ['ValueError', 'TypeError'],
+        'printf' => ['ValueError', 'ArgumentCountError'],
+        'proc_open' => ['ValueError'],
+        'range' => ['ValueError'],
+        'round' => ['ValueError'],
+        'settype' => ['ValueError'],
+        'shmop_open' => ['ValueError'],
+        'shmop_read' => ['ValueError'],
+        'shmop_write' => ['ValueError'],
+        'simplexml_import_dom' => ['TypeError'],
+        'sleep' => ['ValueError'],
+        'sprintf' => ['ValueError', 'ArgumentCountError'],
+        'str_split' => ['ValueError'],
+        'stream_set_chunk_size' => ['ValueError'],
+        'stripos' => ['ValueError'],
+        'strpos' => ['ValueError'],
+        'strripos' => ['ValueError'],
+        'strrpos' => ['ValueError'],
+        'textdomain' => ['ValueError'],
+        'trigger_error' => ['ValueError'],
+        'unserialize' => ['TypeError', 'ValueError'],
+        'vfprintf' => ['ValueError'],
+        'vprintf' => ['ValueError'],
+        'vsprintf' => ['ValueError'],
+        'wordwrap' => ['ValueError'],
+        'xml_parser_get_option' => ['ValueError'],
+        'xml_parser_set_option' => ['ValueError'],
+        'DOMXPath::query' => ['Error', 'TypeError'],
+        'DOMXPath::registerPhpFunctions' => ['ValueError', 'TypeError'],
+        'GlobIterator::__construct' => ['ValueError'],
+        'IntlCalendar::setMinimalDaysInFirstWeek' => ['ValueError'],
+        'LimitIterator::__construct' => ['ValueError'],
+        'ReflectionReference::fromArrayElement' => ['TypeError'],
+        'SimpleXMLElement::current' => ['Error'],
+        'SimpleXMLElement::key' => ['Error'],
+        'SplFixedArray::__construct' => ['ValueError'],
+        'SplFixedArray::setSize' => ['ValueError'],
+        'SQLite3Result::finalize' => ['Error'],
+        'SQLite3Stmt::close' => ['Error'],
+        'XMLReader::open' => ['ValueError'],
+        'XMLReader::XML' => ['ValueError'],
+        'XSLTProcessor::importStylesheet' => ['TypeError'],
+        'XSLTProcessor::setParameter' => ['ValueError'],
+    ];
+
     private BuilderFactory $builderFactory;
 
     private Standard $prettyPrinter;
@@ -197,6 +312,9 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     /** @var array<lowercase-string, string> */
     private static array $constantMap;
 
+    /** @var array<lowercase-string, list<string>> */
+    private static array $php8ThrowsMap;
+
     /** @var array<lowercase-string, string> */
     private array $selectedClassMap = [];
 
@@ -235,6 +353,8 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             self::$functionMap = array_change_key_case(PhpStormStubsMap::FUNCTIONS);
             /** @psalm-suppress PropertyTypeCoercion */
             self::$constantMap = array_change_key_case(PhpStormStubsMap::CONSTANTS);
+            /** @psalm-suppress PropertyTypeCoercion */
+            self::$php8ThrowsMap = array_change_key_case(self::PHP_8_THROWS);
 
             self::$mapsInitialized = true;
         }
@@ -468,7 +588,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
                     continue;
                 }
 
-                $classNode->stmts = $this->modifyStmtsByPhpVersion($classNode->stmts);
+                $classNode->stmts = $this->modifyStmtsByPhpVersion($classNode->stmts, $className);
             }
 
             $this->classNodes[strtolower($className)] = $classNodeData;
@@ -485,6 +605,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
                     $this->modifyFunctionReturnTypeByPhpVersion($functionNode);
                     $this->modifyFunctionParametersByPhpVersion($functionNode);
+
+                    if ($this->phpVersion < 80000) {
+                        $this->removePhp8ThrowsFromDocComment($functionNode, $functionName);
+                    }
                 }
 
                 $lowercaseFunctionName = strtolower($functionName);
@@ -731,7 +855,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
      *
      * @return list<Node\Stmt>
      */
-    private function modifyStmtsByPhpVersion(array $stmts): array
+    private function modifyStmtsByPhpVersion(array $stmts, string $className): array
     {
         $newStmts = [];
         foreach ($stmts as $stmt) {
@@ -748,6 +872,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 $this->modifyFunctionReturnTypeByPhpVersion($stmt);
                 $this->modifyFunctionParametersByPhpVersion($stmt);
+
+                if ($this->phpVersion < 80000) {
+                    $this->removePhp8ThrowsFromDocComment($stmt, sprintf('%s::%s', $className, $stmt->name->toString()));
+                }
             }
 
             $this->addDeprecatedDocComment($stmt);
@@ -932,6 +1060,29 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     private function isCoreExtension(string $extension): bool
     {
         return in_array($extension, self::CORE_EXTENSIONS, true);
+    }
+
+    private function removePhp8ThrowsFromDocComment(Node\Stmt\Function_|Node\Stmt\ClassMethod $node, string $name): void
+    {
+        $throws = self::$php8ThrowsMap[strtolower($name)] ?? null;
+        if ($throws === null) {
+            return;
+        }
+
+        $docComment = $node->getDocComment();
+        if ($docComment === null) {
+            return;
+        }
+
+        // the tag together with the following lines of its description
+        $docCommentText = preg_replace(
+            sprintf('~^[ \t]*\*[ \t]*@throws[ \t]+\\\\?(?:%s)\b[^\n]*\n(?:[ \t]*\*(?![ \t]*@|/)[^\n]*\n)*~m', implode('|', $throws)),
+            '',
+            $docComment->getText(),
+        );
+        assert($docCommentText !== null);
+
+        $node->setDocComment(new Doc($docCommentText));
     }
 
     private function isDeprecatedByPhpDocInPhpVersion(Node\Expr\FuncCall $node): bool
