@@ -47,6 +47,7 @@ use SplObjectStorage;
 use Traversable;
 
 use function array_change_key_case;
+use function array_diff_key;
 use function array_key_exists;
 use function array_key_first;
 use function array_map;
@@ -372,6 +373,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     public function isPresentClass(string $className): ?bool
     {
         $lowercaseClassName = strtolower($className);
+        if (array_key_exists($lowercaseClassName, $this->disabledClassMap)) {
+            return false;
+        }
+
         if ($this->getClassFilePath($lowercaseClassName) === null) {
             return null;
         }
@@ -384,6 +389,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     public function isPresentFunction(string $functionName): ?bool
     {
         $lowercaseFunctionName = strtolower($functionName);
+        if (array_key_exists($lowercaseFunctionName, $this->disabledFunctionMap)) {
+            return false;
+        }
+
         if ($this->getFunctionFilePath($lowercaseFunctionName) === null) {
             return null;
         }
@@ -720,19 +729,26 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             }
 
             $versionMaps = PhpStormStubsMap::EXTENSION_VERSIONS[$extensionName];
-            if (! array_key_exists($version, $versionMaps)) {
-                continue;
+            if (array_key_exists($version, $versionMaps)) {
+                $selectedMap = $versionMaps[$version];
+
+                $this->selectedClassMap += array_change_key_case($selectedMap['classes']);
+                $this->selectedFunctionMap += array_change_key_case($selectedMap['functions']);
+                $this->selectedConstantMap += array_change_key_case($selectedMap['constants']);
+            } else {
+                // a version without a map of its own uses the default stubs
+                $selectedMap = $versionMaps['default'];
             }
 
-            $defaultMap = $versionMaps['default'];
-            $selectedMap = $versionMaps[$version];
-
-            $this->disabledClassMap += array_change_key_case($defaultMap['classes']);
-            $this->disabledFunctionMap += array_change_key_case($defaultMap['functions']);
-            $this->disabledConstantMap += array_change_key_case($defaultMap['constants']);
-            $this->selectedClassMap += array_change_key_case($selectedMap['classes']);
-            $this->selectedFunctionMap += array_change_key_case($selectedMap['functions']);
-            $this->selectedConstantMap += array_change_key_case($selectedMap['constants']);
+            // symbols that other versions of the extension define and the selected one does not
+            $selectedClasses   = array_change_key_case($selectedMap['classes']);
+            $selectedFunctions = array_change_key_case($selectedMap['functions']);
+            $selectedConstants = array_change_key_case($selectedMap['constants']);
+            foreach ($versionMaps as $versionMap) {
+                $this->disabledClassMap += array_diff_key(array_change_key_case($versionMap['classes']), $selectedClasses);
+                $this->disabledFunctionMap += array_diff_key(array_change_key_case($versionMap['functions']), $selectedFunctions);
+                $this->disabledConstantMap += array_diff_key(array_change_key_case($versionMap['constants']), $selectedConstants);
+            }
         }
     }
 
