@@ -1753,27 +1753,39 @@ parameters:
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
 
 		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
 			message: '#^Cannot access offset ''classes'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 3
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
 
 		-
 			message: '#^Cannot access offset ''constants'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 3
+			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
+
+		-
+			message: '#^Cannot access offset ''default'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
 
 		-
 			message: '#^Cannot access offset ''functions'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 3
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
 
 		-
 			message: '#^Parameter \#1 \$array of function array_change_key_case expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 6
+			count: 9
 			path: src/SourceLocator/SourceStubber/PhpStormStubsSourceStubber.php
 
 		-
