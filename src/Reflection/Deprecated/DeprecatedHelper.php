@@ -18,8 +18,9 @@ use Roave\BetterReflection\Reflection\ReflectionProperty;
 /** @internal */
 final class DeprecatedHelper
 {
-    /** @psalm-pure */
-    public static function isDeprecated(ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionConstant|ReflectionClassConstant|ReflectionEnumCase|ReflectionProperty $reflection): bool
+    /** @psalm-pure
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase|\Roave\BetterReflection\Reflection\ReflectionProperty $reflection */
+    public static function isDeprecated($reflection): bool
     {
         if (ReflectionAttributeHelper::filterAttributesByName($reflection->getAttributes(), Deprecated::class) !== []) {
             return true;
