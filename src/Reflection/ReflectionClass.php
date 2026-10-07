@@ -23,7 +23,6 @@ use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMeth
 use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
 use Roave\BetterReflection\Reflection\Attribute\ReflectionAttributeHelper;
 use Roave\BetterReflection\Reflection\Deprecated\DeprecatedHelper;
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
 use Roave\BetterReflection\Reflection\Exception\ClassDoesNotExist;
 use Roave\BetterReflection\Reflection\Exception\NoObjectProvided;
 use Roave\BetterReflection\Reflection\Exception\NotAnObject;
@@ -47,6 +46,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_pop;
 use function array_reverse;
 use function array_slice;
 use function array_values;
@@ -161,6 +161,15 @@ class ReflectionClass implements Reflection
      * @psalm-allow-private-mutation
      */
     private array|null $cachedParentClasses = null;
+
+    /** @psalm-allow-private-mutation */
+    private bool|null $cachedIsOnParentClassCycle = null;
+
+    /** @psalm-allow-private-mutation */
+    private bool|null $cachedIsOnInterfaceCycle = null;
+
+    /** @psalm-allow-private-mutation */
+    private bool|null $cachedIsOnTraitCycle = null;
 
     /**
      * @internal
@@ -1257,8 +1266,8 @@ class ReflectionClass implements Reflection
             return null;
         }
 
-        if ($this->name === $parentClassName) {
-            throw CircularReference::fromClassName($parentClassName);
+        if ($this->isOnParentClassCycle()) {
+            return null;
         }
 
         try {
@@ -1266,6 +1275,78 @@ class ReflectionClass implements Reflection
         } catch (IdentifierNotFound) {
             return null;
         }
+    }
+
+    /**
+     * Whether the class extends itself, directly or through other classes. PHP cannot declare such
+     * a class, so it has no parent here, and every walk up the class hierarchy ends.
+     */
+    private function isOnParentClassCycle(): bool
+    {
+        return $this->cachedIsOnParentClassCycle ??= $this->reachesItself(
+            static fn (self $class): array => $class->parentClassName === null ? [] : [$class->parentClassName],
+        );
+    }
+
+    /**
+     * Whether the interface extends itself, directly or through other interfaces. PHP cannot declare
+     * such an interface, so it extends no interface here, and every walk over the hierarchy ends.
+     */
+    private function isOnInterfaceCycle(): bool
+    {
+        return $this->cachedIsOnInterfaceCycle ??= $this->reachesItself(
+            static fn (self $class): array => $class->isInterface ? $class->implementsClassNames : [],
+        );
+    }
+
+    /**
+     * Whether the trait uses itself, directly or through other traits. PHP cannot declare such
+     * a trait, so it uses no trait here, and every walk over the used traits ends.
+     */
+    private function isOnTraitCycle(): bool
+    {
+        return $this->cachedIsOnTraitCycle ??= $this->reachesItself(
+            static fn (self $class): array => $class->isTrait ? $class->traitClassNames : [],
+        );
+    }
+
+    /**
+     * Follows the declared names, not the reflected classes, so that the answer depends only on
+     * the declarations and not on which class is reflected first.
+     *
+     * @param callable(self): list<class-string> $edges
+     */
+    private function reachesItself(callable $edges): bool
+    {
+        $lowercasedName = strtolower($this->getName());
+        $visited        = [];
+        $stack          = $edges($this);
+
+        while ($stack !== []) {
+            $className           = array_pop($stack);
+            $lowercasedClassName = strtolower($className);
+            if ($lowercasedClassName === $lowercasedName) {
+                return true;
+            }
+
+            if (array_key_exists($lowercasedClassName, $visited)) {
+                continue;
+            }
+
+            $visited[$lowercasedClassName] = true;
+
+            try {
+                $class = $this->reflector->reflectClass($className);
+            } catch (IdentifierNotFound) {
+                continue;
+            }
+
+            foreach ($edges($class) as $nextClassName) {
+                $stack[] = $nextClassName;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1284,27 +1365,14 @@ class ReflectionClass implements Reflection
         if ($this->cachedParentClasses === null) {
             $parentClasses = [];
 
-            $parentClassName = $this->parentClassName;
-            while ($parentClassName !== null) {
-                try {
-                    $parentClass = $this->reflector->reflectClass($parentClassName);
-                } catch (IdentifierNotFound) {
-                    break;
-                }
-
-                if (
-                    $this->name === $parentClassName
-                    || array_key_exists($parentClassName, $parentClasses)
-                ) {
-                    throw CircularReference::fromClassName($parentClassName);
-                }
-
-                $parentClasses[$parentClassName] = $parentClass;
-
-                $parentClassName = $parentClass->parentClassName;
+            // a class on a parent class cycle has no parent, so the chain always ends
+            $class = $this;
+            while (($parentClass = $class->getParentClass()) !== null) {
+                $parentClasses[] = $parentClass;
+                $class           = $parentClass;
             }
 
-            $this->cachedParentClasses = array_values($parentClasses);
+            $this->cachedParentClasses = $parentClasses;
         }
 
         return $this->cachedParentClasses;
@@ -1418,6 +1486,10 @@ class ReflectionClass implements Reflection
     {
         if ($this->cachedTraits !== null) {
             return $this->cachedTraits;
+        }
+
+        if ($this->isTrait && $this->isOnTraitCycle()) {
+            return $this->cachedTraits = [];
         }
 
         $traits = [];
@@ -1759,6 +1831,10 @@ class ReflectionClass implements Reflection
     public function getImmediateInterfaces(): array
     {
         if ($this->isTrait) {
+            return [];
+        }
+
+        if ($this->isInterface && $this->isOnInterfaceCycle()) {
             return [];
         }
 

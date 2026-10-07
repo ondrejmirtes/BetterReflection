@@ -28,7 +28,6 @@ use ReflectionProperty as CoreReflectionProperty;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionProperty as ReflectionPropertyAdapter;
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
 use Roave\BetterReflection\Reflection\Exception\PropertyDoesNotExist;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant;
@@ -892,8 +891,20 @@ PHP;
         ];
     }
 
-    #[DataProvider('circularReferencesProvider')]
-    public function testGetParentClassNamesFailsWithCircularReferences(string $className): void
+    /** @return list<array{0: string, 1: string|null, 2: list<string>}> */
+    public static function circularParentClassesProvider(): array
+    {
+        return [
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidParents\\ClassExtendsSelf', null, []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidParents\\Class1', null, []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidParents\\Class2', null, []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidParents\\Class3', 'Roave\\BetterReflectionTest\\Fixture\\InvalidParents\\Class2', ['Roave\\BetterReflectionTest\\Fixture\\InvalidParents\\Class2']],
+        ];
+    }
+
+    /** @param list<string> $expectedParentClassNames */
+    #[DataProvider('circularParentClassesProvider')]
+    public function testClassOnParentClassCycleHasNoParent(string $className, string|null $expectedParentClassName, array $expectedParentClassNames): void
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
             __DIR__ . '/../Fixture/InvalidParents.php',
@@ -902,9 +913,8 @@ PHP;
 
         $class = $reflector->reflectClass($className);
 
-        $this->expectException(CircularReference::class);
-
-        $class->getParentClassNames();
+        self::assertSame($expectedParentClassName, $class->getParentClass()?->getName());
+        self::assertSame($expectedParentClassNames, $class->getParentClassNames());
     }
 
     /** @return list<array{0: non-empty-string, 1: int, 2: int}> */
@@ -1925,8 +1935,20 @@ PHP;
         ];
     }
 
-    #[DataProvider('interfaceExtendsCircularReferencesProvider')]
-    public function testGetInterfacesFailsWithCircularReferences(string $className): void
+    /** @return list<array{0: string, 1: list<string>}> */
+    public static function circularInterfacesProvider(): array
+    {
+        return [
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidInterfaceParents\\InterfaceExtendsSelf', []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidInterfaceParents\\Interface1', []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidInterfaceParents\\Interface2', []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidInterfaceParents\\Interface3', ['Roave\\BetterReflectionTest\\Fixture\\InvalidInterfaceParents\\Interface2']],
+        ];
+    }
+
+    /** @param list<string> $expectedInterfaceNames */
+    #[DataProvider('circularInterfacesProvider')]
+    public function testInterfaceOnCycleExtendsNoInterface(string $className, array $expectedInterfaceNames): void
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
             __DIR__ . '/../Fixture/InvalidInterfaceParents.php',
@@ -1935,9 +1957,34 @@ PHP;
 
         $class = $reflector->reflectClass($className);
 
-        $this->expectException(CircularReference::class);
+        self::assertSame($expectedInterfaceNames, array_keys($class->getInterfaces()));
+    }
 
-        $class->getInterfaces();
+    /** @return list<array{0: string, 1: list<string>}> */
+    public static function circularTraitsProvider(): array
+    {
+        return [
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\TraitUsesSelf', []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Trait1', []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Trait2', []],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Trait3', ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Trait2']],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Class1', ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\TraitUsesSelf']],
+            ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Class2', ['Roave\\BetterReflectionTest\\Fixture\\InvalidTraitUses\\Trait1']],
+        ];
+    }
+
+    /** @param list<string> $expectedTraitNames */
+    #[DataProvider('circularTraitsProvider')]
+    public function testTraitOnCycleUsesNoTrait(string $className, array $expectedTraitNames): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(
+            __DIR__ . '/../Fixture/InvalidTraitUses.php',
+            $this->astLocator,
+        ));
+
+        $class = $reflector->reflectClass($className);
+
+        self::assertSame($expectedTraitNames, $class->getTraitNames());
     }
 
     public function testIsSubclassOf(): void
@@ -2853,7 +2900,7 @@ PHP;
     #[DataProvider('interfaceExtendsCircularReferencesProvider')]
     #[DataProvider('circularReferencesProvider')]
     #[DataProvider('traitUseCircularReferencesProvider')]
-    public function testGetConstantsFailsWithCircularReference(string $className): void
+    public function testGetConstantsDoesNotFailWithCircularReference(string $className): void
     {
         $reflector = new DefaultReflector(new FileIteratorSourceLocator(
             new ArrayIterator([
@@ -2866,15 +2913,13 @@ PHP;
 
         $class = $reflector->reflectClass($className);
 
-        $this->expectException(CircularReference::class);
-
-        $class->getConstants();
+        self::assertSame([], $class->getConstants());
     }
 
     #[DataProvider('interfaceExtendsCircularReferencesProvider')]
     #[DataProvider('circularReferencesProvider')]
     #[DataProvider('traitUseCircularReferencesProvider')]
-    public function testGetMethodsFailsWithCircularReference(string $className): void
+    public function testGetMethodsDoesNotFailWithCircularReference(string $className): void
     {
         $reflector = new DefaultReflector(new FileIteratorSourceLocator(
             new ArrayIterator([
@@ -2887,15 +2932,13 @@ PHP;
 
         $class = $reflector->reflectClass($className);
 
-        $this->expectException(CircularReference::class);
-
-        $class->getMethods();
+        self::assertSame([], $class->getMethods());
     }
 
     #[DataProvider('interfaceExtendsCircularReferencesProvider')]
     #[DataProvider('circularReferencesProvider')]
     #[DataProvider('traitUseCircularReferencesProvider')]
-    public function testGetPropertiesFailsWithCircularReference(string $className): void
+    public function testGetPropertiesDoesNotFailWithCircularReference(string $className): void
     {
         $reflector = new DefaultReflector(new FileIteratorSourceLocator(
             new ArrayIterator([
@@ -2908,9 +2951,7 @@ PHP;
 
         $class = $reflector->reflectClass($className);
 
-        $this->expectException(CircularReference::class);
-
-        $class->getProperties();
+        self::assertSame([], $class->getProperties());
     }
 
     public function testInterfacesNotCircular(): void
@@ -3089,5 +3130,48 @@ PHP;
         $importedReflection->getName(); // fill cachedName
         AttributesResetter::resetClass($importedReflection);
         self::assertEquals($importedReflection, $reflection);
+    }
+
+    /** @return list<array{0: string, 1: list<string>, 2: list<string>}> */
+    public static function circularMembersProvider(): array
+    {
+        $namespace = 'Roave\\BetterReflectionTest\\Fixture\\CircularMembers\\';
+
+        return [
+            [$namespace . 'Interface1', ['method1'], ['CONSTANT_1']],
+            [$namespace . 'Interface2', ['method2'], ['CONSTANT_2']],
+            [$namespace . 'Class1', ['method1'], ['property1']],
+            [$namespace . 'Class2', ['method2'], ['property2']],
+            [$namespace . 'Trait1', ['method1'], ['property1']],
+            [$namespace . 'Trait2', ['method2'], ['property2']],
+        ];
+    }
+
+    /**
+     * A class-like on a cycle has no supertypes of its kind, so it has only its own members, whichever
+     * class of the cycle is reflected first.
+     *
+     * @param list<string> $expectedMethodNames
+     * @param list<string> $expectedConstantOrPropertyNames
+     */
+    #[DataProvider('circularMembersProvider')]
+    public function testClassLikeOnCycleHasOnlyItsOwnMembers(string $className, array $expectedMethodNames, array $expectedConstantOrPropertyNames): void
+    {
+        $reflector = new DefaultReflector(new SingleFileSourceLocator(
+            __DIR__ . '/../Fixture/CircularMembers.php',
+            $this->astLocator,
+        ));
+
+        foreach ($this->circularMembersProvider() as [$otherClassName]) {
+            $reflector->reflectClass($otherClassName)->getMethods();
+        }
+
+        $class = $reflector->reflectClass($className);
+
+        self::assertSame($expectedMethodNames, array_keys($class->getMethods()));
+        self::assertSame(
+            $expectedConstantOrPropertyNames,
+            array_keys($class->isInterface() ? $class->getConstants() : $class->getProperties()),
+        );
     }
 }

@@ -19,6 +19,8 @@ parameters:
             - test/unit/Fixture/*
         analyseAndScan:
             - test/unit/Fixture/InvalidParents.php
+            - test/unit/Fixture/CircularMembers.php
+            - test/unit/Fixture/InvalidInterfaceParents.php
             - tools/vendor/*
 
     bootstrapFiles:
