@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\CircularReference;
+use PHPStan\BetterReflection\Reflection\Exception\CircularReference;
 
 #[CoversClass(CircularReference::class)]
 class CircularReferenceTest extends TestCase

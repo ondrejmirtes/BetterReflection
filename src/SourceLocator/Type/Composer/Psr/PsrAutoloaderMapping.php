@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Type\Composer\Psr;
+namespace PHPStan\BetterReflection\SourceLocator\Type\Composer\Psr;
 
-use Roave\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\Identifier;
 
 interface PsrAutoloaderMapping
 {

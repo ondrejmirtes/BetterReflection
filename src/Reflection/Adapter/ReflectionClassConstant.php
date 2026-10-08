@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use OutOfBoundsException;
 use PhpParser\Node\Expr;
 use ReflectionClassConstant as CoreReflectionClassConstant;
 use ReflectionType as CoreReflectionType;
 use ReturnTypeWillChange;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
 use ValueError;
 
 use function array_map;

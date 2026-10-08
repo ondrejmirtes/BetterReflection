@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Exception\EvaledAnonymousClassCannotBeLocated;
+use PHPStan\BetterReflection\SourceLocator\Exception\EvaledAnonymousClassCannotBeLocated;
 
 #[CoversClass(EvaledAnonymousClassCannotBeLocated::class)]
 class EvaledAnonymousClassCannotBeLocatedTest extends TestCase
