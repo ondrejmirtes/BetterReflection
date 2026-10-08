@@ -16,8 +16,10 @@ use function assert;
 
 final class DefaultReflector implements Reflector
 {
-    public function __construct(private SourceLocator $sourceLocator)
+    private SourceLocator $sourceLocator;
+    public function __construct(SourceLocator $sourceLocator)
     {
+        $this->sourceLocator = $sourceLocator;
     }
 
     /**

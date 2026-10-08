@@ -245,7 +245,7 @@ class ReflectionPropertyTest extends TestCase
         $reflector = (new DefaultReflector(new StringSourceLocator($php, $this->astLocator)))->reflectClass('Bar');
         $property  = $reflector->getProperty('prop');
 
-        self::assertNotNull($property?->getDocComment());
+        self::assertNotNull(($nullsafeVariable1 = $property) ? $nullsafeVariable1->getDocComment() : null);
         self::assertStringContainsString('Property description', $property->getDocComment());
     }
 
@@ -387,9 +387,10 @@ class ReflectionPropertyTest extends TestCase
     /**
      * @param non-empty-string  $propertyName
      * @param class-string|null $defaultValueExpression
+     * @param mixed $defaultValue
      */
     #[DataProvider('propertyDefaultValueProvider')]
-    public function testPropertyDefaultValue(string $propertyName, bool $hasDefaultValue, mixed $defaultValue, string|null $defaultValueExpression): void
+    public function testPropertyDefaultValue(string $propertyName, bool $hasDefaultValue, $defaultValue, ?string $defaultValueExpression): void
     {
         $classInfo = (new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/DefaultProperties.php', $this->astLocator)))->reflectClass(DefaultProperties::class);
         $property  = $classInfo->getProperty($propertyName);
@@ -715,7 +716,7 @@ PHP;
     #[DataProvider('hasTypeProvider')]
     public function testHasType(
         string $propertyName,
-        bool $expectedHasType,
+        bool $expectedHasType
     ): void {
         $classReflection    = $this->reflector->reflectClass(Php74PropertyTypeDeclarations::class);
         $propertyReflection = $classReflection->getProperty($propertyName);
@@ -739,7 +740,7 @@ PHP;
     #[DataProvider('getTypeProvider')]
     public function testGetType(
         string $propertyName,
-        string $expectedType,
+        string $expectedType
     ): void {
         $classReflection    = $this->reflector->reflectClass(Php74PropertyTypeDeclarations::class);
         $propertyReflection = $classReflection->getProperty($propertyName);
@@ -768,7 +769,7 @@ PHP;
 
     /** @param non-empty-string $propertyName */
     #[DataProvider('isInitializedProvider')]
-    public function testIsInitialized(string $propertyName, object|null $object, bool $isInitialized): void
+    public function testIsInitialized(string $propertyName, ?object $object, bool $isInitialized): void
     {
         $classReflection = $this->reflector->reflectClass(InitializedProperties::class);
 
@@ -1296,7 +1297,7 @@ PHP;
 
     /** @param non-empty-string $propertyName */
     #[DataProvider('getPropertyHookReturnTypeProvider')]
-    public function testGetPropertyHookReturnType(string $propertyName, string|null $returnType): void
+    public function testGetPropertyHookReturnType(string $propertyName, ?string $returnType): void
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(__DIR__ . '/../Fixture/PropertyHooks.php', $this->astLocator));
         $classInfo = $reflector->reflectClass('Roave\BetterReflectionTest\Fixture\GetPropertyHooksReturnTypes');
@@ -1306,6 +1307,6 @@ PHP;
 
         $getHookReflection = $hookProperty->getHook(ReflectionPropertyHookType::Get);
         self::assertNotNull($getHookReflection);
-        self::assertSame($returnType, $getHookReflection->getReturnType()?->__toString());
+        self::assertSame($returnType, ($nullsafeVariable2 = $getHookReflection->getReturnType()) ? $nullsafeVariable2->__toString() : null);
     }
 }

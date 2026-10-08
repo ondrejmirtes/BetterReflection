@@ -254,6 +254,9 @@ class PhpStormStubsSourceStubberTest extends TestCase
         $this->assertSameInterfaces($original, $stubbed);
 
         foreach ($original->getMethods() as $method) {
+            if (PHP_VERSION_ID < 80100) {
+                $method->setAccessible(true);
+            }
             $methodName = $original->getName() . '#' . $method->getName();
 
             // Needs fixes in JetBrains/phpstorm-stubs
@@ -341,7 +344,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     private function assertSameParameterAttributes(
         CoreReflectionMethod $originalMethod,
         CoreReflectionParameter $original,
-        ReflectionParameter $stubbed,
+        ReflectionParameter $stubbed
     ): void {
         $parameterName = $original->getDeclaringClass()->getName()
             . '#' . $originalMethod->getName()
@@ -454,8 +457,11 @@ class PhpStormStubsSourceStubberTest extends TestCase
         return $provider;
     }
 
+    /**
+     * @param mixed $constantValue
+     */
     #[DataProvider('internalConstantsProvider')]
-    public function testInternalConstants(string $constantName, mixed $constantValue, string $extensionName): void
+    public function testInternalConstants(string $constantName, $constantValue, string $extensionName): void
     {
         $constantReflection = $this->reflector->reflectConstant($constantName);
 
@@ -909,8 +915,8 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string $methodName,
         int $phpVersion,
         bool $isSupported,
-        string|null $returnType = null,
-        string|null $tentativeReturnType = null,
+        ?string $returnType = null,
+        ?string $tentativeReturnType = null
     ): void {
         $sourceStubber = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $sourceLocator = new AggregateSourceLocator([
@@ -929,8 +935,8 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
             $method = $class->getMethod($methodName);
 
-            self::assertSame($returnType, $method->getReturnType()?->__toString());
-            self::assertSame($tentativeReturnType, $method->getTentativeReturnType()?->__toString());
+            self::assertSame($returnType, ($nullsafeVariable1 = $method->getReturnType()) ? $nullsafeVariable1->__toString() : null);
+            self::assertSame($tentativeReturnType, ($nullsafeVariable2 = $method->getTentativeReturnType()) ? $nullsafeVariable2->__toString() : null);
         } else {
             self::assertFalse($class->hasMethod($methodName), $fullMethodName);
         }
@@ -960,8 +966,8 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string $parameterName,
         int $phpVersion,
         bool $isSupported,
-        string|null $type = null,
-        bool|null $allowsNull = null,
+        ?string $type = null,
+        ?bool $allowsNull = null
     ): void {
         $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
@@ -975,7 +981,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         if ($isSupported) {
             self::assertInstanceOf(ReflectionParameter::class, $parameter, $fullParameterName);
-            self::assertSame($type, $parameter->getType()?->__toString(), $fullParameterName);
+            self::assertSame($type, ($nullsafeVariable3 = $parameter->getType()) ? $nullsafeVariable3->__toString() : null, $fullParameterName);
             self::assertSame($allowsNull, $parameter->allowsNull(), $fullParameterName);
         } else {
             self::assertNull($parameter, $fullParameterName);
@@ -1000,7 +1006,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
     /** @param non-empty-string $propertyName */
     #[DataProvider('dataPropertyInPhpVersion')]
-    public function testPropertyInPhpVersion(string $className, string $propertyName, int $phpVersion, bool $isSupported, string|null $type = null): void
+    public function testPropertyInPhpVersion(string $className, string $propertyName, int $phpVersion, bool $isSupported, ?string $type = null): void
     {
         $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
@@ -1013,7 +1019,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         if ($isSupported) {
             self::assertInstanceOf(ReflectionProperty::class, $property, $fullPropertyName);
-            self::assertSame($type, $property->getType()?->__toString(), $fullPropertyName);
+            self::assertSame($type, ($nullsafeVariable4 = $property->getType()) ? $nullsafeVariable4->__toString() : null, $fullPropertyName);
         } else {
             self::assertNull($property, $fullPropertyName);
         }
@@ -1052,7 +1058,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     }
 
     #[DataProvider('dataFunctionInPhpVersion')]
-    public function testFunctionInPhpVersion(string $functionName, int $phpVersion, bool $isSupported, string|null $returnType = null): void
+    public function testFunctionInPhpVersion(string $functionName, int $phpVersion, bool $isSupported, ?string $returnType = null): void
     {
         $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
@@ -1062,7 +1068,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
             $function = $reflector->reflectFunction($functionName);
 
             self::assertInstanceOf(ReflectionFunction::class, $function, $functionName);
-            self::assertSame($returnType, $function->getReturnType()?->__toString());
+            self::assertSame($returnType, ($nullsafeVariable5 = $function->getReturnType()) ? $nullsafeVariable5->__toString() : null);
         } else {
             $this->expectException(IdentifierNotFound::class);
             $this->expectExceptionMessage(sprintf('Function "%s" could not be found in the located source', $functionName));
@@ -1096,8 +1102,8 @@ class PhpStormStubsSourceStubberTest extends TestCase
         string $parameterName,
         int $phpVersion,
         bool $isSupported,
-        string|null $type = null,
-        bool|null $allowsNull = null,
+        ?string $type = null,
+        ?bool $allowsNull = null
     ): void {
         $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
@@ -1110,7 +1116,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
 
         if ($isSupported) {
             self::assertInstanceOf(ReflectionParameter::class, $parameter, $fullParameterName);
-            self::assertSame($type, $parameter->getType()?->__toString(), $fullParameterName);
+            self::assertSame($type, ($nullsafeVariable6 = $parameter->getType()) ? $nullsafeVariable6->__toString() : null, $fullParameterName);
             self::assertSame($allowsNull, $parameter->allowsNull(), $fullParameterName);
         } else {
             self::assertNull($parameter, $fullParameterName);
@@ -1384,7 +1390,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     public function testImmediateInterfaces(
         string $className,
         array $interfaceNames,
-        int $phpVersion,
+        int $phpVersion
     ): void {
         $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
@@ -1420,7 +1426,7 @@ class PhpStormStubsSourceStubberTest extends TestCase
     public function testSubclass(
         string $className,
         string $subclassName,
-        int $phpVersion,
+        int $phpVersion
     ): void {
         $sourceStubber            = new PhpStormStubsSourceStubber($this->phpParser, $this->prettyPrinter,$phpVersion);
         $phpInternalSourceLocator = new PhpInternalSourceLocator($this->astLocator, $sourceStubber);
