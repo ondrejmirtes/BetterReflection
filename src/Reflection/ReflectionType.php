@@ -18,13 +18,16 @@ abstract class ReflectionType
      * @internal
      *
      * @psalm-pure
+     * @param \Roave\BetterReflection\Reflection\ReflectionParameter|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionEnum|\Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant $owner
+     * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name|\PhpParser\Node\NullableType|\PhpParser\Node\UnionType|\PhpParser\Node\IntersectionType $type
+     * @return \Roave\BetterReflection\Reflection\ReflectionNamedType|\Roave\BetterReflection\Reflection\ReflectionUnionType|\Roave\BetterReflection\Reflection\ReflectionIntersectionType
      */
     public static function createFromNode(
         Reflector $reflector,
-        ReflectionParameter|ReflectionMethod|ReflectionFunction|ReflectionEnum|ReflectionProperty|ReflectionClassConstant $owner,
-        Identifier|Name|NullableType|UnionType|IntersectionType $type,
-        bool $allowsNull = false,
-    ): ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType {
+        $owner,
+        $type,
+        bool $allowsNull = false
+    ) {
         if ($type instanceof NullableType) {
             $type       = $type->type;
             $allowsNull = true;

@@ -18,6 +18,7 @@ use Roave\BetterReflection\Reflection\Adapter\ReflectionFunction as ReflectionFu
 use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType as ReflectionNamedTypeAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionParameter as ReflectionParameterAdapter;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionParameterWithDocComment as ReflectionParameterWithDocCommentAdapter;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionFunction as BetterReflectionFunction;
@@ -33,7 +34,10 @@ use function array_map;
 use function get_class_methods;
 use function sprintf;
 
+use const PHP_VERSION_ID;
+
 #[CoversClass(ReflectionParameterAdapter::class)]
+#[CoversClass(ReflectionParameterWithDocCommentAdapter::class)]
 class ReflectionParameterTest extends TestCase
 {
     /** @return array<string, array{0: string}> */
@@ -47,10 +51,11 @@ class ReflectionParameterTest extends TestCase
     #[DataProvider('coreReflectionMethodNamesProvider')]
     public function testCoreReflectionMethods(string $methodName): void
     {
-        $reflectionParameterAdapterReflection = new CoreReflectionClass(ReflectionParameterAdapter::class);
+        $adapterClassName                     = PHP_VERSION_ID >= 80600 ? ReflectionParameterWithDocCommentAdapter::class : ReflectionParameterAdapter::class;
+        $reflectionParameterAdapterReflection = new CoreReflectionClass($adapterClassName);
 
         self::assertTrue($reflectionParameterAdapterReflection->hasMethod($methodName));
-        self::assertSame(ReflectionParameterAdapter::class, $reflectionParameterAdapterReflection->getMethod($methodName)->getDeclaringClass()->getName());
+        self::assertContains($reflectionParameterAdapterReflection->getMethod($methodName)->getDeclaringClass()->getName(), [ReflectionParameterAdapter::class, ReflectionParameterWithDocCommentAdapter::class]);
     }
 
     /** @return list<array{0: non-empty-string, 1: list<mixed>, 2: mixed, 3: string|null, 4: mixed}> */
@@ -83,14 +88,16 @@ class ReflectionParameterTest extends TestCase
      * @param non-empty-string             $methodName
      * @param list<mixed>                  $args
      * @param class-string<Throwable>|null $expectedException
+     * @param mixed $returnValue
+     * @param mixed $expectedReturnValue
      */
     #[DataProvider('methodExpectationProvider')]
     public function testAdapterMethods(
         string $methodName,
         array $args,
-        mixed $returnValue,
-        string|null $expectedException,
-        mixed $expectedReturnValue,
+        $returnValue,
+        ?string $expectedException,
+        $expectedReturnValue
     ): void {
         if ($expectedException === null) {
             $reflectionStub = $this->createMock(BetterReflectionParameter::class);
@@ -102,7 +109,7 @@ class ReflectionParameterTest extends TestCase
             $reflectionStub = self::createStub(BetterReflectionParameter::class);
         }
 
-        $adapter = new ReflectionParameterAdapter($reflectionStub);
+        $adapter = new ReflectionParameterWithDocCommentAdapter($reflectionStub);
 
         if ($expectedException !== null) {
             $this->expectException($expectedException);
@@ -136,7 +143,7 @@ class ReflectionParameterTest extends TestCase
             ->method('getDocComment')
             ->willReturn(null);
 
-        $reflectionParameterAdapter = new ReflectionParameterAdapter($betterReflectionParameter);
+        $reflectionParameterAdapter = new ReflectionParameterWithDocCommentAdapter($betterReflectionParameter);
 
         self::assertFalse($reflectionParameterAdapter->getDocComment());
     }
@@ -196,7 +203,7 @@ class ReflectionParameterTest extends TestCase
             ->willReturn($betterReflectionAttributes);
 
         $reflectionParameterAdapter = new ReflectionParameterAdapter($betterReflectionParameter);
-        $attributes                 = $reflectionParameterAdapter->getAttributes();
+        $attributes                 = method_exists($reflectionParameterAdapter, 'getAttributes') ? $reflectionParameterAdapter->getAttributes() : [];
 
         self::assertCount(2, $attributes);
         self::assertSame('SomeAttribute', $attributes[0]->getName());
@@ -231,7 +238,7 @@ class ReflectionParameterTest extends TestCase
             ->willReturn($betterReflectionAttributes);
 
         $reflectionParameterAdapter = new ReflectionParameterAdapter($betterReflectionParameter);
-        $attributes                 = $reflectionParameterAdapter->getAttributes($someAttributeClassName);
+        $attributes                 = method_exists($reflectionParameterAdapter, 'getAttributes') ? $reflectionParameterAdapter->getAttributes($someAttributeClassName) : [];
 
         self::assertCount(1, $attributes);
         self::assertSame($someAttributeClassName, $attributes[0]->getName());
@@ -333,9 +340,9 @@ class ReflectionParameterTest extends TestCase
 
         $reflectionParameterAdapter = new ReflectionParameterAdapter($betterReflectionParameter);
 
-        self::assertCount(1, $reflectionParameterAdapter->getAttributes($className, ReflectionAttributeAdapter::IS_INSTANCEOF));
-        self::assertCount(2, $reflectionParameterAdapter->getAttributes($parentClassName, ReflectionAttributeAdapter::IS_INSTANCEOF));
-        self::assertCount(2, $reflectionParameterAdapter->getAttributes($interfaceName, ReflectionAttributeAdapter::IS_INSTANCEOF));
+        self::assertCount(1, method_exists($reflectionParameterAdapter, 'getAttributes') ? $reflectionParameterAdapter->getAttributes($className, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
+        self::assertCount(2, method_exists($reflectionParameterAdapter, 'getAttributes') ? $reflectionParameterAdapter->getAttributes($parentClassName, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
+        self::assertCount(2, method_exists($reflectionParameterAdapter, 'getAttributes') ? $reflectionParameterAdapter->getAttributes($interfaceName, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
     }
 
     public function testGetAttributesThrowsExceptionForInvalidFlags(): void
@@ -344,7 +351,7 @@ class ReflectionParameterTest extends TestCase
         $reflectionParameterAdapter = new ReflectionParameterAdapter($betterReflectionParameter);
 
         $this->expectException(Error::class);
-        $reflectionParameterAdapter->getAttributes(null, 123);
+        method_exists($reflectionParameterAdapter, 'getAttributes') ? $reflectionParameterAdapter->getAttributes(null, 123) : [];
     }
 
     public function testPropertyName(): void

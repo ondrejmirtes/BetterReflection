@@ -39,7 +39,10 @@ class EvaledCodeSourceLocatorTest extends TestCase
         $this->sourceStubber = $betterReflection->sourceStubber();
     }
 
-    private function getMockReflector(): Reflector&Stub
+    /**
+     * @return (\PHPUnit\Framework\MockObject\Stub & \Roave\BetterReflection\Reflector\Reflector)
+     */
+    private function getMockReflector()
     {
         return self::createStub(Reflector::class);
     }

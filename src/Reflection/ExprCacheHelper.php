@@ -14,8 +14,9 @@ final class ExprCacheHelper
      * One instance for every export and import: a BetterReflection memoizes
      * its php-parser and printer, and building a Php8 parser (token map plus
      * every reduce callback) per imported expression dominated cache hydration.
+     * @var \Roave\BetterReflection\BetterReflection|null
      */
-    private static BetterReflection|null $betterReflection = null;
+    private static $betterReflection = null;
 
     private static function betterReflection(): BetterReflection
     {
