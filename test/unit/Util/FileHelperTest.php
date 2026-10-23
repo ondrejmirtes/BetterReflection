@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
 use PHPUnit\Framework\Attributes\RequiresOperatingSystemFamily;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Util\FileHelper;
+use PHPStan\BetterReflection\Util\FileHelper;
 
 #[CoversClass(FileHelper::class)]
 class FileHelperTest extends TestCase

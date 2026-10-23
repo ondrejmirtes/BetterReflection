@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidDirectory;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidDirectory;
 use stdClass;
 
 use function sprintf;
