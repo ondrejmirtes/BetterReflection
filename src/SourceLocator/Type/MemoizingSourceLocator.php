@@ -17,6 +17,11 @@ use function sprintf;
 
 final class MemoizingSourceLocator implements SourceLocator
 {
+    private SourceLocator $wrappedSourceLocator;
+    /**
+     * @var int|null
+     */
+    private $maxCachedEntries = null;
     /** @var array<string, Reflection|null> indexed by reflector key and identifier cache key */
     private array $cacheByIdentifierKeyAndOid = [];
 
@@ -24,13 +29,13 @@ final class MemoizingSourceLocator implements SourceLocator
     private array $cacheByIdentifierTypeKeyAndOid = [];
 
     /** @param int|null $maxCachedEntries maximum number of entries kept in each cache, evicted by LRU; null means unlimited */
-    public function __construct(
-        private SourceLocator $wrappedSourceLocator,
-        private int|null $maxCachedEntries = null,
-    ) {
+    public function __construct(SourceLocator $wrappedSourceLocator, ?int $maxCachedEntries = null)
+    {
+        $this->wrappedSourceLocator = $wrappedSourceLocator;
+        $this->maxCachedEntries = $maxCachedEntries;
     }
 
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         $cacheKey = sprintf('%s_%s', $this->reflectorCacheKey($reflector), $this->identifierToCacheKey($identifier));
 
@@ -94,7 +99,7 @@ final class MemoizingSourceLocator implements SourceLocator
 
     private function reflectorCacheKey(Reflector $reflector): string
     {
-        return sprintf('type:%s#oid:%d', $reflector::class, spl_object_id($reflector));
+        return sprintf('type:%s#oid:%d', get_class($reflector), spl_object_id($reflector));
     }
 
     private function identifierToCacheKey(Identifier $identifier): string

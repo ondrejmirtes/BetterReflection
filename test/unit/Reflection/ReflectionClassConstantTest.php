@@ -52,7 +52,7 @@ class ReflectionClassConstantTest extends TestCase
     }
 
     /** @param non-empty-string $name */
-    private function getExampleConstant(string $name): ReflectionClassConstant|null
+    private function getExampleConstant(string $name): ?\Roave\BetterReflection\Reflection\ReflectionClassConstant
     {
         $reflector = new DefaultReflector($this->getComposerLocator());
         $classInfo = $reflector->reflectClass(ExampleClass::class);

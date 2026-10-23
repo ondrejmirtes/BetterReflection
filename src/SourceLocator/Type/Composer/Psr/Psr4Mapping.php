@@ -58,7 +58,7 @@ final class Psr4Mapping implements PsrAutoloaderMapping
         return array_merge(
             [],
             ...array_map(static function (array $paths, string $prefix) use ($className): array {
-                $subPath = ltrim(str_replace('\\', '/', substr($className, strlen($prefix))), '/');
+                $subPath = ltrim(str_replace('\\', '/', (string) substr($className, strlen($prefix))), '/');
 
                 if ($subPath === '') {
                     return [];
