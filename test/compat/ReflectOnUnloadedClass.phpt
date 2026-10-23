@@ -6,10 +6,10 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 var_dump(class_exists(UnloadedClass::class, false));
 
-$reflector = new \Roave\BetterReflection\Reflector\DefaultReflector(
-    new Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator(
+$reflector = new \PHPStan\BetterReflection\Reflector\DefaultReflector(
+    new PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator(
         __DIR__ . '/assets/UnloadedClass.php',
-        (new Roave\BetterReflection\BetterReflection())->astLocator()
+        (new PHPStan\BetterReflection\BetterReflection())->astLocator()
     )
 );
 

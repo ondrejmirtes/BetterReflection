@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Identifier\Exception;
+namespace PHPStan\BetterReflection\Identifier\Exception;
 
 use InvalidArgumentException;
 

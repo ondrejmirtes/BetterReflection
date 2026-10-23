@@ -9,7 +9,7 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node\Stmt\Function_;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Util\GetLastDocComment;
+use PHPStan\BetterReflection\Util\GetLastDocComment;
 
 #[CoversClass(GetLastDocComment::class)]
 class GetLastDocCommentTest extends TestCase

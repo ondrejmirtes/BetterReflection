@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
+use PHPStan\BetterReflection\Reflection\Exception\ObjectNotInstanceOfClass;
 
 #[CoversClass(ObjectNotInstanceOfClass::class)]
 class ObjectNotInstanceOfClassTest extends TestCase
