@@ -9,6 +9,7 @@ return RectorConfig::configure()
     ->withSkip([
         dirname(__DIR__) . '/test/unit/Fixture',
         dirname(__DIR__) . '/src/Reflection/Adapter/ReflectionEnum*',
+        dirname(__DIR__) . '/src/Reflection/Adapter/ReflectionParameterWithDocComment.php',
         \Rector\DowngradePhp80\Rector\Class_\DowngradeAttributeToAnnotationRector::class,
         RenameFunctionRector::class,
     ])

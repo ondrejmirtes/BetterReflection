@@ -29,7 +29,7 @@ use function strtolower;
  * @psalm-suppress PropertyNotSetInConstructor
  * @psalm-immutable
  */
-final class ReflectionParameter extends CoreReflectionParameter
+class ReflectionParameter extends CoreReflectionParameter
 {
     public function __construct(private BetterReflectionParameter $betterReflectionParameter)
     {
@@ -50,11 +50,6 @@ final class ReflectionParameter extends CoreReflectionParameter
     public function getBetterReflection(): BetterReflectionParameter
     {
         return $this->betterReflectionParameter;
-    }
-
-    public function getDocComment(): string|false
-    {
-        return $this->betterReflectionParameter->getDocComment() ?? false;
     }
 
     public function isPassedByReference(): bool
