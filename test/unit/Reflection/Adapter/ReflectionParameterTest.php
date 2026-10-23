@@ -18,6 +18,7 @@ use Roave\BetterReflection\Reflection\Adapter\ReflectionFunction as ReflectionFu
 use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod as ReflectionMethodAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionNamedType as ReflectionNamedTypeAdapter;
 use Roave\BetterReflection\Reflection\Adapter\ReflectionParameter as ReflectionParameterAdapter;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionParameterWithDocComment as ReflectionParameterWithDocCommentAdapter;
 use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
 use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionFunction as BetterReflectionFunction;
@@ -47,10 +48,12 @@ class ReflectionParameterTest extends TestCase
     #[DataProvider('coreReflectionMethodNamesProvider')]
     public function testCoreReflectionMethods(string $methodName): void
     {
-        $reflectionParameterAdapterReflection = new CoreReflectionClass(ReflectionParameterAdapter::class);
+        // getDocComment() exists only on the adapter used since PHP 8.6
+        $adapterClass                         = $methodName === 'getDocComment' ? ReflectionParameterWithDocCommentAdapter::class : ReflectionParameterAdapter::class;
+        $reflectionParameterAdapterReflection = new CoreReflectionClass($adapterClass);
 
         self::assertTrue($reflectionParameterAdapterReflection->hasMethod($methodName));
-        self::assertSame(ReflectionParameterAdapter::class, $reflectionParameterAdapterReflection->getMethod($methodName)->getDeclaringClass()->getName());
+        self::assertSame($adapterClass, $reflectionParameterAdapterReflection->getMethod($methodName)->getDeclaringClass()->getName());
     }
 
     /** @return list<array{0: non-empty-string, 1: list<mixed>, 2: mixed, 3: string|null, 4: mixed}> */
@@ -102,7 +105,10 @@ class ReflectionParameterTest extends TestCase
             $reflectionStub = self::createStub(BetterReflectionParameter::class);
         }
 
-        $adapter = new ReflectionParameterAdapter($reflectionStub);
+        // getDocComment() exists only on the adapter used since PHP 8.6
+        $adapter = $methodName === 'getDocComment'
+            ? new ReflectionParameterWithDocCommentAdapter($reflectionStub)
+            : new ReflectionParameterAdapter($reflectionStub);
 
         if ($expectedException !== null) {
             $this->expectException($expectedException);
@@ -136,7 +142,7 @@ class ReflectionParameterTest extends TestCase
             ->method('getDocComment')
             ->willReturn(null);
 
-        $reflectionParameterAdapter = new ReflectionParameterAdapter($betterReflectionParameter);
+        $reflectionParameterAdapter = new ReflectionParameterWithDocCommentAdapter($betterReflectionParameter);
 
         self::assertFalse($reflectionParameterAdapter->getDocComment());
     }

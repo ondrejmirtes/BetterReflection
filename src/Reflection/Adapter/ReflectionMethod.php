@@ -170,7 +170,7 @@ final class ReflectionMethod extends CoreReflectionMethod
     public function getParameters(): array
     {
         return array_map(
-            static fn (BetterReflectionParameter $parameter): ReflectionParameter => new ReflectionParameter($parameter),
+            static fn (BetterReflectionParameter $parameter): ReflectionParameter => ReflectionParameterFactory::create($parameter),
             $this->betterReflectionMethod->getParameters(),
         );
     }
