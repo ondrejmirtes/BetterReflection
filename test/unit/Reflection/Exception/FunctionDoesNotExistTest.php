@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\FunctionDoesNotExist;
+use PHPStan\BetterReflection\Reflection\Exception\FunctionDoesNotExist;
 
 #[CoversClass(FunctionDoesNotExist::class)]
 class FunctionDoesNotExistTest extends TestCase

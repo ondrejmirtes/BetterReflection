@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator;
+namespace PHPStan\BetterReflection\SourceLocator;
 
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileLocation;
 
 use function is_file;
 use function is_readable;

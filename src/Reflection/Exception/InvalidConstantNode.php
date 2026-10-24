@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Exception;
+namespace PHPStan\BetterReflection\Reflection\Exception;
 
 use PhpParser\Node;
-use Roave\BetterReflection\BetterReflection;
+use PHPStan\BetterReflection\BetterReflection;
 use RuntimeException;
 
 use function sprintf;

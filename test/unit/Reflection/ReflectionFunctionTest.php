@@ -7,16 +7,16 @@ namespace Roave\BetterReflectionTest\Reflection;
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
-use Roave\BetterReflection\Reflection\Exception\FunctionDoesNotExist;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflection\ReflectionNamedType;
-use Roave\BetterReflection\Reflector\DefaultReflector;
-use Roave\BetterReflection\SourceLocator\Ast\Locator;
-use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
-use Roave\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use PHPStan\BetterReflection\Reflection\Adapter\Exception\NotImplemented;
+use PHPStan\BetterReflection\Reflection\Exception\FunctionDoesNotExist;
+use PHPStan\BetterReflection\Reflection\ReflectionFunction;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType;
+use PHPStan\BetterReflection\Reflector\DefaultReflector;
+use PHPStan\BetterReflection\SourceLocator\Ast\Locator;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
+use PHPStan\BetterReflection\SourceLocator\Type\PhpInternalSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
+use PHPStan\BetterReflection\SourceLocator\Type\StringSourceLocator;
 use Roave\BetterReflectionTest\BetterReflectionSingleton;
 use Roave\BetterReflectionTest\Fixture\Attr;
 use Roave\BetterReflectionTest\Fixture\ClassWithStaticMethod;
@@ -228,7 +228,7 @@ class ReflectionFunctionTest extends TestCase
     {
         require_once __DIR__ . '/../Fixture/Functions.php';
 
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
         $functionInfo = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\myFunction');
 
         self::assertStringMatchesFormat("Function [ <user> function Roave\BetterReflectionTest\Fixture\myFunction ] {\n  @@ %s/test/unit/Fixture/Functions.php 5 - 6\n}", (string) $functionInfo);
@@ -238,7 +238,7 @@ class ReflectionFunctionTest extends TestCase
     {
         require_once __DIR__ . '/../Fixture/Functions.php';
 
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
         $functionReflection = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\myFunctionWithParams');
 
         $closure = $functionReflection->getClosure();
@@ -275,7 +275,7 @@ class ReflectionFunctionTest extends TestCase
     {
         require_once __DIR__ . '/../Fixture/Functions.php';
 
-        $reflector = (new \Roave\BetterReflection\BetterReflection())->reflector();
+        $reflector = (new \PHPStan\BetterReflection\BetterReflection())->reflector();
         $functionReflection = $reflector->reflectFunction('Roave\BetterReflectionTest\Fixture\myFunctionWithParams');
 
         self::assertSame(5, $functionReflection->invoke(2, 3));
