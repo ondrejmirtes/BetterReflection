@@ -169,4 +169,37 @@ class ReflectionEnumTest extends TestCase
         // The imported reflection may hold lazily-restored state, so it is compared through what it exports
         self::assertSame($data, $importedReflection->exportToCache());
     }
+
+    /** @return list<array{class-string, list<non-empty-string>}> */
+    public static function dataEngineProvidedMethodsStayInternalThroughCache(): array
+    {
+        return [
+            [PureEnum::class, ['cases']],
+            [IntEnum::class, ['cases', 'from', 'tryFrom']],
+            [StringEnum::class, ['cases', 'from', 'tryFrom']],
+        ];
+    }
+
+    /** @param list<non-empty-string> $engineProvidedMethodNames */
+    #[DataProvider('dataEngineProvidedMethodsStayInternalThroughCache')]
+    public function testEngineProvidedMethodsStayInternalThroughCache(string $enumName, array $engineProvidedMethodNames): void
+    {
+        $reflection = $this->reflector->reflectClass($enumName);
+        self::assertInstanceOf(ReflectionEnum::class, $reflection);
+        $data               = $reflection->exportToCache();
+        $readData           = eval('return ' . var_export($data, true) . ';');
+        $importedReflection = ReflectionEnum::importFromCache($this->reflector, $readData);
+
+        foreach ($engineProvidedMethodNames as $methodName) {
+            $method = $importedReflection->getMethod($methodName);
+            self::assertNotNull($method);
+            self::assertTrue($method->isInternal(), $methodName);
+            self::assertSame('Core', $method->getExtensionName(), $methodName);
+        }
+
+        $someMethod = $importedReflection->getMethod('someMethod');
+        self::assertNotNull($someMethod);
+        self::assertFalse($someMethod->isInternal());
+        self::assertSame($importedReflection->getLocatedSource(), $someMethod->getLocatedSource());
+    }
 }
