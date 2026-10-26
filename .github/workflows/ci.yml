@@ -292,6 +292,75 @@ jobs:
       - name: "Check Demo Scripts"
         run: "test/demo/check-demo.sh"
 
+  phpstan-src:
+    name: "phpstan-src"
+    # runs phpstan-src's tests and static analysis with this release tree in place of the released package
+    if: ${{ inputs.release }}
+
+    runs-on: ${{ matrix.operating-system }}
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.2"
+          - "8.5"
+        target:
+          - "tests"
+          - "phpstan"
+        operating-system:
+          - "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Checkout phpstan-src"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+        with:
+          repository: "phpstan/phpstan-src"
+          # the branch send-pr.yml updates
+          ref: "2.3.x"
+          path: "phpstan-src"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: ds, mbstring
+          ini-file: development
+          ini-values: memory_limit=-1
+
+      - name: "Install phpstan-src dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          working-directory: "phpstan-src"
+
+      - name: "Replace ondrejmirtes/better-reflection with the release tree"
+        run: |
+          package=phpstan-src/vendor/ondrejmirtes/better-reflection
+          test -d "$package/src"
+          rm -rf "$package/src"
+          cp -R src composer.json "$package/"
+          composer dump-autoload --working-dir phpstan-src
+
+      - name: "make ${{ matrix.target }}"
+        working-directory: "phpstan-src"
+        run: "make ${{ matrix.target }}"
+
   benchmarks:
     name: "Run benchmarks"
 
