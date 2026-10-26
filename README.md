@@ -79,3 +79,5 @@ This package is released under the [MIT license](LICENSE).
 ## Contributing
 
 If you wish to contribute to the project, please read the [CONTRIBUTING notes](CONTRIBUTING.md).
+
+<!-- Sample change to check the pull request pipeline; do not merge. -->
