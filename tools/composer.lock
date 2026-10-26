@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0196c0dd047c75fe93dc68176de312e2",
+    "content-hash": "397d0f2c99554536d61aeeb005a30c92",
     "packages": [
         {
             "name": "amphp/amp",
@@ -5696,6 +5696,63 @@
                 }
             ],
             "time": "2025-08-19T18:57:03+00:00"
+        },
+        {
+            "name": "rector/rector",
+            "version": "2.6.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rectorphp/rector.git",
+                "reference": "f4aa224edb9b0630fb43826d4cb6a49b62e48d4c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f4aa224edb9b0630fb43826d4cb6a49b62e48d4c",
+                "reference": "f4aa224edb9b0630fb43826d4cb6a49b62e48d4c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0",
+                "phpstan/phpstan": "^2.2.14"
+            },
+            "conflict": {
+                "rector/rector-doctrine": "*",
+                "rector/rector-downgrade-php": "*",
+                "rector/rector-phpunit": "*",
+                "rector/rector-symfony": "*"
+            },
+            "bin": [
+                "bin/rector"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+            "homepage": "https://getrector.com/",
+            "keywords": [
+                "automation",
+                "dev",
+                "migration",
+                "refactoring"
+            ],
+            "support": {
+                "issues": "https://github.com/rectorphp/rector/issues",
+                "source": "https://github.com/rectorphp/rector/tree/2.6.7"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/tomasvotruba",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-13T20:17:44+00:00"
         },
         {
             "name": "revolt/event-loop",

@@ -7,7 +7,7 @@ downgrade: downgrade-inner
 rename: rename-inner fix-cs
 
 downgrade-inner:
-	$(PHP) -d memory_limit=2G vendor/bin/rector process src test -c build/downgrade-config.php
+	$(PHP) -d memory_limit=2G tools/vendor/bin/rector process src test -c build/downgrade-config.php
 
 rename-inner:
 	$(PHP) build/rename.php
