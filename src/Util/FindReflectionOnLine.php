@@ -23,8 +23,12 @@ use function array_merge;
 
 final class FindReflectionOnLine
 {
-    public function __construct(private SourceLocator $sourceLocator, private Locator $astLocator)
+    private SourceLocator $sourceLocator;
+    private Locator $astLocator;
+    public function __construct(SourceLocator $sourceLocator, Locator $astLocator)
     {
+        $this->sourceLocator = $sourceLocator;
+        $this->astLocator = $astLocator;
     }
 
     /**
@@ -37,8 +41,9 @@ final class FindReflectionOnLine
      * @throws InvalidFileLocation
      * @throws ParseToAstFailure
      * @throws InvalidArgumentException
+     * @return \Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant|\Roave\BetterReflection\Reflection\Reflection|null
      */
-    public function __invoke(string $filename, int $lineNumber): ReflectionMethod|ReflectionClass|ReflectionFunction|ReflectionConstant|Reflection|null
+    public function __invoke(string $filename, int $lineNumber)
     {
         $reflections = $this->computeReflections($filename);
 
@@ -89,8 +94,9 @@ final class FindReflectionOnLine
 
     /**
      * Check to see if the line is within the boundaries of the reflection specified.
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionMethod|\Roave\BetterReflection\Reflection\ReflectionFunction|\Roave\BetterReflection\Reflection\ReflectionConstant $reflection
      */
-    private function containsLine(ReflectionClass|ReflectionMethod|ReflectionFunction|ReflectionConstant $reflection, int $lineNumber): bool
+    private function containsLine($reflection, int $lineNumber): bool
     {
         return $lineNumber >= $reflection->getStartLine() && $lineNumber <= $reflection->getEndLine();
     }

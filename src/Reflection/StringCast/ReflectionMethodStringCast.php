@@ -96,7 +96,7 @@ final class ReflectionMethodStringCast
     {
         try {
             return sprintf(', prototype %s', $methodReflection->getPrototype()->getDeclaringClass()->getName());
-        } catch (MethodPrototypeNotFound) {
+        } catch (MethodPrototypeNotFound $exception) {
             return '';
         }
     }

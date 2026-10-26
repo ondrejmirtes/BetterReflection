@@ -20,10 +20,12 @@ use function strtolower;
 /** @internal */
 class Locator
 {
+    private Parser $parser;
     private FindReflectionsInTree $findReflectionsInTree;
 
-    public function __construct(private Parser $parser)
+    public function __construct(Parser $parser)
     {
+        $this->parser = $parser;
         $this->findReflectionsInTree = new FindReflectionsInTree(new NodeToReflection());
     }
 
@@ -34,7 +36,7 @@ class Locator
     public function findReflection(
         Reflector $reflector,
         LocatedSource $locatedSource,
-        Identifier $identifier,
+        Identifier $identifier
     ): Reflection {
         return $this->findInArray(
             $this->findReflectionsOfType(
@@ -57,7 +59,7 @@ class Locator
     public function findReflectionsOfType(
         Reflector $reflector,
         LocatedSource $locatedSource,
-        IdentifierType $identifierType,
+        IdentifierType $identifierType
     ): array {
         try {
             /** @var list<Node\Stmt> $ast */
@@ -81,7 +83,7 @@ class Locator
      *
      * @throws IdentifierNotFound
      */
-    private function findInArray(array $reflections, Identifier $identifier, string|null $name): Reflection
+    private function findInArray(array $reflections, Identifier $identifier, ?string $name): Reflection
     {
         if ($name === null) {
             throw IdentifierNotFound::fromIdentifier($identifier);
