@@ -12,22 +12,22 @@ jobs:
         runs-on: "ubuntu-latest"
         steps:
             - name: "Install PHP"
-              uses: "shivammathur/setup-php@v2"
+              uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
               with:
                   coverage: "none"
                   php-version: "8.2"
 
             - name: "Checkout phpstan-src"
-              uses: actions/checkout@v4
+              uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
               with:
                   repository: phpstan/phpstan-src
                   path: phpstan-src
-                  token: ${{ secrets.PAT_TOKEN }}
+                  token: ${{ secrets.PHPSTAN_SRC_TOKEN }}
                   ref: 2.3.x
 
             - name: "Install dependencies"
               working-directory: ./phpstan-src
-              run: "composer install --no-interaction --no-progress --no-suggest"
+              run: "composer install --no-interaction --no-progress"
 
             - name: "Change composer.json"
               working-directory: ./phpstan-src
@@ -35,9 +35,9 @@ jobs:
 
             - name: "Create Pull Request"
               id: create-pr
-              uses: peter-evans/create-pull-request@v5
+              uses: "peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1" # v8.1.1
               with:
-                  token: ${{ secrets.PAT_TOKEN }}
+                  token: ${{ secrets.PHPSTAN_SRC_TOKEN }}
                   path: ./phpstan-src
                   branch-suffix: random
                   delete-branch: true
