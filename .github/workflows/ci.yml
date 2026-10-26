@@ -512,5 +512,12 @@ jobs:
           working-directory: "tools"
           custom-cache-suffix: "ci"
 
+      # tools/composer.json autoloads this repository's src in place of the tool's own BetterReflection,
+      # but the fork's API differs from what the tool was written against
+      - name: "Use the tool's own BetterReflection"
+        run: |
+          composer config --working-dir tools --unset autoload
+          composer dump-autoload --working-dir tools
+
       - name: "BC Checks"
         run: tools/vendor/bin/roave-backward-compatibility-check --from=origin/${{ github.base_ref }}
