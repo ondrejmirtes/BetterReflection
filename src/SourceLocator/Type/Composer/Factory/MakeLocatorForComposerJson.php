@@ -66,7 +66,7 @@ final class MakeLocatorForComposerJson
         assert(is_string($composerJsonContent));
 
         /** @psalm-var array{autoload: ComposerAutoload} $composer */
-        $composer = json_decode($composerJsonContent, true, flags: JSON_THROW_ON_ERROR);
+        $composer = json_decode($composerJsonContent, true, 512, JSON_THROW_ON_ERROR);
 
         $pathPrefix          = $realInstallationPath . '/';
         $classMapPaths       = $this->prefixPaths($this->packageToClassMapPaths($composer), $pathPrefix);
@@ -108,7 +108,7 @@ final class MakeLocatorForComposerJson
      */
     private function packageToPsr4AutoloadNamespaces(array $package): array
     {
-        return array_map(static fn (string|array $namespacePaths): array => (array) $namespacePaths, $package['autoload']['psr-4'] ?? []);
+        return array_map(static fn ($namespacePaths): array => (array) $namespacePaths, $package['autoload']['psr-4'] ?? []);
     }
 
     /**
@@ -118,7 +118,7 @@ final class MakeLocatorForComposerJson
      */
     private function packageToPsr0AutoloadNamespaces(array $package): array
     {
-        return array_map(static fn (string|array $namespacePaths): array => (array) $namespacePaths, $package['autoload']['psr-0'] ?? []);
+        return array_map(static fn ($namespacePaths): array => (array) $namespacePaths, $package['autoload']['psr-0'] ?? []);
     }
 
     /**

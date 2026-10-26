@@ -24,7 +24,11 @@ use function iterator_to_array;
  */
 class FileIteratorSourceLocator implements SourceLocator
 {
-    private AggregateSourceLocator|null $aggregateSourceLocator = null;
+    private Locator $astLocator;
+    /**
+     * @var \Roave\BetterReflection\SourceLocator\Type\AggregateSourceLocator|null
+     */
+    private $aggregateSourceLocator = null;
 
     /** @var Iterator<SplFileInfo> */
     private Iterator $fileSystemIterator;
@@ -34,8 +38,9 @@ class FileIteratorSourceLocator implements SourceLocator
      *
      * @throws InvalidFileInfo In case of iterator not contains only SplFileInfo.
      */
-    public function __construct(Iterator $fileInfoIterator, private Locator $astLocator)
+    public function __construct(Iterator $fileInfoIterator, Locator $astLocator)
     {
+        $this->astLocator = $astLocator;
         foreach ($fileInfoIterator as $fileInfo) {
             /** @phpstan-ignore instanceof.alwaysTrue */
             if (! $fileInfo instanceof SplFileInfo) {
@@ -52,7 +57,7 @@ class FileIteratorSourceLocator implements SourceLocator
         // @infection-ignore-all Coalesce: There's no difference, it's just optimization
         return $this->aggregateSourceLocator
             ?? $this->aggregateSourceLocator = new AggregateSourceLocator(array_values(array_filter(array_map(
-                function (SplFileInfo $item): SingleFileSourceLocator|null {
+                function (SplFileInfo $item): ?\Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator {
                     if (! ($item->isFile() && $item->getExtension() === 'php')) {
                         return null;
                     }
@@ -71,7 +76,7 @@ class FileIteratorSourceLocator implements SourceLocator
      *
      * @throws InvalidFileLocation
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         return $this->getAggregatedSourceLocator()->locateIdentifier($reflector, $identifier);
     }

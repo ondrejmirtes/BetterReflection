@@ -34,10 +34,12 @@ use function str_contains;
 /** @internal */
 final class ClosureSourceLocator implements SourceLocator
 {
+    private Parser $parser;
     private CoreFunctionReflection $coreFunctionReflection;
 
-    public function __construct(Closure $closure, private Parser $parser)
+    public function __construct(Closure $closure, Parser $parser)
     {
+        $this->parser = $parser;
         $this->coreFunctionReflection = new CoreFunctionReflection($closure);
     }
 
@@ -46,7 +48,7 @@ final class ClosureSourceLocator implements SourceLocator
      *
      * @throws ParseToAstFailure
      */
-    public function locateIdentifier(Reflector $reflector, Identifier $identifier): Reflection|null
+    public function locateIdentifier(Reflector $reflector, Identifier $identifier): ?\Roave\BetterReflection\Reflection\Reflection
     {
         return $this->getReflectionFunction($reflector, $identifier->getType());
     }
@@ -61,7 +63,7 @@ final class ClosureSourceLocator implements SourceLocator
         return array_filter([$this->getReflectionFunction($reflector, $identifierType)]);
     }
 
-    private function getReflectionFunction(Reflector $reflector, IdentifierType $identifierType): ReflectionFunction|null
+    private function getReflectionFunction(Reflector $reflector, IdentifierType $identifierType): ?\Roave\BetterReflection\Reflection\ReflectionFunction
     {
         if (! $identifierType->isFunction()) {
             return null;
@@ -70,7 +72,7 @@ final class ClosureSourceLocator implements SourceLocator
         /** @phpstan-var non-empty-string $fileName */
         $fileName = $this->coreFunctionReflection->getFileName();
 
-        if (str_contains($fileName, 'eval()\'d code')) {
+        if (strpos($fileName, 'eval()\'d code') !== false) {
             throw EvaledClosureCannotBeLocated::create();
         }
 
@@ -82,13 +84,20 @@ final class ClosureSourceLocator implements SourceLocator
 
         $nodeVisitor = new class ($fileName, $startLine) extends NodeVisitorAbstract
         {
+            private string $fileName;
+            private int $startLine;
             /** @var list<array{node: Node\Expr\Closure|Node\Expr\ArrowFunction, namespace: Namespace_|null}> */
             private array $closureNodes = [];
 
-            private Namespace_|null $currentNamespace = null;
+            /**
+             * @var \PhpParser\Node\Stmt\Namespace_|null
+             */
+            private $currentNamespace = null;
 
-            public function __construct(private string $fileName, private int $startLine)
+            public function __construct(string $fileName, int $startLine)
             {
+                $this->fileName = $fileName;
+                $this->startLine = $startLine;
             }
 
             /**

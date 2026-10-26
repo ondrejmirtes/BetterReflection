@@ -905,7 +905,7 @@ PHP;
 
     /** @param list<string> $expectedParentClassNames */
     #[DataProvider('circularParentClassesProvider')]
-    public function testClassOnParentClassCycleHasNoParent(string $className, string|null $expectedParentClassName, array $expectedParentClassNames): void
+    public function testClassOnParentClassCycleHasNoParent(string $className, ?string $expectedParentClassName, array $expectedParentClassNames): void
     {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
             __DIR__ . '/../Fixture/InvalidParents.php',
@@ -914,7 +914,7 @@ PHP;
 
         $class = $reflector->reflectClass($className);
 
-        self::assertSame($expectedParentClassName, $class->getParentClass()?->getName());
+        self::assertSame($expectedParentClassName, ($nullsafeVariable1 = $class->getParentClass()) ? $nullsafeVariable1->getName() : null);
         self::assertSame($expectedParentClassNames, $class->getParentClassNames());
     }
 
@@ -1421,7 +1421,7 @@ PHP;
         string $methodName,
         string $declaringClassShortName,
         string $implementingClassShortName,
-        string $currentClassShortName,
+        string $currentClassShortName
     ): void {
         $reflector = new DefaultReflector(new SingleFileSourceLocator(
             __DIR__ . '/../Fixture/TraitWithAbstractMethod.php',
@@ -2290,7 +2290,7 @@ PHP;
                 self::assertTrue($reflection->hasConstant($constantName), 'Constant ' . $constantName . ' not set');
                 self::assertSame(
                     $constantValue,
-                    $reflection->getConstant($constantName)?->getValue(),
+                    ($nullsafeVariable2 = $reflection->getConstant($constantName)) ? $nullsafeVariable2->getValue() : null,
                     'Constant value for ' . $constantName . ' does not match',
                 );
             },
