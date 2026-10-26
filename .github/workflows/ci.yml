@@ -1,0 +1,447 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+# Reusable CI pipeline. Called by continuous-integration.yml for the X.Y.x source tree and for the release tree
+# (release/X.Y.x branches, or a pull request's code built into a release tree on the fly).
+
+name: "CI"
+
+on:
+  workflow_call:
+    inputs:
+      release:
+        description: "Check a release tree: code downgraded to PHP 7.4 in the PHPStan\\BetterReflection namespace"
+        type: boolean
+        default: false
+      release-tree-artifact:
+        description: "Artifact with release-tree.tgz to unpack over the checkout before running the checks"
+        type: string
+        default: ""
+
+jobs:
+  phpunit:
+    name: "PHPUnit tests"
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "lowest"
+          - "highest"
+          - "locked"
+        php-version:
+          - "8.4"
+          - "8.5"
+          - "8.6"
+        operating-system:
+          - "ubuntu-latest"
+          - "windows-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "pcov"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+
+      - name: "Install CI dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          working-directory: "tools"
+          custom-cache-suffix: "ci"
+
+      - name: "Tests"
+        run: "vendor/bin/phpunit"
+
+  static-analysis-phpstan:
+    name: "Static Analysis by PHPStan"
+    # the source is analysed; the generated release code is not expected to pass level 10 with the source's baseline
+    if: ${{ !inputs.release }}
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "8.4"
+          - "8.5"
+          - "8.6"
+        operating-system:
+          - "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+
+      - name: "Install CI dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          working-directory: "tools"
+          custom-cache-suffix: "ci"
+
+      - name: "PHPStan"
+        run: "tools/vendor/bin/phpstan analyse --memory-limit=-1"
+
+  compatibility:
+    name: "Test Compatibility"
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "8.4"
+        operating-system:
+          - "ubuntu-latest"
+          - "windows-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+
+      - name: "Install CI dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          working-directory: "tools"
+          custom-cache-suffix: "ci"
+
+      - name: "Test Compatibility"
+        run: "vendor/bin/phpunit test/compat"
+
+  demo-scripts:
+    name: "Check Demo Scripts"
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "8.4"
+        operating-system:
+          - "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+
+      - name: "Check Demo Scripts"
+        run: "test/demo/check-demo.sh"
+
+  downgraded-code:
+    name: "Check Downgraded Code"
+    # the tests need PHPUnit 13 and PHP 8.4, so older PHP versions run the code without them
+    if: ${{ inputs.release }}
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "7.4"
+          - "8.0"
+          - "8.1"
+          - "8.2"
+          - "8.3"
+        operating-system:
+          - "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          composer-options: "--no-dev"
+
+      # files skipped by the downgrade are loaded only on PHP versions that support their syntax
+      - name: "Lint"
+        run: |
+          find src -name '*.php' ! -name 'ReflectionEnum*.php' ! -name 'ReflectionParameterWithDocComment.php' -print0 \
+            | xargs -0 -n 1 php -l > /dev/null
+
+      - name: "Check Demo Scripts"
+        run: "test/demo/check-demo.sh"
+
+  benchmarks:
+    name: "Run benchmarks"
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "8.4"
+        operating-system:
+          - "ubuntu-latest"
+          - "windows-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+
+      - name: "Install CI dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          working-directory: "tools"
+          custom-cache-suffix: "ci"
+
+      - name: "PhpBench"
+        run: "vendor/bin/phpbench run --progress=dots --iterations=1"
+
+  coding-standards:
+    name: "Check Coding Standards"
+    # the generated release code is not expected to follow the coding standard
+    if: ${{ !inputs.release }}
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "8.4"
+        operating-system:
+          - "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          working-directory: "tools"
+          custom-cache-suffix: "ci"
+
+      - name: "Coding Standard"
+        run: "tools/vendor/bin/phpcs"
+
+  backward-compatibility:
+    name: "Check Backward Compatibility"
+    if: ${{ github.event_name == 'pull_request' && !inputs.release }}
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      matrix:
+        dependencies:
+          - "locked"
+        php-version:
+          - "8.4"
+        operating-system:
+          - "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+        with:
+          fetch-depth: 0
+
+      - name: "Download release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        uses: "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333" # v8.0.2
+        with:
+          name: "${{ inputs.release-tree-artifact }}"
+
+      - name: "Unpack release tree"
+        if: ${{ inputs.release-tree-artifact != '' }}
+        shell: "bash"
+        run: "tar -xzf release-tree.tgz && rm release-tree.tgz"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          working-directory: "tools"
+          custom-cache-suffix: "ci"
+
+      - name: "BC Checks"
+        run: tools/vendor/bin/roave-backward-compatibility-check --from=origin/${{ github.base_ref }}

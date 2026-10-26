@@ -52,20 +52,8 @@ jobs:
           git config user.email "ondrej+phpstanbot@mirtes.cz"
           git switch -c "release/${{ github.ref_name }}"
 
-      - name: "Change autoload namespace"
-        run: |
-          sed -i -E 's#"Roave(..BetterReflection..": "(\.\./)?src")#"PHPStan\1#' composer.json tools/composer.json
-          git commit -am "Change autoload namespace"
-
-      - name: "Downgrade"
-        run: |
-          make downgrade
-          git commit -am "[GENERATED] Downgraded"
-
-      - name: "Rename"
-        run: |
-          make rename-inner
-          git commit -am "[GENERATED] Renamed"
+      - name: "Build release tree"
+        run: build/build-release.sh --commit
 
       - name: "Push"
         run: git push --force origin "HEAD:refs/heads/release/${{ github.ref_name }}"

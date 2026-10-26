@@ -11,41 +11,23 @@ on:
       - "renovate/*"
 
 jobs:
-  php-versions:
-    name: "Determine PHP versions"
+  source:
+    name: "Source"
+    if: ${{ !startsWith(github.ref_name, 'release/') && !startsWith(github.base_ref, 'release/') }}
+    uses: "./.github/workflows/ci.yml"
+
+  release:
+    name: "Release"
+    if: ${{ startsWith(github.ref_name, 'release/') || startsWith(github.base_ref, 'release/') }}
+    uses: "./.github/workflows/ci.yml"
+    with:
+      release: true
+
+  # Pull requests against X.Y.x also get checked the way release/X.Y.x would be after merging
+  build-release-tree:
+    name: "Build release tree"
+    if: ${{ github.event_name == 'pull_request' && !startsWith(github.base_ref, 'release/') }}
     runs-on: "ubuntu-latest"
-    outputs:
-      all: ${{ steps.versions.outputs.all }}
-      compat: ${{ steps.versions.outputs.compat }}
-    steps:
-      # X.Y.x branches contain the PHP 8.4+ source, release/X.Y.x branches the code downgraded to PHP 7.4
-      - id: "versions"
-        run: |
-          if [[ "${{ github.base_ref || github.ref_name }}" == release/* ]]; then
-            echo 'all=["7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5", "8.6"]' >> "$GITHUB_OUTPUT"
-            echo 'compat=["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]' >> "$GITHUB_OUTPUT"
-          else
-            echo 'all=["8.4", "8.5", "8.6"]' >> "$GITHUB_OUTPUT"
-            echo 'compat=["8.4"]' >> "$GITHUB_OUTPUT"
-          fi
-
-  phpunit:
-    name: "PHPUnit tests"
-    needs: "php-versions"
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        dependencies:
-          - "lowest"
-          - "highest"
-          - "locked"
-        php-version: ${{ fromJSON(needs.php-versions.outputs.all) }}
-        operating-system:
-          - "ubuntu-latest"
-          - "windows-latest"
 
     steps:
       - name: "Checkout"
@@ -54,261 +36,40 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
         with:
-          coverage: "pcov"
-          php-version: "${{ matrix.php-version }}"
+          coverage: "none"
+          php-version: "8.4"
           extensions: intl, sodium
           ini-values: memory_limit=-1
 
       - name: "Install dependencies"
         uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
         with:
-          dependency-versions: "${{ matrix.dependencies }}"
+          dependency-versions: "locked"
 
       - name: "Install CI dependencies"
         uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
         with:
-          dependency-versions: "${{ matrix.dependencies }}"
+          dependency-versions: "locked"
           working-directory: "tools"
           custom-cache-suffix: "ci"
 
-      - name: "Tests"
-        run: "vendor/bin/phpunit"
+      - name: "Build release tree"
+        run: build/build-release.sh
 
-  static-analysis-phpstan:
-    name: "Static Analysis by PHPStan"
-    needs: "php-versions"
+      - name: "Pack release tree"
+        run: git diff --name-only -z | tar --null -czf release-tree.tgz -T -
 
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        dependencies:
-          - "locked"
-        php-version: ${{ fromJSON(needs.php-versions.outputs.all) }}
-        operating-system:
-          - "ubuntu-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+      - name: "Upload release tree"
+        uses: "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9" # v7.0.2
         with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          extensions: intl, sodium
-          ini-values: memory_limit=-1
+          name: "release-tree"
+          path: "release-tree.tgz"
+          retention-days: 7
 
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-
-      - name: "Install CI dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          working-directory: "tools"
-          custom-cache-suffix: "ci"
-
-      - name: "PHPStan"
-        run: "tools/vendor/bin/phpstan analyse --memory-limit=-1"
-
-  compatibility:
-    name: "Test Compatibility"
-    needs: "php-versions"
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        dependencies:
-          - "locked"
-        php-version: ${{ fromJSON(needs.php-versions.outputs.compat) }}
-        operating-system:
-          - "ubuntu-latest"
-          - "windows-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
-        with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          extensions: intl, sodium
-          ini-values: memory_limit=-1
-
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-
-      - name: "Install CI dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          working-directory: "tools"
-          custom-cache-suffix: "ci"
-
-      - name: "Test Compatibility"
-        run: "vendor/bin/phpunit test/compat"
-
-  demo-scripts:
-    name: "Check Demo Scripts"
-    needs: "php-versions"
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        dependencies:
-          - "locked"
-        php-version: ${{ fromJSON(needs.php-versions.outputs.compat) }}
-        operating-system:
-          - "ubuntu-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
-        with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          extensions: intl, sodium
-          ini-values: memory_limit=-1
-
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-
-      - name: "Check Demo Scripts"
-        run: "test/demo/check-demo.sh"
-
-  benchmarks:
-    name: "Run benchmarks"
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        dependencies:
-          - "locked"
-        php-version:
-          - "8.4"
-        operating-system:
-          - "ubuntu-latest"
-          - "windows-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
-        with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          extensions: intl, sodium
-          ini-values: memory_limit=-1
-
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-
-      - name: "Install CI dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          working-directory: "tools"
-          custom-cache-suffix: "ci"
-
-      - name: "PhpBench"
-        run: "vendor/bin/phpbench run --progress=dots --iterations=1"
-
-  coding-standards:
-    name: "Check Coding Standards"
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        dependencies:
-          - "locked"
-        php-version:
-          - "8.4"
-        operating-system:
-          - "ubuntu-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
-        with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          extensions: intl, sodium
-          ini-values: memory_limit=-1
-
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          working-directory: "tools"
-          custom-cache-suffix: "ci"
-
-      - name: "Coding Standard"
-        run: "tools/vendor/bin/phpcs"
-
-  backward-compatibility:
-    name: "Check Backward Compatibility"
-    if: ${{github.event_name == 'pull_request'}}
-
-    runs-on: ${{ matrix.operating-system }}
-
-    strategy:
-      matrix:
-        dependencies:
-          - "locked"
-        php-version:
-          - "8.4"
-        operating-system:
-          - "ubuntu-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
-        with:
-          fetch-depth: 0
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
-        with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          extensions: intl, sodium
-          ini-values: memory_limit=-1
-
-      - name: "Install dependencies"
-        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          working-directory: "tools"
-          custom-cache-suffix: "ci"
-
-      - name: "BC Checks"
-        run: tools/vendor/bin/roave-backward-compatibility-check --from=origin/${{ github.base_ref }}
+  release-preview:
+    name: "Release preview"
+    needs: "build-release-tree"
+    uses: "./.github/workflows/ci.yml"
+    with:
+      release: true
+      release-tree-artifact: "release-tree"
