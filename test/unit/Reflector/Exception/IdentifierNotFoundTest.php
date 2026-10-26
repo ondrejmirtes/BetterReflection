@@ -6,9 +6,9 @@ namespace Roave\BetterReflectionTest\Reflector\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\Identifier;
-use Roave\BetterReflection\Identifier\IdentifierType;
-use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use PHPStan\BetterReflection\Identifier\Identifier;
+use PHPStan\BetterReflection\Identifier\IdentifierType;
+use PHPStan\BetterReflection\Reflector\Exception\IdentifierNotFound;
 
 #[CoversClass(IdentifierNotFound::class)]
 class IdentifierNotFoundTest extends TestCase

@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Located;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Located\EvaledLocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Located\EvaledLocatedSource;
 
 #[CoversClass(EvaledLocatedSource::class)]
 class EvaledLocatedSourceTest extends TestCase

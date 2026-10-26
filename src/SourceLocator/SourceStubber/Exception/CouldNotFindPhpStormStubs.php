@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\SourceStubber\Exception;
+namespace PHPStan\BetterReflection\SourceLocator\SourceStubber\Exception;
 
 use RuntimeException;
 

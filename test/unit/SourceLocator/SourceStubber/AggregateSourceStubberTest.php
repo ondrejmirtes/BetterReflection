@@ -6,9 +6,9 @@ namespace Roave\BetterReflectionTest\SourceLocator\SourceStubber;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\SourceStubber\AggregateSourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
-use Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\AggregateSourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\SourceStubber;
+use PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData;
 
 #[CoversClass(AggregateSourceStubber::class)]
 class AggregateSourceStubberTest extends TestCase
