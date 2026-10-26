@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# Prepares an Amp orb (Debian 12) for this repository: PHP 8.4 + Composer + dependencies.
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+step() {
+	local name="$1"
+	shift
+	echo "==> $name"
+	local start=$SECONDS
+	"$@"
+	echo "<== $name ($((SECONDS - start))s)"
+}
+
+PHP_VERSION=8.4
+PHP_PACKAGES=(
+	"php$PHP_VERSION-cli"
+	"php$PHP_VERSION-intl"
+	"php$PHP_VERSION-mbstring"
+	"php$PHP_VERSION-xml"
+	"php$PHP_VERSION-curl"
+	"php$PHP_VERSION-zip"
+	"php$PHP_VERSION-pcov"
+	unzip
+)
+
+install_php() {
+	local missing=()
+	for pkg in "${PHP_PACKAGES[@]}"; do
+		dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed" || missing+=("$pkg")
+	done
+	if [ ${#missing[@]} -eq 0 ]; then
+		echo "PHP packages already installed"
+		return
+	fi
+
+	# Debian 12 ships PHP 8.2 only; the Sury repository provides newer versions.
+	if [ ! -f /etc/apt/sources.list.d/sury-php.list ]; then
+		sudo install -d -m 0755 /etc/apt/keyrings
+		curl -fsSL https://packages.sury.org/php/apt.gpg | sudo tee /etc/apt/keyrings/sury-php.gpg >/dev/null
+		echo "deb [signed-by=/etc/apt/keyrings/sury-php.gpg] https://packages.sury.org/php/ bookworm main" \
+			| sudo tee /etc/apt/sources.list.d/sury-php.list >/dev/null
+	fi
+	sudo apt-get update -qq
+	sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends "${missing[@]}"
+	sudo update-alternatives --set php "/usr/bin/php$PHP_VERSION"
+}
+
+install_composer() {
+	if command -v composer >/dev/null; then
+		sudo composer self-update --2 --quiet || echo "composer self-update failed; keeping existing version"
+		return
+	fi
+	local tmp
+	tmp="$(mktemp -d)"
+	local expected
+	expected="$(curl -fsSL https://composer.github.io/installer.sig)"
+	curl -fsSL https://getcomposer.org/installer -o "$tmp/composer-setup.php"
+	echo "$expected  $tmp/composer-setup.php" | sha384sum -c --quiet
+	php "$tmp/composer-setup.php" --quiet --install-dir="$tmp" --filename=composer
+	sudo install -m 0755 "$tmp/composer" /usr/local/bin/composer
+	rm -rf "$tmp"
+}
+
+composer_install() {
+	COMPOSER_NO_INTERACTION=1 composer install --no-progress --no-interaction "$@"
+}
+
+add_roave_remote() {
+	local url=https://github.com/Roave/BetterReflection
+	if git remote get-url roave >/dev/null 2>&1; then
+		git remote set-url roave "$url"
+	else
+		git remote add roave "$url"
+	fi
+}
+
+step "Add roave remote" add_roave_remote
+step "Install PHP $PHP_VERSION" install_php
+step "Install Composer" install_composer
+step "Install root dependencies" composer_install
+step "Install tools dependencies" composer_install --working-dir=tools
+
+php --version | head -1
+composer --version
