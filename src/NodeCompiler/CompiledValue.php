@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\NodeCompiler;
+namespace PHPStan\BetterReflection\NodeCompiler;
 
 /** @internal */
 class CompiledValue

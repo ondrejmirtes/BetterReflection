@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
 use LogicException;
 use OutOfBoundsException;
@@ -11,13 +11,13 @@ use ReflectionClass as CoreReflectionClass;
 use ReflectionFunctionAbstract as CoreReflectionFunctionAbstract;
 use ReflectionParameter as CoreReflectionParameter;
 use ReturnTypeWillChange;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionIntersectionType as BetterReflectionIntersectionType;
-use Roave\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
-use Roave\BetterReflection\Reflection\ReflectionParameter as BetterReflectionParameter;
-use Roave\BetterReflection\Reflection\ReflectionType as BetterReflectionType;
-use Roave\BetterReflection\Reflection\ReflectionUnionType as BetterReflectionUnionType;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionIntersectionType as BetterReflectionIntersectionType;
+use PHPStan\BetterReflection\Reflection\ReflectionMethod as BetterReflectionMethod;
+use PHPStan\BetterReflection\Reflection\ReflectionNamedType as BetterReflectionNamedType;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter as BetterReflectionParameter;
+use PHPStan\BetterReflection\Reflection\ReflectionType as BetterReflectionType;
+use PHPStan\BetterReflection\Reflection\ReflectionUnionType as BetterReflectionUnionType;
 use ValueError;
 
 use function array_map;

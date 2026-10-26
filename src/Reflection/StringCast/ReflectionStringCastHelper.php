@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\StringCast;
+namespace PHPStan\BetterReflection\Reflection\StringCast;
 
-use Roave\BetterReflection\Reflection\ReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionEnumCase;
-use Roave\BetterReflection\Reflection\ReflectionProperty;
+use PHPStan\BetterReflection\Reflection\ReflectionClassConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionEnumCase;
+use PHPStan\BetterReflection\Reflection\ReflectionProperty;
 
 use function assert;
 use function preg_replace;
@@ -15,7 +15,7 @@ use function preg_replace;
 final class ReflectionStringCastHelper
 {
     /** @psalm-pure
-     * @param \Roave\BetterReflection\Reflection\ReflectionProperty|\Roave\BetterReflection\Reflection\ReflectionClassConstant|\Roave\BetterReflection\Reflection\ReflectionEnumCase $reflection */
+     * @param \PHPStan\BetterReflection\Reflection\ReflectionProperty|\PHPStan\BetterReflection\Reflection\ReflectionClassConstant|\PHPStan\BetterReflection\Reflection\ReflectionEnumCase $reflection */
     public static function docCommentToString($reflection, bool $indent): string
     {
         $docComment = $reflection->getDocComment();

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Util;
+namespace PHPStan\BetterReflection\Util;
 
 use PhpParser\Node;
-use Roave\BetterReflection\Util\Exception\InvalidNodePosition;
-use Roave\BetterReflection\Util\Exception\NoNodePosition;
+use PHPStan\BetterReflection\Util\Exception\InvalidNodePosition;
+use PHPStan\BetterReflection\Util\Exception\NoNodePosition;
 
 use function strlen;
 use function strrpos;

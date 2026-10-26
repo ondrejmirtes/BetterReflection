@@ -11,14 +11,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionClassConstant as CoreReflectionClassConstant;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
-use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClass as ReflectionClassAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClassConstant as ReflectionClassConstantAdapter;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionClassConstant as BetterReflectionClassConstant;
+use PHPStan\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
+use PHPStan\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
 use Throwable;
 
 use function array_combine;
@@ -342,7 +342,7 @@ class ReflectionClassConstantTest extends TestCase
         $betterReflectionClassConstant  = self::createStub(BetterReflectionClassConstant::class);
         $reflectionClassConstantAdapter = new ReflectionClassConstantAdapter($betterReflectionClassConstant);
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionClassConstant::$foo does not exist.');
+        $this->expectExceptionMessage('Property PHPStan\BetterReflection\Reflection\Adapter\ReflectionClassConstant::$foo does not exist.');
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $reflectionClassConstantAdapter->foo;
     }

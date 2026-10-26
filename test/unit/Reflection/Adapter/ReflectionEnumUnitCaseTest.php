@@ -11,14 +11,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass as CoreReflectionClass;
 use ReflectionEnumUnitCase as CoreReflectionEnumUnitCase;
-use Roave\BetterReflection\Reflection\Adapter\Exception\NotImplementedBecauseItTriggersAutoloading;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionEnum as ReflectionEnumAdapter;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionEnumUnitCase as ReflectionEnumUnitCaseAdapter;
-use Roave\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
-use Roave\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
-use Roave\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
+use PHPStan\BetterReflection\Reflection\Adapter\Exception\NotImplementedBecauseItTriggersAutoloading;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionAttribute as ReflectionAttributeAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionEnum as ReflectionEnumAdapter;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionEnumUnitCase as ReflectionEnumUnitCaseAdapter;
+use PHPStan\BetterReflection\Reflection\ReflectionAttribute as BetterReflectionAttribute;
+use PHPStan\BetterReflection\Reflection\ReflectionClass as BetterReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionEnum as BetterReflectionEnum;
+use PHPStan\BetterReflection\Reflection\ReflectionEnumCase as BetterReflectionEnumCase;
 
 use function array_combine;
 use function array_map;
@@ -392,7 +392,7 @@ class ReflectionEnumUnitCaseTest extends TestCase
         $betterReflectionEnumCase      = self::createStub(BetterReflectionEnumCase::class);
         $reflectionEnumUnitCaseAdapter = new ReflectionEnumUnitCaseAdapter($betterReflectionEnumCase);
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Property Roave\BetterReflection\Reflection\Adapter\ReflectionEnumUnitCase::$foo does not exist.');
+        $this->expectExceptionMessage('Property PHPStan\BetterReflection\Reflection\Adapter\ReflectionEnumUnitCase::$foo does not exist.');
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $reflectionEnumUnitCaseAdapter->foo;
     }

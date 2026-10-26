@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Annotation;
+namespace PHPStan\BetterReflection\Reflection\Annotation;
 
 use function preg_match;
 

@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Identifier\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Identifier\Exception\InvalidIdentifierName;
+use PHPStan\BetterReflection\Identifier\Exception\InvalidIdentifierName;
 
 #[CoversClass(InvalidIdentifierName::class)]
 class InvalidIdentifierNameTest extends TestCase

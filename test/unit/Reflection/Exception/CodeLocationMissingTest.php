@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Reflection\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\CodeLocationMissing;
+use PHPStan\BetterReflection\Reflection\Exception\CodeLocationMissing;
 
 #[CoversClass(CodeLocationMissing::class)]
 class CodeLocationMissingTest extends TestCase
