@@ -1,0 +1,64 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+# Builds release/X.Y.x from X.Y.x: renames the autoloaded namespace to PHPStan\BetterReflection,
+# downgrades the code to PHP 7.4 and renames the code. Releases are tagged on release/X.Y.x.
+
+name: "Build release branch"
+
+on:
+  push:
+    branches:
+      - "*.*.x"
+
+concurrency:
+  group: "release-branch-${{ github.ref_name }}"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: "Build release/${{ github.ref_name }}"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+        with:
+          # Pushing with a PAT so that the push triggers CI on the release branch
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962" # 2.40.0
+        with:
+          coverage: "none"
+          php-version: "8.4"
+          extensions: intl, sodium
+          ini-values: memory_limit=-1
+
+      - name: "Install dependencies"
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          dependency-versions: "locked"
+
+      - name: "Configure Git"
+        run: |
+          git config user.name "phpstan-bot"
+          git config user.email "ondrej+phpstanbot@mirtes.cz"
+          git switch -c "release/${{ github.ref_name }}"
+
+      - name: "Change autoload namespace"
+        run: |
+          sed -i -E 's#"Roave(..BetterReflection..": "(\.\./)?src")#"PHPStan\1#' composer.json tools/composer.json
+          git commit -am "Change autoload namespace"
+
+      - name: "Downgrade"
+        run: |
+          make downgrade
+          git commit -am "[GENERATED] Downgraded"
+
+      - name: "Rename"
+        run: |
+          make rename-inner
+          git commit -am "[GENERATED] Renamed"
+
+      - name: "Push"
+        run: git push --force origin "HEAD:refs/heads/release/${{ github.ref_name }}"

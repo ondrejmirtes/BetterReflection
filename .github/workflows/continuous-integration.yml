@@ -7,11 +7,31 @@ on:
   push:
     branches:
       - "*.*.x"
+      - "release/*.*.x"
       - "renovate/*"
 
 jobs:
+  php-versions:
+    name: "Determine PHP versions"
+    runs-on: "ubuntu-latest"
+    outputs:
+      all: ${{ steps.versions.outputs.all }}
+      compat: ${{ steps.versions.outputs.compat }}
+    steps:
+      # X.Y.x branches contain the PHP 8.4+ source, release/X.Y.x branches the code downgraded to PHP 7.4
+      - id: "versions"
+        run: |
+          if [[ "${{ github.base_ref || github.ref_name }}" == release/* ]]; then
+            echo 'all=["7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5", "8.6"]' >> "$GITHUB_OUTPUT"
+            echo 'compat=["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'all=["8.4", "8.5", "8.6"]' >> "$GITHUB_OUTPUT"
+            echo 'compat=["8.4"]' >> "$GITHUB_OUTPUT"
+          fi
+
   phpunit:
     name: "PHPUnit tests"
+    needs: "php-versions"
 
     runs-on: ${{ matrix.operating-system }}
 
@@ -22,15 +42,7 @@ jobs:
           - "lowest"
           - "highest"
           - "locked"
-        php-version:
-          - "7.4"
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
-          - "8.5"
-          - "8.6"
+        php-version: ${{ fromJSON(needs.php-versions.outputs.all) }}
         operating-system:
           - "ubuntu-latest"
           - "windows-latest"
@@ -64,6 +76,7 @@ jobs:
 
   static-analysis-phpstan:
     name: "Static Analysis by PHPStan"
+    needs: "php-versions"
 
     runs-on: ${{ matrix.operating-system }}
 
@@ -72,15 +85,7 @@ jobs:
       matrix:
         dependencies:
           - "locked"
-        php-version:
-          - "7.4"
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
-          - "8.5"
-          - "8.6"
+        php-version: ${{ fromJSON(needs.php-versions.outputs.all) }}
         operating-system:
           - "ubuntu-latest"
 
@@ -113,6 +118,7 @@ jobs:
 
   compatibility:
     name: "Test Compatibility"
+    needs: "php-versions"
 
     runs-on: ${{ matrix.operating-system }}
 
@@ -121,13 +127,7 @@ jobs:
       matrix:
         dependencies:
           - "locked"
-        php-version:
-          - "7.4"
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
+        php-version: ${{ fromJSON(needs.php-versions.outputs.compat) }}
         operating-system:
           - "ubuntu-latest"
           - "windows-latest"
@@ -161,6 +161,7 @@ jobs:
 
   demo-scripts:
     name: "Check Demo Scripts"
+    needs: "php-versions"
 
     runs-on: ${{ matrix.operating-system }}
 
@@ -169,13 +170,7 @@ jobs:
       matrix:
         dependencies:
           - "locked"
-        php-version:
-          - "7.4"
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
+        php-version: ${{ fromJSON(needs.php-versions.outputs.compat) }}
         operating-system:
           - "ubuntu-latest"
 

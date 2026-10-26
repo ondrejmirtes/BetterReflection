@@ -32,6 +32,16 @@ class PhpPatcher extends NodeVisitorAbstract
 
             return $node;
         }
+        if ($node instanceof Node\Scalar\String_) {
+            if (strpos($node->value, 'Roave\\BetterReflection\\') === false) {
+                return null;
+            }
+
+            $attributes = $node->getAttributes();
+            unset($attributes['rawValue']);
+
+            return new Node\Scalar\String_(str_replace('Roave\\BetterReflection\\', 'PHPStan\\BetterReflection\\', $node->value), $attributes);
+        }
         if (!$node instanceof Node\Name) {
             return null;
         }
@@ -114,5 +124,24 @@ class PhpPatcher extends NodeVisitorAbstract
         );
 
         file_put_contents($fileName, $newCode);
+    }
+
+    // Expected outputs outside of PHP code (.phpt EXPECT sections, demo checks, PHPStan baseline)
+    $textFiles = [__DIR__ . '/../test/demo/check-demo.sh', __DIR__ . '/../phpstan-baseline.neon'];
+    foreach ($files as $file) {
+        if (preg_match('/\.phpt$/', $file->getPathname())) {
+            $textFiles[] = $file->getPathname();
+        }
+    }
+
+    foreach ($textFiles as $fileName) {
+        $code = file_get_contents($fileName);
+        $code = preg_replace_callback(
+            '/string\((\d+)\) "Roave\\\\BetterReflection\\\\/',
+            static fn (array $matches): string => sprintf('string(%d) "PHPStan\\BetterReflection\\', (int) $matches[1] + strlen('PHPStan') - strlen('Roave')),
+            $code
+        );
+        // \b keeps Roave\BetterReflectionTest and Roave\BetterReflectionBenchmark untouched
+        file_put_contents($fileName, preg_replace('/\bRoave(\\\\+BetterReflection)\b/', 'PHPStan$1', $code));
     }
 })();
