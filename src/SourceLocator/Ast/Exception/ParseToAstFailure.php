@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\Ast\Exception;
+namespace PHPStan\BetterReflection\SourceLocator\Ast\Exception;
 
 use PhpParser\Error;
-use Roave\BetterReflection\SourceLocator\Located\LocatedSource;
+use PHPStan\BetterReflection\SourceLocator\Located\LocatedSource;
 use RuntimeException;
 use Throwable;
 

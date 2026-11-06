@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\NodeCompiler\Exception;
+namespace PHPStan\BetterReflection\NodeCompiler\Exception;
 
 use LogicException;
 use PhpParser\Node;
-use Roave\BetterReflection\NodeCompiler\CompilerContext;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Util\FileHelper;
+use PHPStan\BetterReflection\NodeCompiler\CompilerContext;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Util\FileHelper;
 
 use function assert;
 use function sprintf;

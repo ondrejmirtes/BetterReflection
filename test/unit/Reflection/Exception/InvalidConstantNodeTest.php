@@ -7,7 +7,7 @@ namespace Roave\BetterReflectionTest\Reflection\Exception;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
+use PHPStan\BetterReflection\Reflection\Exception\InvalidConstantNode;
 
 #[CoversClass(InvalidConstantNode::class)]
 class InvalidConstantNodeTest extends TestCase

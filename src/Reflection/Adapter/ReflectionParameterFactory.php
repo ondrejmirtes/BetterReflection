@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Reflection\Adapter;
+namespace PHPStan\BetterReflection\Reflection\Adapter;
 
-use Roave\BetterReflection\Reflection\ReflectionParameter as BetterReflectionParameter;
+use PHPStan\BetterReflection\Reflection\ReflectionParameter as BetterReflectionParameter;
 
 use const PHP_VERSION_ID;
 

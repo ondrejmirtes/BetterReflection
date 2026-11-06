@@ -7,7 +7,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
+use PHPStan\BetterReflection\SourceLocator\Exception\InvalidFileInfo;
 use stdClass;
 
 #[CoversClass(InvalidFileInfo::class)]

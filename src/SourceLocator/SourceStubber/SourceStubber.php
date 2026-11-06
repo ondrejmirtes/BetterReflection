@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\SourceLocator\SourceStubber;
+namespace PHPStan\BetterReflection\SourceLocator\SourceStubber;
 
 /** @internal */
 interface SourceStubber
@@ -12,15 +12,15 @@ interface SourceStubber
      *
      * @param class-string|trait-string $className
      */
-    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
+    public function generateClassStub(string $className): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData;
 
     /**
      * Generates stub for given function. Returns null when it cannot generate the stub.
      */
-    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
+    public function generateFunctionStub(string $functionName): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData;
 
     /**
      * Generates stub for given constant. Returns null when it cannot generate the stub.
      */
-    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData;
+    public function generateConstantStub(string $constantName): ?\PHPStan\BetterReflection\SourceLocator\SourceStubber\StubData;
 }

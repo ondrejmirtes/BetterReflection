@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Util;
+namespace PHPStan\BetterReflection\Util;
 
 use PhpParser\Node;
-use Roave\BetterReflection\Reflection\Exception\InvalidConstantNode;
+use PHPStan\BetterReflection\Reflection\Exception\InvalidConstantNode;
 
 use function count;
 use function in_array;

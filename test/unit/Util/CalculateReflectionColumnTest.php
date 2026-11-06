@@ -7,7 +7,7 @@ namespace Roave\BetterReflectionTest\Util;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Util\CalculateReflectionColumn;
+use PHPStan\BetterReflection\Util\CalculateReflectionColumn;
 
 #[CoversClass(CalculateReflectionColumn::class)]
 class CalculateReflectionColumnTest extends TestCase
