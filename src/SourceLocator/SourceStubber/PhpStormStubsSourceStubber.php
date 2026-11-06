@@ -60,6 +60,7 @@ use function in_array;
 use function is_dir;
 use function is_string;
 use function ltrim;
+use function max;
 use function preg_match;
 use function preg_replace;
 use function sprintf;
@@ -916,16 +917,14 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $isTentativeReturnType = $this->getNodeAttribute($function, 'JetBrains\PhpStorm\Internal\TentativeType') !== null;
 
         if ($isTentativeReturnType) {
-            // Tentative types are the most correct in stubs
-            // If the type is tentative in stubs, we should remove the type for PHP < 8.1
+            // Tentative types are the most correct in stubs. They are kept for every PHP version:
+            // the annotation hides them from getReturnType() and getTentativeReturnType() exposes them,
+            // so that a consumer analysing a range of PHP versions can learn about them even when
+            // the lowest version of the range is below 8.1, the first version that checks them.
 
-            if ($this->phpVersion >= 80100) {
-                // Some tentative types are described only by #[LanguageLevelTypeAware]
-                $function->returnType ??= $this->getStmtType($function);
-                $this->addAnnotationToDocComment($function, AnnotationHelper::TENTATIVE_RETURN_TYPE_ANNOTATION);
-            } else {
-                $function->returnType = null;
-            }
+            // Some tentative types are described only by #[LanguageLevelTypeAware]
+            $function->returnType ??= $this->getStmtType($function, max($this->phpVersion, 80100));
+            $this->addAnnotationToDocComment($function, AnnotationHelper::TENTATIVE_RETURN_TYPE_ANNOTATION);
 
             return;
         }
@@ -975,9 +974,9 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $function->params = $parameters;
     }
 
-    private function getStmtType(Function_|ClassMethod|Property|Param $node): Name|Identifier|ComplexType|null
+    private function getStmtType(Function_|ClassMethod|Property|Param $node, int|null $phpVersion = null): Name|Identifier|ComplexType|null
     {
-        $type = $this->getRawStmtType($node);
+        $type = $this->getRawStmtType($node, $phpVersion);
 
         if ($type === null) {
             return null;
@@ -986,8 +985,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->normalizeType($type);
     }
 
-    private function getRawStmtType(Function_|ClassMethod|Property|Param $node): string|null
+    private function getRawStmtType(Function_|ClassMethod|Property|Param $node, int|null $phpVersion = null): string|null
     {
+        $phpVersion ??= $this->phpVersion;
+
         $languageLevelTypeAwareAttribute = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Internal\LanguageLevelTypeAware');
 
         if ($languageLevelTypeAwareAttribute === null) {
@@ -1005,7 +1006,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             assert($type->key instanceof Node\Scalar\String_);
             assert($type->value instanceof Node\Scalar\String_);
 
-            if ($this->parsePhpVersion($type->key->value) > $this->phpVersion) {
+            if ($this->parsePhpVersion($type->key->value) > $phpVersion) {
                 continue;
             }
 
