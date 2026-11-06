@@ -8,7 +8,7 @@ use RuntimeException;
 
 class CodeLocationMissing extends RuntimeException
 {
-    public static function create(string|null $hint = null): self
+    public static function create(?string $hint = null): self
     {
         $message = 'Code location is missing';
         if ($hint !== null) {

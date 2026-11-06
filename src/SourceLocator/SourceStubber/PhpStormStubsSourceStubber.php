@@ -74,6 +74,12 @@ use const PHP_VERSION_ID;
 /** @internal */
 final class PhpStormStubsSourceStubber implements SourceStubber
 {
+    private Parser $phpParser;
+    private int $phpVersion = PHP_VERSION_ID;
+    /**
+     * @var int|null
+     */
+    private $maxCachedNodes = null;
     private const SEARCH_DIRECTORIES = [
         __DIR__ . '/../../../../../jetbrains/phpstorm-stubs',
         __DIR__ . '/../../../vendor/jetbrains/phpstorm-stubs',
@@ -278,7 +284,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
 
     private NodeTraverser $nodeTraverser;
 
-    private string|null $stubsDirectory = null;
+    /**
+     * @var string|null
+     */
+    private $stubsDirectory = null;
 
     private CachingVisitor $cachingVisitor;
 
@@ -339,8 +348,11 @@ final class PhpStormStubsSourceStubber implements SourceStubber
      * @param int|null           $maxCachedNodes    maximum number of entries kept in each node cache, evicted by LRU; null means unlimited
      * @param array<string, int> $extensionVersions
      */
-    public function __construct(private Parser $phpParser, Standard $prettyPrinter, private int $phpVersion = PHP_VERSION_ID, private int|null $maxCachedNodes = null, array $extensionVersions = [])
+    public function __construct(Parser $phpParser, Standard $prettyPrinter, int $phpVersion = PHP_VERSION_ID, ?int $maxCachedNodes = null, array $extensionVersions = [])
     {
+        $this->phpParser = $phpParser;
+        $this->phpVersion = $phpVersion;
+        $this->maxCachedNodes = $maxCachedNodes;
         $this->builderFactory = new BuilderFactory();
         $this->prettyPrinter  = $prettyPrinter;
 
@@ -404,7 +416,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     }
 
     /** @param class-string|trait-string $className */
-    public function generateClassStub(string $className): StubData|null
+    public function generateClassStub(string $className): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         if (strtolower($className) === 'iterable') {
             return null;
@@ -445,7 +457,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
     }
 
     /** @return array{0: Node\Stmt\ClassLike, 1: Node\Stmt\Namespace_|null}|null */
-    private function getClassNodeData(string $className): array|null
+    private function getClassNodeData(string $className): ?array
     {
         $lowercaseClassName = strtolower($className);
 
@@ -494,7 +506,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->functionNodes[$lowercaseFunctionName];
     }
 
-    public function generateFunctionStub(string $functionName): StubData|null
+    public function generateFunctionStub(string $functionName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $functionNodeData = $this->getFunctionNodeData($functionName);
 
@@ -509,7 +521,7 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return new StubData($this->createStub($functionNodeData[0], $functionNodeData[1]), $extension, $this->getAbsoluteFilePath($filePath));
     }
 
-    public function generateConstantStub(string $constantName): StubData|null
+    public function generateConstantStub(string $constantName): ?\Roave\BetterReflection\SourceLocator\SourceStubber\StubData
     {
         $lowercaseConstantName = strtolower($constantName);
 
@@ -676,13 +688,16 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         }
     }
 
-    private function createStub(Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall $node, Node\Stmt\Namespace_|null $namespaceNode): string
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function createStub($node, ?\PhpParser\Node\Stmt\Namespace_ $namespaceNode): string
     {
         if ($node instanceof Node\Expr\FuncCall) {
             try {
                 ConstantNodeChecker::assertValidDefineFunctionCall($node);
                 $this->addDeprecatedDocComment($node);
-            } catch (InvalidConstantNode) {
+            } catch (InvalidConstantNode $exception) {
                 // just keep going
             }
         }
@@ -901,7 +916,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $newStmts;
     }
 
-    private function modifyStmtTypeByPhpVersion(Node\Stmt\Property|Node\Param $stmt): void
+    /**
+     * @param \PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $stmt
+     */
+    private function modifyStmtTypeByPhpVersion($stmt): void
     {
         $type = $this->getStmtType($stmt);
 
@@ -912,7 +930,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $stmt->type = $type;
     }
 
-    private function modifyFunctionReturnTypeByPhpVersion(Node\Stmt\ClassMethod|Node\Stmt\Function_ $function): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $function
+     */
+    private function modifyFunctionReturnTypeByPhpVersion($function): void
     {
         $isTentativeReturnType = $this->getNodeAttribute($function, 'JetBrains\PhpStorm\Internal\TentativeType') !== null;
 
@@ -947,7 +968,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $function->returnType = $type;
     }
 
-    private function modifyFunctionParametersByPhpVersion(Node\Stmt\ClassMethod|Node\Stmt\Function_ $function): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $function
+     */
+    private function modifyFunctionParametersByPhpVersion($function): void
     {
         $parameters = [];
 
@@ -974,7 +998,11 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $function->params = $parameters;
     }
 
-    private function getStmtType(Function_|ClassMethod|Property|Param $node, int|null $phpVersion = null): Name|Identifier|ComplexType|null
+    /**
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $node
+     * @return \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\ComplexType|null
+     */
+    private function getStmtType($node, ?int $phpVersion = null)
     {
         $type = $this->getRawStmtType($node, $phpVersion);
 
@@ -985,7 +1013,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $this->normalizeType($type);
     }
 
-    private function getRawStmtType(Function_|ClassMethod|Property|Param $node, int|null $phpVersion = null): string|null
+    /**
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $node
+     */
+    private function getRawStmtType($node, ?int $phpVersion = null): ?string
     {
         $phpVersion ??= $this->phpVersion;
 
@@ -1020,7 +1051,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
             : null;
     }
 
-    private function addDeprecatedDocComment(Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\FuncCall|Node\Stmt\Const_|Node\Stmt\EnumCase $node): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function addDeprecatedDocComment($node): void
     {
         if ($node instanceof Node\Expr\FuncCall) {
             if (! $this->isDeprecatedByPhpDocInPhpVersion($node)) {
@@ -1043,9 +1077,12 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $this->addAnnotationToDocComment($node, 'deprecated');
     }
 
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
     private function addAnnotationToDocComment(
-        Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Stmt\Const_|Node\Stmt\EnumCase $node,
-        string $annotationName,
+        $node,
+        string $annotationName
     ): void {
         $docComment = $node->getDocComment();
 
@@ -1059,9 +1096,12 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         $node->setDocComment(new Doc($docCommentText));
     }
 
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
     private function removeAnnotationFromDocComment(
-        Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Expr\FuncCall|Node\Stmt\Const_|Node\Stmt\EnumCase $node,
-        string $annotationName,
+        $node,
+        string $annotationName
     ): void {
         $docComment = $node->getDocComment();
         if ($docComment === null) {
@@ -1079,7 +1119,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return in_array($extension, self::CORE_EXTENSIONS, true);
     }
 
-    private function removePhp8ThrowsFromDocComment(Node\Stmt\Function_|Node\Stmt\ClassMethod $node, string $name): void
+    /**
+     * @param \PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\ClassMethod $node
+     */
+    private function removePhp8ThrowsFromDocComment($node, string $name): void
     {
         $throws = self::$php8ThrowsMap[strtolower($name)] ?? null;
         if ($throws === null) {
@@ -1121,7 +1164,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return true;
     }
 
-    private function isDeprecatedInPhpVersion(Node\Stmt\ClassLike|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Stmt\Function_|Node\Stmt\EnumCase $node): bool
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function isDeprecatedInPhpVersion($node): bool
     {
         $deprecatedAttribute = $this->getNodeAttribute($node, 'JetBrains\PhpStorm\Deprecated');
         if ($deprecatedAttribute === null) {
@@ -1139,8 +1185,11 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return true;
     }
 
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Param|\PhpParser\Node\Stmt\EnumCase $node
+     */
     private function isSupportedInPhpVersion(
-        Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Param|Node\Stmt\EnumCase $node,
+        $node
     ): bool {
         [$fromVersion, $toVersion] = $this->getSupportedPhpVersions($node);
 
@@ -1151,9 +1200,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $toVersion === null || $toVersion >= $this->phpVersion;
     }
 
-    /** @return array{0: int|null, 1: int|null} */
+    /** @return array{0: int|null, 1: int|null}
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Param|\PhpParser\Node\Stmt\EnumCase $node */
     private function getSupportedPhpVersions(
-        Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Param|Node\Stmt\EnumCase $node,
+        $node
     ): array {
         $fromVersion = null;
         $toVersion   = null;
@@ -1209,10 +1259,13 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return [$fromVersion, $toVersion];
     }
 
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Param|\PhpParser\Node\Stmt\EnumCase $node
+     */
     private function getNodeAttribute(
-        Node\Stmt\ClassLike|Node\Stmt\Function_|Node\Stmt\Const_|Node\Expr\FuncCall|Node\Stmt\ClassConst|Node\Stmt\Property|Node\Stmt\ClassMethod|Node\Param|Node\Stmt\EnumCase $node,
-        string $attributeName,
-    ): Node\Attribute|null {
+        $node,
+        string $attributeName
+    ): ?\PhpParser\Node\Attribute {
         if ($node instanceof Node\Expr\FuncCall || $node instanceof Node\Stmt\Const_) {
             return null;
         }
@@ -1235,10 +1288,13 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return $parts[0] * 10000 + $parts[1] * 100 + ($parts[2] ?? $defaultPatch);
     }
 
-    private function normalizeType(string $type): Name|Identifier|ComplexType|null
+    /**
+     * @return \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\ComplexType|null
+     */
+    private function normalizeType(string $type)
     {
         // There are some invalid types in stubs, eg. `string[]|string|null`
-        if (str_contains($type, '[')) {
+        if (strpos($type, '[') !== false) {
             return null;
         }
 
@@ -1262,7 +1318,10 @@ final class PhpStormStubsSourceStubber implements SourceStubber
         return in_array('resource', explode('|', ltrim($type, '?')), true);
     }
 
-    private function addTagToDocComment(ClassLike|ClassConst|Property|ClassMethod|Function_|Const_|EnumCase $node, string $tag): void
+    /**
+     * @param \PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Stmt\ClassConst|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Stmt\Const_|\PhpParser\Node\Stmt\EnumCase $node
+     */
+    private function addTagToDocComment($node, string $tag): void
     {
         $this->removeAnnotationFromDocComment($node, $tag);
         $this->addAnnotationToDocComment($node, $tag);

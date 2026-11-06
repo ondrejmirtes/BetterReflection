@@ -75,9 +75,10 @@ class ReflectionEnumUnitCaseTest extends TestCase
      * @param non-empty-string             $methodName
      * @param list<mixed>                  $args
      * @param class-string<Throwable>|null $expectedException
+     * @param mixed $returnValue
      */
     #[DataProvider('methodExpectationProvider')]
-    public function testAdapterMethods(string $methodName, string|null $expectedException, mixed $returnValue, array $args): void
+    public function testAdapterMethods(string $methodName, ?string $expectedException, $returnValue, array $args): void
     {
         if ($expectedException === null) {
             $reflectionStub = $this->createMock(BetterReflectionEnumCase::class);
@@ -164,7 +165,7 @@ class ReflectionEnumUnitCaseTest extends TestCase
             ->willReturn($betterReflectionAttributes);
 
         $reflectionEnumUnitCaseAdapter = new ReflectionEnumUnitCaseAdapter($betterReflectionEnumCase);
-        $attributes                    = $reflectionEnumUnitCaseAdapter->getAttributes();
+        $attributes                    = method_exists($reflectionEnumUnitCaseAdapter, 'getAttributes') ? $reflectionEnumUnitCaseAdapter->getAttributes() : [];
 
         self::assertCount(2, $attributes);
         self::assertSame('SomeAttribute', $attributes[0]->getName());
@@ -199,7 +200,7 @@ class ReflectionEnumUnitCaseTest extends TestCase
             ->willReturn($betterReflectionAttributes);
 
         $reflectionEnumUnitCaseAdapter = new ReflectionEnumUnitCaseAdapter($betterReflectionEnumCase);
-        $attributes                    = $reflectionEnumUnitCaseAdapter->getAttributes($someAttributeClassName);
+        $attributes                    = method_exists($reflectionEnumUnitCaseAdapter, 'getAttributes') ? $reflectionEnumUnitCaseAdapter->getAttributes($someAttributeClassName) : [];
 
         self::assertCount(1, $attributes);
         self::assertSame($someAttributeClassName, $attributes[0]->getName());
@@ -301,9 +302,9 @@ class ReflectionEnumUnitCaseTest extends TestCase
 
         $reflectionEnumUnitCaseAdapter = new ReflectionEnumUnitCaseAdapter($betterReflectionEnumCase);
 
-        self::assertCount(1, $reflectionEnumUnitCaseAdapter->getAttributes($className, ReflectionAttributeAdapter::IS_INSTANCEOF));
-        self::assertCount(2, $reflectionEnumUnitCaseAdapter->getAttributes($parentClassName, ReflectionAttributeAdapter::IS_INSTANCEOF));
-        self::assertCount(2, $reflectionEnumUnitCaseAdapter->getAttributes($interfaceName, ReflectionAttributeAdapter::IS_INSTANCEOF));
+        self::assertCount(1, method_exists($reflectionEnumUnitCaseAdapter, 'getAttributes') ? $reflectionEnumUnitCaseAdapter->getAttributes($className, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
+        self::assertCount(2, method_exists($reflectionEnumUnitCaseAdapter, 'getAttributes') ? $reflectionEnumUnitCaseAdapter->getAttributes($parentClassName, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
+        self::assertCount(2, method_exists($reflectionEnumUnitCaseAdapter, 'getAttributes') ? $reflectionEnumUnitCaseAdapter->getAttributes($interfaceName, ReflectionAttributeAdapter::IS_INSTANCEOF) : []);
     }
 
     public function testGetAttributesThrowsExceptionForInvalidFlags(): void
@@ -312,7 +313,7 @@ class ReflectionEnumUnitCaseTest extends TestCase
         $reflectionEnumUnitCaseAdapter = new ReflectionEnumUnitCaseAdapter($betterReflectionEnumCase);
 
         $this->expectException(Error::class);
-        $reflectionEnumUnitCaseAdapter->getAttributes(null, 123);
+        method_exists($reflectionEnumUnitCaseAdapter, 'getAttributes') ? $reflectionEnumUnitCaseAdapter->getAttributes(null, 123) : [];
     }
 
     public function testIsFinal(): void
