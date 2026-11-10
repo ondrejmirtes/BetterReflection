@@ -14,8 +14,10 @@ use function assert;
 /** @psalm-immutable */
 class ReflectionIntersectionType extends CoreReflectionIntersectionType
 {
-    public function __construct(private BetterReflectionIntersectionType $betterReflectionType)
+    private BetterReflectionIntersectionType $betterReflectionType;
+    public function __construct(BetterReflectionIntersectionType $betterReflectionType)
     {
+        $this->betterReflectionType = $betterReflectionType;
     }
 
     /** @return non-empty-list<ReflectionNamedType> */

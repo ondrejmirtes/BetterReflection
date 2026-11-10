@@ -297,7 +297,11 @@ class ReflectionSourceStubberTest extends TestCase
         self::assertSame($originalInterfacesNames, $stubbedInterfacesNames);
     }
 
-    private function assertSameClassAttributes(CoreReflectionClass|CoreReflectionEnum $original, ReflectionClass|ReflectionEnum $stubbed): void
+    /**
+     * @param CoreReflectionClass|CoreReflectionEnum $original
+     * @param \Roave\BetterReflection\Reflection\ReflectionClass|\Roave\BetterReflection\Reflection\ReflectionEnum $stubbed
+     */
+    private function assertSameClassAttributes($original, $stubbed): void
     {
         self::assertSame($original->getName(), $stubbed->getName());
 
@@ -305,6 +309,9 @@ class ReflectionSourceStubberTest extends TestCase
         $this->assertSameInterfaces($original, $stubbed);
 
         foreach ($original->getMethods() as $method) {
+            if (PHP_VERSION_ID < 80100) {
+                $method->setAccessible(true);
+            }
             $stubbedMethod = $stubbed->getMethod($method->getName());
             self::assertNotNull($stubbedMethod);
 
@@ -410,7 +417,7 @@ class ReflectionSourceStubberTest extends TestCase
     private function assertSameParameterAttributes(
         CoreReflectionMethod $originalMethod,
         CoreReflectionParameter $original,
-        ReflectionParameter $stubbed,
+        ReflectionParameter $stubbed
     ): void {
         $methodName    = $original->getDeclaringClass()->getName() . '#' . $originalMethod->getName();
         $parameterName = $methodName . '.' . $original->getName();
@@ -551,8 +558,11 @@ class ReflectionSourceStubberTest extends TestCase
         return $provider;
     }
 
+    /**
+     * @param mixed $constantValue
+     */
     #[DataProvider('internalConstantsProvider')]
-    public function testInternalConstants(string $constantName, mixed $constantValue, string $extensionName): void
+    public function testInternalConstants(string $constantName, $constantValue, string $extensionName): void
     {
         $constantReflection = $this->reflector->reflectConstant($constantName);
 

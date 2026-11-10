@@ -31,6 +31,12 @@ use function is_int;
 /** @psalm-immutable */
 class ReflectionConstant implements Reflection
 {
+    private Reflector $reflector;
+    private LocatedSource $locatedSource;
+    /**
+     * @var non-empty-string|null
+     */
+    private $namespace = null;
     /**
      * @var non-empty-string
      * @psalm-allow-private-mutation
@@ -49,10 +55,10 @@ class ReflectionConstant implements Reflection
      *
      * @var Node\Expr|array<string, mixed>
      */
-    private Node\Expr|array $value;
+    private $value;
 
     /** @var non-empty-string|null */
-    private string|null $docComment;
+    private $docComment;
 
     /** @var positive-int */
     private int $startLine;
@@ -69,18 +75,23 @@ class ReflectionConstant implements Reflection
     /** @var list<ReflectionAttribute> */
     private array $attributes;
 
-    /** @psalm-allow-private-mutation */
-    private CompiledValue|null $compiledValue = null;
+    /** @psalm-allow-private-mutation
+     * @var \Roave\BetterReflection\NodeCompiler\CompiledValue|null */
+    private $compiledValue = null;
 
-    /** @param non-empty-string|null $namespace */
+    /** @param non-empty-string|null $namespace
+     * @param \PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall $node */
     private function __construct(
-        private Reflector $reflector,
-        Node\Stmt\Const_|Node\Expr\FuncCall $node,
-        private LocatedSource $locatedSource,
-        /** @psalm-allow-private-mutation */
-        private string|null $namespace = null,
-        int|null $positionInNode = null,
+        Reflector $reflector,
+        $node,
+        LocatedSource $locatedSource,
+        ?string $namespace = null,
+        ?int $positionInNode = null
     ) {
+        $this->reflector = $reflector;
+        $this->locatedSource = $locatedSource;
+        /** @psalm-allow-private-mutation */
+        $this->namespace = $namespace;
         $this->setNamesFromNode($node, $positionInNode);
 
         if ($node instanceof Node\Expr\FuncCall) {
@@ -168,8 +179,8 @@ class ReflectionConstant implements Reflection
         Reflector $reflector,
         Node $node,
         LocatedSource $locatedSource,
-        string|null $namespace = null,
-        int|null $positionInNode = null,
+        ?string $namespace = null,
+        ?int $positionInNode = null
     ): self {
         if ($node instanceof Node\Stmt\Const_) {
             assert(is_int($positionInNode));
@@ -185,8 +196,8 @@ class ReflectionConstant implements Reflection
         Reflector $reflector,
         Node\Stmt\Const_ $node,
         LocatedSource $locatedSource,
-        string|null $namespace,
-        int $positionInNode,
+        ?string $namespace,
+        int $positionInNode
     ): self {
         return new self(
             $reflector,
@@ -201,7 +212,7 @@ class ReflectionConstant implements Reflection
     private static function createFromDefineFunctionCall(
         Reflector $reflector,
         Node\Expr\FuncCall $node,
-        LocatedSource $locatedSource,
+        LocatedSource $locatedSource
     ): self {
         ConstantNodeChecker::assertValidDefineFunctionCall($node);
 
@@ -240,7 +251,7 @@ class ReflectionConstant implements Reflection
      *
      * @return non-empty-string|null
      */
-    public function getNamespaceName(): string|null
+    public function getNamespaceName(): ?string
     {
         return $this->namespace;
     }
@@ -255,7 +266,7 @@ class ReflectionConstant implements Reflection
     }
 
     /** @return non-empty-string|null */
-    public function getExtensionName(): string|null
+    public function getExtensionName(): ?string
     {
         return $this->locatedSource->getExtensionName();
     }
@@ -291,7 +302,10 @@ class ReflectionConstant implements Reflection
         return $this->value;
     }
 
-    public function getValue(): mixed
+    /**
+     * @return mixed
+     */
+    public function getValue()
     {
         if ($this->compiledValue === null) {
             $this->compiledValue = (new CompileNodeToValue())->__invoke(
@@ -304,7 +318,7 @@ class ReflectionConstant implements Reflection
     }
 
     /** @return non-empty-string|null */
-    public function getFileName(): string|null
+    public function getFileName(): ?string
     {
         return $this->locatedSource->getFileName();
     }
@@ -347,7 +361,7 @@ class ReflectionConstant implements Reflection
     }
 
     /** @return non-empty-string|null */
-    public function getDocComment(): string|null
+    public function getDocComment(): ?string
     {
         return $this->docComment;
     }
@@ -380,7 +394,10 @@ class ReflectionConstant implements Reflection
         return ReflectionAttributeHelper::filterAttributesByInstance($this->getAttributes(), $className);
     }
 
-    private function setNamesFromNode(Node\Stmt\Const_|Node\Expr\FuncCall $node, int|null $positionInNode): void
+    /**
+     * @param \PhpParser\Node\Stmt\Const_|\PhpParser\Node\Expr\FuncCall $node
+     */
+    private function setNamesFromNode($node, ?int $positionInNode): void
     {
         if ($node instanceof Node\Expr\FuncCall) {
             $name = $this->getNameFromDefineFunctionCall($node);

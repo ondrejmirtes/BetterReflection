@@ -22,8 +22,10 @@ class ReflectionPropertyHookType
     public const Get = 'get';
     public const Set = 'set';
     // phpcs:enable
-
-    public static function fromCoreReflectionPropertyHookType(CoreReflectionPropertyHookType $hookType): string
+    /**
+     * @param \PropertyHookType::* $hookType
+     */
+    public static function fromCoreReflectionPropertyHookType($hookType): string
     {
         if ($hookType === CoreReflectionPropertyHookType::Get) {
             return self::Get;

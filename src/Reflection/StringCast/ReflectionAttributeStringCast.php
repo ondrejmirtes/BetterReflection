@@ -61,8 +61,9 @@ final class ReflectionAttributeStringCast
         return $string;
     }
 
-    /** @psalm-pure */
-    private static function argumentValueToString(mixed $value): string
+    /** @psalm-pure
+     * @param mixed $value */
+    private static function argumentValueToString($value): string
     {
         if (is_array($value)) {
             return 'Array';
