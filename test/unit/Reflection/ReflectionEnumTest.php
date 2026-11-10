@@ -20,6 +20,8 @@ use Roave\BetterReflectionTest\Fixture\IntEnum;
 use Roave\BetterReflectionTest\Fixture\PureEnum;
 use Roave\BetterReflectionTest\Fixture\StringEnum;
 
+use function array_merge;
+use function array_replace_recursive;
 use function var_export;
 
 #[CoversClass(ReflectionEnum::class)]
@@ -186,7 +188,11 @@ class ReflectionEnumTest extends TestCase
     {
         $reflection = $this->reflector->reflectClass($enumName);
         self::assertInstanceOf(ReflectionEnum::class, $reflection);
-        $data               = $reflection->exportToCache();
+        // The cache entry is read where the file lives now, e.g. after the project was moved
+        $movedFileName      = '/moved/project/Enums.php';
+        $data               = array_merge($reflection->exportToCache(), [
+            'locatedSource' => array_replace_recursive($reflection->getLocatedSource()->exportToCache(), ['data' => ['filename' => $movedFileName]]),
+        ]);
         $readData           = eval('return ' . var_export($data, true) . ';');
         $importedReflection = ReflectionEnum::importFromCache($this->reflector, $readData);
 
@@ -195,6 +201,7 @@ class ReflectionEnumTest extends TestCase
             self::assertNotNull($method);
             self::assertTrue($method->isInternal(), $methodName);
             self::assertSame('Core', $method->getExtensionName(), $methodName);
+            self::assertSame($movedFileName, $method->getFileName(), $methodName);
         }
 
         $someMethod = $importedReflection->getMethod('someMethod');
