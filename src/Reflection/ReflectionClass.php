@@ -274,11 +274,13 @@ class ReflectionClass implements Reflection
             'immediateConstants' => array_map(static fn ($ref) => $ref->exportToCache(), $this->immediateConstants),
             'immediateProperties' => array_map(static fn ($ref) => $ref->exportToCache(), $this->immediateProperties),
             // the methods share the class's located source, except the ones an enum
-            // gets from the engine (cases(), from(), tryFrom()) - they keep their own
+            // gets from the engine (cases(), from(), tryFrom()) - their own one is
+            // derived from the class's, so it is rebuilt on import instead of exported
+            // with a second copy of the file name
             'immediateMethods' => array_map(
                 fn (ReflectionMethod $ref) => $ref->getLocatedSource() === $this->locatedSource
                     ? $ref->exportToCache()
-                    : array_merge($ref->exportToCache(), ['locatedSource' => $ref->getLocatedSource()->exportToCache()]),
+                    : array_merge($ref->exportToCache(), ['isEngineProvided' => true]),
                 $this->immediateMethods,
             ),
             'traitsData' => $this->traitsData,
@@ -331,7 +333,7 @@ class ReflectionClass implements Reflection
             static fn ($methodData) => ReflectionMethod::importFromCache(
                 $reflector,
                 $methodData,
-                array_key_exists('locatedSource', $methodData) ? LocatedSource::importFromCache($methodData['locatedSource']) : $locatedSource,
+                array_key_exists('isEngineProvided', $methodData) ? $ref->createEngineProvidedMethodsLocatedSource() : $locatedSource,
                 null,
             ),
             $data['immediateMethods'],
@@ -758,6 +760,12 @@ class ReflectionClass implements Reflection
         return $methods;
     }
 
+    /** The located source of the methods an enum gets from the engine: cases(), from() and tryFrom(). */
+    private function createEngineProvidedMethodsLocatedSource(): InternalLocatedSource
+    {
+        return new InternalLocatedSource('', $this->getName(), 'Core', $this->getFileName());
+    }
+
     /**
      * @param array<non-empty-string, ReflectionMethod> $methods
      *
@@ -765,7 +773,7 @@ class ReflectionClass implements Reflection
      */
     private function addEnumMethods(EnumNode $node, array $methods): array
     {
-        $internalLocatedSource = new InternalLocatedSource('', $this->getName(), 'Core', $this->getFileName());
+        $internalLocatedSource = $this->createEngineProvidedMethodsLocatedSource();
         $createMethod          = function (string $name, array $params, Node\Identifier|Node\NullableType $returnType) use ($internalLocatedSource): ReflectionMethod {
             assert($name !== '');
 
