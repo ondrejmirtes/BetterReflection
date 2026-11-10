@@ -189,7 +189,7 @@ class ReflectionEnumTest extends TestCase
         $reflection = $this->reflector->reflectClass($enumName);
         self::assertInstanceOf(ReflectionEnum::class, $reflection);
         // The cache entry is read where the file lives now, e.g. after the project was moved
-        $movedFileName      = __FILE__;
+        $movedFileName      = '/moved/project/Enums.php';
         $data               = array_merge($reflection->exportToCache(), [
             'locatedSource' => array_replace_recursive($reflection->getLocatedSource()->exportToCache(), ['data' => ['filename' => $movedFileName]]),
         ]);
