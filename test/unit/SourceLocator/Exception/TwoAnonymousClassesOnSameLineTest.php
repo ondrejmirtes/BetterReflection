@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\SourceLocator\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\SourceLocator\Exception\TwoAnonymousClassesOnSameLine;
+use PHPStan\BetterReflection\SourceLocator\Exception\TwoAnonymousClassesOnSameLine;
 
 #[CoversClass(TwoAnonymousClassesOnSameLine::class)]
 class TwoAnonymousClassesOnSameLineTest extends TestCase

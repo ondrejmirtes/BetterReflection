@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\BetterReflection\Util;
+namespace PHPStan\BetterReflection\Util;
 
 use function class_exists;
 use function interface_exists;

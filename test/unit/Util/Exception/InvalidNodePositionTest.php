@@ -6,7 +6,7 @@ namespace Roave\BetterReflectionTest\Util\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\Util\Exception\InvalidNodePosition;
+use PHPStan\BetterReflection\Util\Exception\InvalidNodePosition;
 
 #[CoversClass(InvalidNodePosition::class)]
 class InvalidNodePositionTest extends TestCase

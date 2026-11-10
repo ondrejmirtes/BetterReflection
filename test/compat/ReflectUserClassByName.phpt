@@ -4,13 +4,13 @@ Reflecting a user-defined class by name
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use Roave\BetterReflection\Reflection\ReflectionClass;
+use PHPStan\BetterReflection\Reflection\ReflectionClass;
 
-$classInfo = (new Roave\BetterReflection\BetterReflection())->reflector()->reflectClass(ReflectionClass::class);
+$classInfo = (new PHPStan\BetterReflection\BetterReflection())->reflector()->reflectClass(ReflectionClass::class);
 
 var_dump($classInfo->getName());
 var_dump($classInfo->isInternal());
 ?>
 --EXPECT--
-string(49) "Roave\BetterReflection\Reflection\ReflectionClass"
+string(51) "PHPStan\BetterReflection\Reflection\ReflectionClass"
 bool(false)
